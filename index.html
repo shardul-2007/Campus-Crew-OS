@@ -3,975 +3,1045 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Shardul Parihar | Software Developer &amp; Full Stack Developer</title>
-  <meta name="description" content="Shardul Parihar is a software developer building modern web applications, full-stack projects and AI-powered digital experiences.">
+  <title>Shardul Parihar — SHARDUL.OS</title>
+  <meta name="description" content="Shardul Parihar — Software Engineer building AI-powered products, full-stack systems and modern web experiences. Pune, India.">
+  <meta name="keywords" content="Shardul Parihar, Software Developer, Full Stack Developer, AI Developer, Web Developer, React, Node.js, CivicOS, Pune">
   <meta name="author" content="Shardul Parihar">
-  <meta name="keywords" content="Shardul Parihar, Software Developer, Full Stack Developer, AI Developer, Web Developer, Open Source, React, Node.js, MERN, CivicOS, Pune">
   <link rel="canonical" href="https://shardul-2007.github.io/my-portfolio/">
-  <!-- Open Graph -->
-  <meta property="og:type" content="website">
+  <meta property="og:title" content="Shardul Parihar — SHARDUL.OS">
+  <meta property="og:description" content="Software Engineer building AI-powered products, full-stack systems and modern web experiences.">
   <meta property="og:url" content="https://shardul-2007.github.io/my-portfolio/">
-  <meta property="og:title" content="Shardul Parihar | Software Developer &amp; Full Stack Developer">
-  <meta property="og:description" content="Shardul Parihar is a software developer building modern web applications, full-stack projects and AI-powered digital experiences.">
-  <meta property="og:image" content="https://shardul-2007.github.io/my-portfolio/imageshardul.png">
-  <!-- Twitter -->
+  <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Shardul Parihar | Software Developer &amp; Full Stack Developer">
-  <meta name="twitter:description" content="Shardul Parihar is a software developer building modern web applications, full-stack projects and AI-powered digital experiences.">
-  <meta name="twitter:image" content="https://shardul-2007.github.io/my-portfolio/imageshardul.png">
-  <meta name="theme-color" content="#020f0a">
-  <!-- Fonts -->
+  <meta name="twitter:title" content="Shardul Parihar — SHARDUL.OS">
+  <meta name="twitter:description" content="Software Engineer. AI × Full Stack × Web × Open Source.">
+  <meta name="theme-color" content="#0a0a08">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  <!-- Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  <!-- Styles -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- ===== GLOBAL ELEMENTS ===== -->
-<div id="scroll-progress" aria-hidden="true"></div>
-<div id="cursor-dot" aria-hidden="true"></div>
-<div id="cursor-ring" aria-hidden="true"></div>
-<div id="cursor-glow" aria-hidden="true"></div>
-
-<!-- ===== LOADER ===== -->
-<div id="loader" role="status" aria-label="Loading">
-  <div class="loader-inner">
-    <div class="loader-letters" aria-hidden="true">
-      <span style="--d:0">S</span><span style="--d:1">H</span><span style="--d:2">A</span><span style="--d:3">R</span><span style="--d:4">D</span><span style="--d:5">U</span><span style="--d:6">L</span>
+<!-- BOOT SEQUENCE -->
+<div id="boot" role="dialog" aria-modal="true" aria-label="SHARDUL.OS initialising">
+  <div class="boot-inner">
+    <div class="boot-logo">
+      <span class="boot-wordmark">SHARDUL<span class="boot-dot">.</span>OS</span>
+      <span class="boot-ver">v2.0 · Developer Environment</span>
     </div>
-    <div class="loader-bar"><div class="loader-fill"></div></div>
+    <div class="boot-log" aria-live="polite" aria-label="Boot log">
+      <div class="boot-line" data-delay="350"><span class="boot-ok">✓</span> Identity loaded</div>
+      <div class="boot-line" data-delay="620"><span class="boot-ok">✓</span> Projects indexed</div>
+      <div class="boot-line" data-delay="890"><span class="boot-ok">✓</span> Engineering ready</div>
+      <div class="boot-line" data-delay="1100"><span class="boot-ok">✓</span> Lab active</div>
+      <div class="boot-line" data-delay="1320"><span class="boot-ok">✓</span> Open source synced</div>
+      <div class="boot-line" data-delay="1540"><span class="boot-ok">✓</span> AI online</div>
+    </div>
+    <div class="boot-actions">
+      <p class="boot-ready-text">SYSTEM READY</p>
+      <button id="bootEnter" class="boot-enter-btn">
+        ENTER SHARDUL.OS <span aria-hidden="true">→</span>
+      </button>
+      <button id="bootSkip" class="boot-skip-btn">SKIP INTRO</button>
+    </div>
   </div>
 </div>
 
-<!-- ===== HEADER ===== -->
+<!-- COMMAND PALETTE -->
+<div id="cmdPalette" class="cmd-overlay" hidden role="dialog" aria-modal="true" aria-label="Command Palette">
+  <div class="cmd-backdrop" id="cmdBackdrop" aria-hidden="true"></div>
+  <div class="cmd-box">
+    <div class="cmd-header">
+      <i class="fa-solid fa-terminal cmd-icon" aria-hidden="true"></i>
+      <input type="text" id="cmdInput" class="cmd-input"
+             placeholder="Type a command or search…"
+             autocomplete="off" spellcheck="false"
+             aria-label="Command search" aria-autocomplete="list"
+             aria-controls="cmdList" aria-haspopup="listbox">
+      <kbd class="cmd-esc-hint">ESC</kbd>
+    </div>
+    <ul id="cmdList" class="cmd-list" role="listbox" aria-label="Commands"></ul>
+    <div class="cmd-footer" aria-hidden="true">
+      <span><kbd>↑↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> select</span>
+      <span><kbd>ESC</kbd> close</span>
+      <span><kbd>/</kbd> or <kbd>⌘K</kbd> to open</span>
+    </div>
+  </div>
+</div>
+
+<!-- VIEW MODE BANNER -->
+<div id="viewBanner" class="view-banner" hidden role="status">
+  <span id="viewBannerText">VIEWING AS RECRUITER</span>
+  <button id="viewBannerReset" class="vb-reset">Exit mode ×</button>
+</div>
+
+<!-- SCROLL PROGRESS -->
+<div id="scrollProgress" aria-hidden="true"></div>
+
+<!-- HEADER -->
 <header id="header" role="banner">
-  <a href="#home" class="logo" aria-label="Shardul Parihar — back to top">
-    <span class="logo-s">S</span><span class="logo-dot">.</span>
-  </a>
-
-  <nav role="navigation" aria-label="Main navigation">
-    <a href="#home"     class="nav-link" data-section="home">Home</a>
-    <a href="#about"    class="nav-link" data-section="about">About</a>
-    <a href="#skills"   class="nav-link" data-section="skills">Skills</a>
-    <a href="#projects" class="nav-link" data-section="projects">Projects</a>
-    <a href="#journey"  class="nav-link" data-section="journey">Journey</a>
-    <a href="#contact"  class="nav-link" data-section="contact">Contact</a>
-  </nav>
-
-  <div class="header-actions">
-    <button id="themeToggle" aria-label="Toggle light/dark theme">
-      <i class="fa-solid fa-moon t-moon" aria-hidden="true"></i>
-      <i class="fa-solid fa-sun t-sun"  aria-hidden="true"></i>
-    </button>
-    <a href="https://github.com/shardul-2007" target="_blank" rel="noopener noreferrer"
-       class="header-gh" aria-label="GitHub profile">
-      <i class="fab fa-github" aria-hidden="true"></i>
+  <div class="header-inner">
+    <a href="#identity" class="header-logo" aria-label="SHARDUL.OS — Return to top">
+      <span class="hl-name">SHARDUL</span><span class="hl-dot">.</span><span class="hl-os">OS</span>
     </a>
-    <button class="menu-toggle" id="menuToggle"
-            aria-expanded="false" aria-controls="mobileMenu" aria-label="Toggle menu">
-      <span class="bar"></span><span class="bar"></span><span class="bar"></span>
-    </button>
+    <nav class="header-nav" role="navigation" aria-label="Main navigation">
+      <a href="#identity"    class="nav-link" data-section="identity">    <span class="nav-num">01</span> Identity</a>
+      <a href="#work"        class="nav-link" data-section="work">        <span class="nav-num">02</span> Work</a>
+      <a href="#engineering" class="nav-link" data-section="engineering"> <span class="nav-num">03</span> Engineering</a>
+      <a href="#lab"         class="nav-link" data-section="lab">         <span class="nav-num">04</span> Lab</a>
+      <a href="#opensource"  class="nav-link" data-section="opensource">  <span class="nav-num">05</span> Open Source</a>
+      <a href="#journey"     class="nav-link" data-section="journey">     <span class="nav-num">06</span> Journey</a>
+      <a href="#connect"     class="nav-link" data-section="connect">     <span class="nav-num">07</span> Connect</a>
+    </nav>
+    <div class="header-actions">
+      <button id="cmdTrigger" class="hdr-btn cmd-trigger-btn" aria-label="Open command palette — Ctrl+K or /">
+        <i class="fa-solid fa-terminal" aria-hidden="true"></i>
+        <span class="cmd-trigger-label" aria-hidden="true">⌘K</span>
+      </button>
+      <button id="themeToggle" class="hdr-btn" aria-label="Toggle light/dark theme">
+        <i class="fa-solid fa-moon t-moon" aria-hidden="true"></i>
+        <i class="fa-solid fa-sun t-sun" aria-hidden="true"></i>
+      </button>
+      <button id="menuToggle" class="hdr-btn hamburger" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open navigation menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
   </div>
 </header>
 
-<!-- ===== MOBILE MENU ===== -->
-<div id="mobileMenu" class="mobile-menu" role="dialog" aria-modal="true"
-     aria-label="Navigation" hidden>
-  <div class="mobile-menu-inner">
-    <button class="mobile-close" id="mobileClose" aria-label="Close menu">
-      <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-    </button>
-    <nav class="mobile-nav">
-      <a href="#home"     class="mobile-link">Home</a>
-      <a href="#about"    class="mobile-link">About</a>
-      <a href="#skills"   class="mobile-link">Skills</a>
-      <a href="#projects" class="mobile-link">Projects</a>
-      <a href="#journey"  class="mobile-link">Journey</a>
-      <a href="#contact"  class="mobile-link">Contact</a>
-    </nav>
-    <div class="mobile-social">
-      <a href="https://github.com/shardul-2007" target="_blank" rel="noopener noreferrer"
-         aria-label="GitHub"><i class="fab fa-github"></i></a>
-      <a href="https://www.linkedin.com/in/shardul-parihar-/" target="_blank" rel="noopener noreferrer"
-         aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-      <a href="mailto:shardulparihar2007@gmail.com" aria-label="Email">
-        <i class="fa-solid fa-envelope"></i></a>
+<!-- MOBILE MENU -->
+<div id="mobileMenu" class="mobile-menu" hidden role="dialog" aria-modal="true" aria-label="Navigation">
+  <div class="mm-inner">
+    <div class="mm-header">
+      <span class="mm-logo">SHARDUL.OS</span>
+      <button id="mobileClose" class="mm-close" aria-label="Close menu">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
     </div>
+    <nav class="mm-nav" aria-label="Mobile navigation">
+      <a href="#identity"    class="mm-link"><span class="mm-num">01</span> IDENTITY</a>
+      <a href="#work"        class="mm-link"><span class="mm-num">02</span> WORK</a>
+      <a href="#engineering" class="mm-link"><span class="mm-num">03</span> ENGINEERING</a>
+      <a href="#lab"         class="mm-link"><span class="mm-num">04</span> LAB</a>
+      <a href="#opensource"  class="mm-link"><span class="mm-num">05</span> OPEN SOURCE</a>
+      <a href="#journey"     class="mm-link"><span class="mm-num">06</span> JOURNEY</a>
+      <a href="#connect"     class="mm-link"><span class="mm-num">07</span> CONNECT</a>
+    </nav>
+    <button id="mmCmdBtn" class="mm-cmd-btn">
+      <i class="fa-solid fa-terminal" aria-hidden="true"></i> Command Palette <kbd>⌘K</kbd>
+    </button>
   </div>
 </div>
 
-<!-- ===== HERO ===== -->
-<section class="hero" id="home" aria-labelledby="hero-heading">
+<!-- VIEW MODE MODAL -->
+<div id="viewModeModal" class="vm-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="vmTitle">
+  <div class="vm-backdrop" id="vmBackdrop" aria-hidden="true"></div>
+  <div class="vm-box">
+    <h2 id="vmTitle" class="vm-title">View As</h2>
+    <p class="vm-desc">Adjust which content is highlighted based on how you're visiting.</p>
+    <div class="vm-options">
+      <button class="vm-opt active" data-mode="default">
+        <i class="fa-solid fa-globe" aria-hidden="true"></i>
+        <strong>Default</strong><span>Full experience</span>
+      </button>
+      <button class="vm-opt" data-mode="recruiter">
+        <i class="fa-solid fa-briefcase" aria-hidden="true"></i>
+        <strong>Recruiter</strong><span>Projects · skills · contact</span>
+      </button>
+      <button class="vm-opt" data-mode="developer">
+        <i class="fa-solid fa-code" aria-hidden="true"></i>
+        <strong>Developer</strong><span>Engineering · GitHub · Lab</span>
+      </button>
+      <button class="vm-opt" data-mode="collaborator">
+        <i class="fa-solid fa-handshake" aria-hidden="true"></i>
+        <strong>Collaborator</strong><span>Open source · journey · collab</span>
+      </button>
+    </div>
+    <button id="vmClose" class="vm-close" aria-label="Close view mode selector">
+      <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+    </button>
+  </div>
+</div>
 
-  <div class="hero-bg" aria-hidden="true">
-    <div class="hero-grid"></div>
-    <div class="hero-radial"></div>
-    <div class="hero-blob hero-blob-1"></div>
-    <div class="hero-blob hero-blob-2"></div>
-    <canvas id="dotCanvas"></canvas>
+<main id="main">
+
+<!-- ═══════════════════════════════ 01 IDENTITY ═══════════════════════════════ -->
+<section id="identity" aria-labelledby="identity-heading">
+  <div class="identity-bg" aria-hidden="true">
+    <div class="id-grid"></div>
+    <canvas id="idCanvas"></canvas>
   </div>
 
-  <div class="hero-content">
+  <div class="identity-layout">
 
-    <!-- TEXT SIDE -->
-    <div class="hero-text">
-
-      <p class="hero-greeting">
-        <span class="greeting-line" aria-hidden="true"></span>
-        <span>Hello, I'm</span>
+    <!-- LEFT: Text -->
+    <div class="id-text">
+      <p class="id-greeting">
+        <span class="id-greeting-line" aria-hidden="true"></span>Hello, I'm
       </p>
-
-      <h1 id="hero-heading" class="hero-name">
-        <span class="name-char" style="--i:0">S</span><span
-             class="name-char" style="--i:1">h</span><span
-             class="name-char" style="--i:2">a</span><span
-             class="name-char" style="--i:3">r</span><span
-             class="name-char" style="--i:4">d</span><span
-             class="name-char" style="--i:5">u</span><span
-             class="name-char" style="--i:6">l</span><span
-             class="name-char name-period" style="--i:7">.</span>
+      <h1 id="identity-heading" class="id-name">
+        Shardul<span class="id-period">.</span>
       </h1>
-
-      <!-- ROLE ROTATOR — fade+blur word swap -->
-      <div class="hero-role" aria-live="polite" aria-atomic="true">
-        <span class="role-prefix">I build </span>
-        <div class="role-words">
-          <span class="role-word active">modern web apps.</span>
-          <span class="role-word">full-stack systems.</span>
-          <span class="role-word">AI-powered products.</span>
-          <span class="role-word">open source software.</span>
-          <span class="role-word">scalable backends.</span>
+      <div class="id-role-wrap" aria-live="polite" aria-atomic="true">
+        <span class="id-role-prefix">I build </span>
+        <div class="id-words">
+          <span class="id-word active">AI-powered products.</span>
+          <span class="id-word">full-stack systems.</span>
+          <span class="id-word">modern web apps.</span>
+          <span class="id-word">open source software.</span>
+          <span class="id-word">scalable backends.</span>
         </div>
       </div>
-
-      <p class="hero-desc">
-        Software Developer building modern web experiences,
-        full-stack applications and AI-powered products.
+      <p class="id-bio">
+        Software Developer building AI-powered products, full-stack systems and modern web
+        experiences. Open-source contributor. Problem solver. Focused on DSA + scalable systems.
       </p>
-
-      <div class="hero-actions">
-        <a href="#projects" class="btn btn-primary magnetic">
-          <span>View My Work</span>
-          <i class="fa-solid fa-arrow-right btn-arrow" aria-hidden="true"></i>
-        </a>
-        <a href="#contact" class="btn btn-outline magnetic">
-          <span>Let's Connect</span>
-        </a>
+      <div class="id-tags" role="list" aria-label="Areas of focus">
+        <span class="id-tag" role="listitem"><i class="fa-solid fa-brain" aria-hidden="true"></i>AI</span>
+        <span class="id-tag" role="listitem"><i class="fa-solid fa-layer-group" aria-hidden="true"></i>Full Stack</span>
+        <span class="id-tag" role="listitem"><i class="fa-solid fa-globe" aria-hidden="true"></i>Web</span>
+        <span class="id-tag" role="listitem"><i class="fab fa-github" aria-hidden="true"></i>Open Source</span>
+        <span class="id-tag" role="listitem"><i class="fa-solid fa-code-branch" aria-hidden="true"></i>DSA</span>
       </div>
-
-      <div class="hero-social" role="list">
+      <div class="id-actions">
+        <a href="#work" class="btn btn-primary">
+          Explore Work <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+        </a>
+        <a href="#connect" class="btn btn-ghost">Let's Connect</a>
+        <button id="viewModeToggle" class="btn btn-outline" aria-label="Change view mode" title="View as Recruiter / Developer / Collaborator">
+          <i class="fa-solid fa-user-gear" aria-hidden="true"></i> View as…
+        </button>
+      </div>
+      <div class="id-social" role="list" aria-label="Social links">
         <a href="https://github.com/shardul-2007" target="_blank" rel="noopener noreferrer"
-           class="social-btn" role="listitem" aria-label="GitHub — shardul-2007">
+           class="id-social-link" role="listitem" aria-label="GitHub — shardul-2007">
           <i class="fab fa-github" aria-hidden="true"></i>
         </a>
         <a href="https://www.linkedin.com/in/shardul-parihar-/" target="_blank" rel="noopener noreferrer"
-           class="social-btn" role="listitem" aria-label="LinkedIn">
+           class="id-social-link" role="listitem" aria-label="LinkedIn">
           <i class="fab fa-linkedin-in" aria-hidden="true"></i>
         </a>
         <a href="mailto:shardulparihar2007@gmail.com"
-           class="social-btn" role="listitem" aria-label="Email">
+           class="id-social-link" role="listitem" aria-label="Email Shardul">
           <i class="fa-solid fa-envelope" aria-hidden="true"></i>
         </a>
       </div>
-
-    </div><!-- /.hero-text -->
-
-    <!-- VISUAL SIDE -->
-    <div class="hero-visual" aria-hidden="true">
-      <div class="profile-wrap">
-        <div class="profile-glow"></div>
-        <div class="profile-border-ring"></div>
-        <div class="profile-frame">
-          <img src="imageshardul.png"
-               alt="Shardul Parihar — Software Developer"
-               class="profile-img"
-               width="340" height="340"
-               loading="eager">
-        </div>
-        <div class="profile-chip chip-dev">
-          <i class="fa-solid fa-code"></i><span>Dev</span>
-        </div>
-        <div class="profile-chip chip-os">
-          <i class="fab fa-github"></i><span>Open Source</span>
-        </div>
-        <div class="profile-chip chip-ai">
-          <i class="fa-solid fa-brain"></i><span>AI Builder</span>
-        </div>
+      <div class="id-meta">
+        <span class="id-loc"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> Pune, India</span>
+        <span class="id-avail"><span class="status-dot pulse" aria-hidden="true"></span> Available for opportunities</span>
       </div>
     </div>
 
-  </div><!-- /.hero-content -->
+    <!-- RIGHT: Developer Constellation -->
+    <div class="id-visual" role="img" aria-label="Developer skills constellation — click nodes to navigate">
+      <div class="constellation-wrap">
 
-  <!-- SCROLL HINT -->
-  <div class="hero-scroll-cue" aria-hidden="true">
+        <!-- Profile at center -->
+        <div class="cons-profile-wrap" aria-hidden="true">
+          <div class="cons-profile-ring"></div>
+          <img src="imageshardul.png" alt="" class="cons-profile-img" width="80" height="80" loading="eager">
+        </div>
+
+        <!-- SVG constellation -->
+        <svg id="constellationSVG" class="constellation-svg" viewBox="0 0 520 440"
+             aria-hidden="true" focusable="false">
+          <defs>
+            <filter id="nodeGlow">
+              <feGaussianBlur stdDeviation="3" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <g id="cLines" class="c-lines"></g>
+          <g id="cNodes" class="c-nodes">
+            <!-- CIVICOS — center top (main node) -->
+            <g class="c-node c-node-main" data-href="#work" data-label="CIVICOS" data-desc="Flagship project — AI civic platform"
+               transform="translate(260,100)" tabindex="0" role="button" aria-label="CivicOS — Navigate to Work section">
+              <circle class="c-node-bg" r="32"/>
+              <circle class="c-node-ring" r="36"/>
+              <text class="c-node-label" dy="55" text-anchor="middle">CIVICOS</text>
+            </g>
+            <!-- AI — left -->
+            <g class="c-node" data-href="#lab" data-label="AI" data-desc="AI-powered experiments and products"
+               transform="translate(90,190)" tabindex="0" role="button" aria-label="AI Lab — Navigate to Lab section">
+              <circle class="c-node-bg" r="24"/>
+              <circle class="c-node-ring" r="28"/>
+              <text class="c-node-label" dy="43" text-anchor="middle">AI</text>
+            </g>
+            <!-- FULL STACK — right -->
+            <g class="c-node" data-href="#work" data-label="FULL STACK" data-desc="End-to-end web development"
+               transform="translate(430,190)" tabindex="0" role="button" aria-label="Full Stack — Navigate to Work section">
+              <circle class="c-node-bg" r="24"/>
+              <circle class="c-node-ring" r="28"/>
+              <text class="c-node-label" dy="43" text-anchor="middle">FULL STACK</text>
+            </g>
+            <!-- WEB — lower right -->
+            <g class="c-node" data-href="#work" data-label="WEB" data-desc="Modern web experiences"
+               transform="translate(390,320)" tabindex="0" role="button" aria-label="Web — Navigate to Work section">
+              <circle class="c-node-bg" r="20"/>
+              <circle class="c-node-ring" r="24"/>
+              <text class="c-node-label" dy="38" text-anchor="middle">WEB</text>
+            </g>
+            <!-- OPEN SOURCE — lower left -->
+            <g class="c-node" data-href="#opensource" data-label="OPEN SOURCE" data-desc="GSSoC · NSOC · GitHub"
+               transform="translate(130,320)" tabindex="0" role="button" aria-label="Open Source — Navigate to Open Source section">
+              <circle class="c-node-bg" r="20"/>
+              <circle class="c-node-ring" r="24"/>
+              <text class="c-node-label" dy="38" text-anchor="middle">OPEN SOURCE</text>
+            </g>
+            <!-- COMMUNITY — bottom -->
+            <g class="c-node" data-href="#journey" data-label="COMMUNITY" data-desc="Campus ambassador · Leadership"
+               transform="translate(260,380)" tabindex="0" role="button" aria-label="Community — Navigate to Journey section">
+              <circle class="c-node-bg" r="18"/>
+              <circle class="c-node-ring" r="22"/>
+              <text class="c-node-label" dy="35" text-anchor="middle">COMMUNITY</text>
+            </g>
+          </g>
+        </svg>
+
+        <!-- Tooltip -->
+        <div id="cTooltip" class="c-tooltip" hidden role="tooltip">
+          <strong class="c-tooltip-label"></strong>
+          <span class="c-tooltip-desc"></span>
+        </div>
+
+        <!-- Accessible fallback nav -->
+        <nav class="c-fallback-nav" aria-label="Section shortcuts">
+          <a href="#work">Work</a>
+          <a href="#lab">Lab</a>
+          <a href="#opensource">Open Source</a>
+          <a href="#journey">Journey</a>
+        </nav>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="scroll-cue" aria-hidden="true">
     <span class="scroll-cue-text">Scroll to explore</span>
     <div class="scroll-cue-line"></div>
   </div>
-
-</section><!-- /#home -->
-
-
-<!-- ===== ABOUT ===== -->
-<section id="about" aria-labelledby="about-heading">
-  <div class="section-container">
-
-    <div class="section-header reveal-item">
-      <span class="section-tag">01 / About</span>
-      <h2 id="about-heading" class="section-title">Who I Am</h2>
-      <div class="section-line" aria-hidden="true"></div>
-    </div>
-
-    <div class="about-layout">
-
-      <div class="about-text reveal-item" data-reveal="left">
-        <p class="about-intro">
-          I am a passionate software developer interested in web development,
-          full-stack development, modern technologies and creative digital projects.
-          I enjoy turning ideas into real-world applications and continuously
-          improving my technical skills.
-        </p>
-        <p class="about-sub">
-          Based in <strong>Pune, India</strong> — building real-world projects in
-          Web Dev &amp; AI, contributing to open source, and focused on
-          DSA and scalable systems.
-        </p>
-        <div class="about-actions">
-          <a href="https://github.com/shardul-2007" target="_blank" rel="noopener noreferrer"
-             class="about-action-link">
-            <i class="fab fa-github" aria-hidden="true"></i> GitHub Profile
-          </a>
-          <a href="#projects" class="about-action-link">
-            <i class="fa-solid fa-folder-open" aria-hidden="true"></i> View Projects
-          </a>
-        </div>
-      </div>
-
-      <div class="capability-grid reveal-item" data-reveal="right">
-
-        <div class="cap-card" tabindex="0">
-          <div class="cap-icon-wrap">
-            <i class="fa-solid fa-layer-group" aria-hidden="true"></i>
-          </div>
-          <h3 class="cap-title">Frontend</h3>
-          <p class="cap-desc">Responsive, accessible, performant UIs with modern HTML, CSS and JavaScript.</p>
-        </div>
-
-        <div class="cap-card" tabindex="0">
-          <div class="cap-icon-wrap">
-            <i class="fa-solid fa-server" aria-hidden="true"></i>
-          </div>
-          <h3 class="cap-title">Full Stack</h3>
-          <p class="cap-desc">End-to-end MERN stack — React, Node.js, Express and MongoDB.</p>
-        </div>
-
-        <div class="cap-card" tabindex="0">
-          <div class="cap-icon-wrap">
-            <i class="fa-solid fa-brain" aria-hidden="true"></i>
-          </div>
-          <h3 class="cap-title">AI &amp; Modern Tech</h3>
-          <p class="cap-desc">Integrating AI capabilities into web applications and building intelligent products.</p>
-        </div>
-
-        <div class="cap-card" tabindex="0">
-          <div class="cap-icon-wrap">
-            <i class="fab fa-github" aria-hidden="true"></i>
-          </div>
-          <h3 class="cap-title">Open Source</h3>
-          <p class="cap-desc">Active contributor to GirlScript Summer of Code and NSOC programs.</p>
-        </div>
-
-        <div class="cap-card" tabindex="0">
-          <div class="cap-icon-wrap">
-            <i class="fa-solid fa-users" aria-hidden="true"></i>
-          </div>
-          <h3 class="cap-title">Community</h3>
-          <p class="cap-desc">Campus Ambassador across Google, Internshala, GUVI, Physics Wallah and more.</p>
-        </div>
-
-      </div><!-- /.capability-grid -->
-    </div><!-- /.about-layout -->
-  </div>
 </section>
 
 
-<!-- ===== SKILLS ===== -->
-<section id="skills" aria-labelledby="skills-heading">
+<!-- ═══════════════════════════════ 02 WORK ═══════════════════════════════ -->
+<section id="work" aria-labelledby="work-heading">
   <div class="section-container">
 
-    <div class="section-header reveal-item">
-      <span class="section-tag">02 / Skills</span>
-      <h2 id="skills-heading" class="section-title">Technology Ecosystem</h2>
+    <header class="section-head reveal-item">
+      <div class="section-eyebrow"><span class="sec-num">02</span><span class="sec-tag">WORK</span></div>
+      <h2 id="work-heading" class="section-title">What I Build</h2>
       <div class="section-line" aria-hidden="true"></div>
-      <p class="section-desc">Technologies and tools I work with and am continuously learning.</p>
-    </div>
+    </header>
 
-    <div class="skills-grid reveal-item">
-
-      <div class="skill-group">
-        <h3 class="skill-group-label">
-          <i class="fa-solid fa-code" aria-hidden="true"></i> Languages
-        </h3>
-        <div class="chips">
-          <span class="chip"><i class="fab fa-html5" aria-hidden="true"></i> HTML</span>
-          <span class="chip"><i class="fab fa-css3-alt" aria-hidden="true"></i> CSS</span>
-          <span class="chip"><i class="fab fa-js" aria-hidden="true"></i> JavaScript</span>
-          <span class="chip"><i class="fab fa-python" aria-hidden="true"></i> Python</span>
-          <span class="chip chip-mono">C</span>
-          <span class="chip chip-mono">C++</span>
+    <!-- CIVICOS — Featured -->
+    <div class="featured-project reveal-item" id="civicosCard">
+      <div class="fp-left">
+        <div class="fp-meta">
+          <span class="fp-badge">FEATURED PROJECT</span>
+          <span class="fp-status">
+            <span class="status-dot pulse" aria-hidden="true"></span>LIVE
+          </span>
         </div>
-      </div>
-
-      <div class="skill-group">
-        <h3 class="skill-group-label">
-          <i class="fa-solid fa-cubes" aria-hidden="true"></i> Development
-        </h3>
-        <div class="chips">
-          <span class="chip"><i class="fab fa-react" aria-hidden="true"></i> React</span>
-          <span class="chip"><i class="fab fa-node-js" aria-hidden="true"></i> Node.js</span>
-          <span class="chip chip-mono">Express</span>
-          <span class="chip chip-mono">MongoDB</span>
-          <span class="chip chip-mono">MERN Stack</span>
-          <span class="chip chip-mono">REST APIs</span>
-        </div>
-      </div>
-
-      <div class="skill-group">
-        <h3 class="skill-group-label">
-          <i class="fa-solid fa-wrench" aria-hidden="true"></i> Tools
-        </h3>
-        <div class="chips">
-          <span class="chip"><i class="fab fa-git-alt" aria-hidden="true"></i> Git</span>
-          <span class="chip"><i class="fab fa-github" aria-hidden="true"></i> GitHub</span>
-          <span class="chip chip-mono">VS Code</span>
-        </div>
-      </div>
-
-      <div class="skill-group">
-        <h3 class="skill-group-label">
-          <i class="fa-solid fa-compass" aria-hidden="true"></i> Areas
-        </h3>
-        <div class="chips">
-          <span class="chip chip-accent">Frontend</span>
-          <span class="chip chip-accent">Backend</span>
-          <span class="chip chip-accent">Full Stack</span>
-          <span class="chip chip-accent">AI Integration</span>
-          <span class="chip chip-accent">Web Development</span>
-          <span class="chip chip-accent">Open Source</span>
-        </div>
-      </div>
-
-    </div><!-- /.skills-grid -->
-
-    <!-- TECH MARQUEE -->
-    <div class="marquee-wrap reveal-item" aria-hidden="true">
-      <div class="marquee-track">
-        <div class="marquee-inner">
-          <span class="mq-item"><i class="fab fa-html5"></i> HTML</span>
-          <span class="mq-item"><i class="fab fa-css3-alt"></i> CSS</span>
-          <span class="mq-item"><i class="fab fa-js"></i> JavaScript</span>
-          <span class="mq-item"><i class="fab fa-react"></i> React</span>
-          <span class="mq-item"><i class="fab fa-node-js"></i> Node.js</span>
-          <span class="mq-item"><i class="fab fa-python"></i> Python</span>
-          <span class="mq-item"><i class="fab fa-git-alt"></i> Git</span>
-          <span class="mq-item"><i class="fab fa-github"></i> GitHub</span>
-          <span class="mq-item chip-mono-text">MongoDB</span>
-          <span class="mq-item chip-mono-text">Express</span>
-          <span class="mq-item chip-mono-text">REST APIs</span>
-          <span class="mq-item"><i class="fa-solid fa-brain"></i> AI</span>
-          <span class="mq-item chip-mono-text">MERN</span>
-          <span class="mq-item chip-mono-text">VS Code</span>
-          <!-- Duplicate for seamless loop -->
-          <span class="mq-item"><i class="fab fa-html5"></i> HTML</span>
-          <span class="mq-item"><i class="fab fa-css3-alt"></i> CSS</span>
-          <span class="mq-item"><i class="fab fa-js"></i> JavaScript</span>
-          <span class="mq-item"><i class="fab fa-react"></i> React</span>
-          <span class="mq-item"><i class="fab fa-node-js"></i> Node.js</span>
-          <span class="mq-item"><i class="fab fa-python"></i> Python</span>
-          <span class="mq-item"><i class="fab fa-git-alt"></i> Git</span>
-          <span class="mq-item"><i class="fab fa-github"></i> GitHub</span>
-          <span class="mq-item chip-mono-text">MongoDB</span>
-          <span class="mq-item chip-mono-text">Express</span>
-          <span class="mq-item chip-mono-text">REST APIs</span>
-          <span class="mq-item"><i class="fa-solid fa-brain"></i> AI</span>
-          <span class="mq-item chip-mono-text">MERN</span>
-          <span class="mq-item chip-mono-text">VS Code</span>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-
-<!-- ===== PROJECTS ===== -->
-<section id="projects" aria-labelledby="projects-heading">
-  <div class="section-container">
-
-    <div class="section-header reveal-item">
-      <span class="section-tag">03 / Projects</span>
-      <h2 id="projects-heading" class="section-title">What I've Built</h2>
-      <div class="section-line" aria-hidden="true"></div>
-      <p class="section-desc">A showcase of projects — from featured work to explorations.</p>
-    </div>
-
-    <!-- FEATURED LABEL -->
-    <div class="featured-badge reveal-item">
-      <i class="fa-solid fa-star" aria-hidden="true"></i>
-      <span>Featured Project</span>
-    </div>
-
-    <!-- CIVICOS FEATURED PROJECT -->
-    <article class="featured-project reveal-item" data-reveal="scale"
-             aria-labelledby="civicos-heading">
-
-      <!-- LEFT: visual mockup -->
-      <div class="fp-visual">
-        <div class="fp-browser" aria-hidden="true">
-          <div class="fp-browser-bar">
-            <div class="fp-dots">
-              <span class="dot-red"></span>
-              <span class="dot-yellow"></span>
-              <span class="dot-green"></span>
-            </div>
-            <span class="fp-url">civicos-beta.vercel.app</span>
-          </div>
-          <div class="fp-screen">
-            <!-- Simulated UI -->
-            <div class="fps-nav">
-              <div class="fps-nav-logo">CivicOS</div>
-              <div class="fps-nav-links">
-                <span></span><span></span><span></span>
-              </div>
-            </div>
-            <div class="fps-hero">
-              <div class="fps-h-eyebrow">AI Municipal Intelligence Platform</div>
-              <div class="fps-h-title">CivicOS</div>
-              <div class="fps-h-tags">
-                <span>AI</span><span>Maps</span><span>Analytics</span><span>Civic</span>
-              </div>
-            </div>
-            <div class="fps-body">
-              <div class="fps-card"><div class="fps-card-head"></div><div class="fps-card-body"></div></div>
-              <div class="fps-card"><div class="fps-card-head"></div><div class="fps-card-body"></div></div>
-              <div class="fps-map">
-                <div class="fps-map-pulse"></div>
-                <div class="fps-map-grid"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="fp-visual-glow" aria-hidden="true"></div>
-      </div><!-- /.fp-visual -->
-
-      <!-- RIGHT: content -->
-      <div class="fp-content">
-        <span class="fp-eyebrow">
-          <i class="fa-solid fa-microchip" aria-hidden="true"></i> AI Platform
-        </span>
-
-        <h3 id="civicos-heading" class="fp-title">CivicOS</h3>
-        <p class="fp-subtitle">AI Municipal Intelligence Platform</p>
-
+        <h3 class="fp-title">CivicOS</h3>
+        <p class="fp-tagline">AI-Powered Municipal Operating System</p>
         <p class="fp-desc">
-          CivicOS is an AI-powered municipal intelligence platform designed to make
-          civic information, workflows and public-service interactions more accessible,
-          structured and intelligent. It brings together maps, data analytics and an
-          intelligent interface to connect citizens with civic services.
+          A civic platform combining interactive maps, real-time analytics and AI-driven intelligence
+          to help citizens interact with municipal services more effectively.
         </p>
-
-        <ul class="fp-features" aria-label="Key features">
-          <li><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i><span>Interactive Maps</span></li>
-          <li><i class="fa-solid fa-chart-line" aria-hidden="true"></i><span>Data Analytics</span></li>
-          <li><i class="fa-solid fa-brain" aria-hidden="true"></i><span>AI Intelligence Layer</span></li>
-          <li><i class="fa-solid fa-city" aria-hidden="true"></i><span>Civic Services Interface</span></li>
-        </ul>
-
         <div class="fp-stack">
-          <span class="stack-tag">React</span>
-          <span class="stack-tag">Vite</span>
-          <span class="stack-tag">Leaflet</span>
-          <span class="stack-tag">Recharts</span>
-          <span class="stack-tag">AI Integration</span>
-          <span class="stack-tag">REST APIs</span>
+          <span>React</span><span>Vite</span><span>Leaflet 1.9.4</span><span>Recharts</span><span>AI APIs</span><span>REST APIs</span>
         </div>
-
         <div class="fp-actions">
-          <a href="https://civicos-beta.vercel.app/"
-             target="_blank" rel="noopener noreferrer"
-             class="btn btn-primary magnetic">
-            <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
-            <span>Live Demo</span>
+          <a href="https://civicos-beta.vercel.app/" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+            <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> View Live
           </a>
-          <button class="btn btn-ghost case-study-btn"
-                  aria-expanded="false" aria-controls="civicosStudy">
-            <i class="fa-solid fa-book-open" aria-hidden="true"></i>
-            <span>Case Study</span>
+          <button class="btn btn-ghost" id="archToggle" aria-controls="civicosArch" aria-expanded="false">
+            <i class="fa-solid fa-diagram-project" aria-hidden="true"></i> Architecture
+          </button>
+          <button class="btn btn-ghost" id="studyToggle" aria-controls="civicosStudy" aria-expanded="false">
+            <i class="fa-solid fa-book-open" aria-hidden="true"></i> Case Study
           </button>
         </div>
-      </div><!-- /.fp-content -->
-
-      <!-- CASE STUDY PANEL -->
-      <div id="civicosStudy" class="case-study-panel" hidden>
-        <div class="cs-inner">
-
-          <div class="cs-col">
-            <div class="cs-block">
-              <h4 class="cs-block-title">
-                <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Problem
-              </h4>
-              <p>Civic information is often fragmented and inaccessible. Public services lack a unified, intelligent interface — leaving citizens without clear ways to access or engage with municipal resources.</p>
-            </div>
-
-            <div class="cs-block">
-              <h4 class="cs-block-title">
-                <i class="fa-solid fa-lightbulb" aria-hidden="true"></i> Solution
-              </h4>
-              <p>CivicOS provides a structured, AI-augmented interface that consolidates civic data, maps infrastructure and presents public-service information in an accessible, human-readable form.</p>
-            </div>
-
-            <div class="cs-block">
-              <h4 class="cs-block-title">
-                <i class="fa-solid fa-circle-check" aria-hidden="true"></i> Impact
-              </h4>
-              <p>CivicOS demonstrates how AI and modern web technology can reduce friction between citizens and public services — establishing a foundation for intelligent municipal tooling.</p>
-            </div>
+      </div>
+      <div class="fp-right" aria-hidden="true">
+        <div class="browser-mock">
+          <div class="bm-bar">
+            <div class="bm-dots"><span></span><span></span><span></span></div>
+            <div class="bm-url">civicos-beta.vercel.app</div>
           </div>
-
-          <div class="cs-col">
-            <div class="cs-block">
-              <h4 class="cs-block-title">
-                <i class="fa-solid fa-diagram-project" aria-hidden="true"></i> How It Works
-              </h4>
-              <div class="cs-flow">
-                <div class="cs-step">
-                  <div class="cs-step-icon"><i class="fa-solid fa-user" aria-hidden="true"></i></div>
-                  <span>User</span>
-                </div>
-                <div class="cs-step-arrow" aria-hidden="true">↓</div>
-                <div class="cs-step">
-                  <div class="cs-step-icon"><i class="fa-solid fa-display" aria-hidden="true"></i></div>
-                  <span>CivicOS Interface</span>
-                </div>
-                <div class="cs-step-arrow" aria-hidden="true">↓</div>
-                <div class="cs-step">
-                  <div class="cs-step-icon"><i class="fa-solid fa-brain" aria-hidden="true"></i></div>
-                  <span>AI Processing Layer</span>
-                </div>
-                <div class="cs-step-arrow" aria-hidden="true">↓</div>
-                <div class="cs-step">
-                  <div class="cs-step-icon"><i class="fa-solid fa-database" aria-hidden="true"></i></div>
-                  <span>Structured Information</span>
-                </div>
-                <div class="cs-step-arrow" aria-hidden="true">↓</div>
-                <div class="cs-step cs-step-accent">
-                  <div class="cs-step-icon"><i class="fa-solid fa-city" aria-hidden="true"></i></div>
-                  <span>Useful Civic Output</span>
-                </div>
-              </div>
+          <div class="bm-screen">
+            <div class="bm-nav-row"></div>
+            <div class="bm-hero">
+              <div class="bm-eyebrow">CIVICOS</div>
+              <div class="bm-h1"></div><div class="bm-h2"></div>
             </div>
-
-            <div class="cs-block">
-              <h4 class="cs-block-title">
-                <i class="fa-solid fa-microchip" aria-hidden="true"></i> Technology
-              </h4>
-              <div class="cs-tech">
-                <span>React (Vite)</span>
-                <span>Leaflet — Maps</span>
-                <span>Recharts — Charts</span>
-                <span>AI Integration Layer</span>
-                <span>REST APIs</span>
-                <span>Inter &amp; Outfit Fonts</span>
+            <div class="bm-body">
+              <div class="bm-map">
+                <div class="bm-pin" style="left:28%;top:38%"></div>
+                <div class="bm-pin" style="left:54%;top:22%"></div>
+                <div class="bm-pin" style="left:72%;top:58%"></div>
+              </div>
+              <div class="bm-side">
+                <div class="bm-card"></div>
+                <div class="bm-card"></div>
+                <div class="bm-card"></div>
               </div>
             </div>
           </div>
-
-          <div class="cs-footer">
-            <a href="https://civicos-beta.vercel.app/"
-               target="_blank" rel="noopener noreferrer"
-               class="btn btn-primary">
-              <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
-              Open Project
-            </a>
-          </div>
-
         </div>
-      </div><!-- /#civicosStudy -->
-
-    </article><!-- /.featured-project -->
-
-    <!-- MORE PROJECTS -->
-    <div class="more-header reveal-item">
-      <h3>More Projects</h3>
-      <div class="filters" role="group" aria-label="Filter projects by category">
-        <button class="filter-btn active" data-filter="all">All</button>
-        <button class="filter-btn" data-filter="web">Web</button>
-        <button class="filter-btn" data-filter="fullstack">Full Stack</button>
-        <button class="filter-btn" data-filter="ai">AI</button>
-        <button class="filter-btn" data-filter="opensource">Open Source</button>
       </div>
     </div>
 
-    <div class="projects-grid reveal-item" id="projectsGrid">
-
-      <article class="proj-card" data-category="web" tabindex="0">
-        <div class="pj-top">
-          <div class="pj-icon">
-            <i class="fa-solid fa-laptop-code" aria-hidden="true"></i>
+    <!-- Architecture Diagram -->
+    <div id="civicosArch" class="arch-diagram" hidden>
+      <h4 class="arch-title">
+        <i class="fa-solid fa-diagram-project" aria-hidden="true"></i>
+        System Architecture — Click any component
+      </h4>
+      <div class="arch-flow" role="list">
+        <div class="arch-node" data-panel="ap-citizen" role="listitem" tabindex="0" role="button" aria-expanded="false">
+          <i class="fa-solid fa-users" aria-hidden="true"></i><span>Citizens</span>
+        </div>
+        <div class="arch-arrow" aria-hidden="true">↓</div>
+        <div class="arch-node arch-featured" data-panel="ap-frontend" role="listitem" tabindex="0" role="button" aria-expanded="false">
+          <i class="fa-solid fa-display" aria-hidden="true"></i>
+          <span>CivicOS Interface</span>
+          <small>React + Vite</small>
+        </div>
+        <div class="arch-arrow" aria-hidden="true">↓</div>
+        <div class="arch-node arch-accent" data-panel="ap-ai" role="listitem" tabindex="0" role="button" aria-expanded="false">
+          <i class="fa-solid fa-brain" aria-hidden="true"></i>
+          <span>AI Intelligence Layer</span>
+          <small>AI APIs</small>
+        </div>
+        <div class="arch-arrow" aria-hidden="true">↓</div>
+        <div class="arch-row-3">
+          <div class="arch-node arch-sm" data-panel="ap-maps" tabindex="0" role="button" aria-expanded="false">
+            <i class="fa-solid fa-map" aria-hidden="true"></i><span>Maps</span><small>Leaflet 1.9.4</small>
           </div>
-          <div class="pj-links">
-            <a href="https://shardul-2007.github.io/my-portfolio/"
-               target="_blank" rel="noopener noreferrer"
-               aria-label="View live" class="pj-link">
-              <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
-            </a>
-            <a href="https://github.com/shardul-2007/my-portfolio"
-               target="_blank" rel="noopener noreferrer"
-               aria-label="View source" class="pj-link">
-              <i class="fab fa-github" aria-hidden="true"></i>
-            </a>
+          <div class="arch-node arch-sm" data-panel="ap-analytics" tabindex="0" role="button" aria-expanded="false">
+            <i class="fa-solid fa-chart-line" aria-hidden="true"></i><span>Analytics</span><small>Recharts</small>
+          </div>
+          <div class="arch-node arch-sm" data-panel="ap-apis" tabindex="0" role="button" aria-expanded="false">
+            <i class="fa-solid fa-plug" aria-hidden="true"></i><span>Civic APIs</span><small>REST</small>
           </div>
         </div>
-        <div class="pj-body">
-          <span class="pj-cat">Web</span>
-          <h3 class="pj-title">Portfolio Website</h3>
-          <p class="pj-desc">Premium personal portfolio with animations, scroll reveals and responsive design — built without a framework.</p>
-        </div>
-        <div class="pj-stack">
-          <span>HTML</span><span>CSS</span><span>JavaScript</span>
-        </div>
-      </article>
+      </div>
+      <!-- Detail panels -->
+      <div id="ap-citizen"   class="arch-panel" hidden><h5>Citizens</h5><p>End users accessing CivicOS via any modern browser. The interface is responsive, accessible and works on all screen sizes — no app install required.</p></div>
+      <div id="ap-frontend"  class="arch-panel" hidden><h5>CivicOS Interface — React + Vite</h5><p><strong>Why React?</strong> Component-based architecture for reusable civic UI panels — maps, dashboards, status cards. Rich state management with hooks. Fast iteration via HMR.</p><p><strong>Why Vite?</strong> Near-instant HMR, optimized production builds. Significantly faster than Create React App for complex projects.</p><p><strong>Component strategy:</strong> Page-level components consume shared data hooks. Map, analytics and reporting panels are independent modules assembled at the route level.</p></div>
+      <div id="ap-ai"        class="arch-panel" hidden><h5>AI Intelligence Layer</h5><p><strong>Purpose:</strong> Surface intelligent insights from civic data — classifications, natural language queries, automated summaries.</p><p><strong>Input:</strong> Civic data streams, citizen requests, geographic context.</p><p><strong>Output:</strong> Processed insights, recommendations and smart search results shown inline in the UI.</p></div>
+      <div id="ap-maps"      class="arch-panel" hidden><h5>Maps — Leaflet 1.9.4</h5><p><strong>Why Leaflet?</strong> Lightweight (~42KB gzipped). No API key or billing. Open-source with OpenStreetMap tiles. React-Leaflet wrapper integrates cleanly with the component model. Google Maps would add SDK overhead and usage limits.</p><p>Interactive markers, clustered pins for dense data, click-to-inspect for location details.</p></div>
+      <div id="ap-analytics" class="arch-panel" hidden><h5>Analytics — Recharts</h5><p><strong>Why Recharts?</strong> Built natively for React — no DOM conflicts. Declarative chart composition. Responsive SVG. Chosen over Chart.js for cleaner React integration and smaller footprint for the specific chart types needed.</p></div>
+      <div id="ap-apis"      class="arch-panel" hidden><h5>Civic APIs — REST</h5><p><strong>Data flow:</strong> External civic sources → API layer → application state → UI components.</p><p><strong>Error handling:</strong> Graceful degradation — API failures show cached data or honest empty states, never a crash.</p><p><strong>Caching:</strong> Responses cached with TTL-based invalidation for time-sensitive civic data.</p></div>
+    </div>
 
-      <article class="proj-card proj-card-soon" tabindex="0"
-               aria-label="More projects coming soon">
-        <i class="fa-solid fa-plus" aria-hidden="true"></i>
-        <p>More projects<br>coming soon</p>
-      </article>
+    <!-- Full Case Study -->
+    <div id="civicosStudy" class="case-study" hidden>
+      <div class="cs-grid">
+        <div class="cs-col">
+          <div class="cs-block"><h4><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Problem</h4><p>Citizens lack a unified intelligent interface for municipal services. Information is scattered across disconnected portals — making civic engagement cumbersome and unintuitive.</p></div>
+          <div class="cs-block"><h4><i class="fa-solid fa-lightbulb" aria-hidden="true"></i> Solution</h4><p>CivicOS aggregates civic data into a unified platform with AI intelligence, interactive maps and real-time analytics — making municipal information accessible and actionable.</p></div>
+          <div class="cs-block"><h4><i class="fa-solid fa-user" aria-hidden="true"></i> My Role</h4><p>Full-stack development — frontend architecture, AI integration, map and analytics implementation, responsive design, and deployment on Vercel.</p></div>
+        </div>
+        <div class="cs-col">
+          <div class="cs-block">
+            <h4><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> What Broke → What I Learned</h4>
+            <div class="cs-steps">
+              <div class="cs-step"><span class="cs-step-tag">Problem</span><p>Initial API integration caused high latency — the map felt sluggish and unresponsive on first load.</p></div>
+              <div class="cs-step"><span class="cs-step-tag">Attempt</span><p>Added request caching, loading states, and optimistic UI updates to hide latency.</p></div>
+              <div class="cs-step cs-step-success"><span class="cs-step-tag">Result</span><p>Perceived performance improved significantly. Map interactions became snappy with cached baseline data.</p></div>
+            </div>
+          </div>
+          <div class="cs-block">
+            <h4><i class="fa-solid fa-cogs" aria-hidden="true"></i> Stack Detail</h4>
+            <div class="cs-tech-rows">
+              <div class="cs-tech-row"><strong>React + Vite</strong><span>Component UI · fast builds</span></div>
+              <div class="cs-tech-row"><strong>Leaflet 1.9.4</strong><span>Interactive maps · zero cost</span></div>
+              <div class="cs-tech-row"><strong>Recharts</strong><span>React-native charts · SVG</span></div>
+              <div class="cs-tech-row"><strong>AI APIs</strong><span>Intelligence layer</span></div>
+              <div class="cs-tech-row"><strong>Vercel</strong><span>Edge deployment · CDN</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-    </div><!-- /#projectsGrid -->
+    <!-- More Projects -->
+    <div class="more-projects reveal-item">
+      <h3 class="more-title">More Projects</h3>
+      <div class="proj-grid" id="projGrid">
+        <article class="proj-card" tabindex="0">
+          <div class="pc-top">
+            <span class="pc-cat">WEB</span>
+            <div class="pc-links">
+              <a href="https://shardul-2007.github.io/my-portfolio/" target="_blank" rel="noopener noreferrer" class="pc-link" aria-label="View live site">
+                <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+              </a>
+              <a href="https://github.com/shardul-2007/my-portfolio" target="_blank" rel="noopener noreferrer" class="pc-link" aria-label="View source code">
+                <i class="fab fa-github" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+          <h3 class="pc-title">SHARDUL.OS</h3>
+          <p class="pc-desc">This portfolio — engineered as a developer OS experience. Zero framework, plain HTML/CSS/JS, GitHub Pages deployed. The portfolio itself is a project.</p>
+          <div class="pc-stack"><span>HTML</span><span>CSS</span><span>JavaScript</span></div>
+        </article>
+        <div class="proj-card proj-soon" aria-label="More projects in progress">
+          <i class="fa-solid fa-terminal" aria-hidden="true"></i>
+          <p>More in progress</p>
+          <a href="https://github.com/shardul-2007" target="_blank" rel="noopener noreferrer">
+            <i class="fab fa-github" aria-hidden="true"></i> View GitHub
+          </a>
+        </div>
+      </div>
+    </div>
 
   </div>
 </section>
 
 
-<!-- ===== JOURNEY ===== -->
+<!-- ═══════════════════════════════ 03 ENGINEERING ═══════════════════════════════ -->
+<section id="engineering" aria-labelledby="engineering-heading">
+  <div class="section-container">
+
+    <header class="section-head reveal-item">
+      <div class="section-eyebrow"><span class="sec-num">03</span><span class="sec-tag">ENGINEERING</span></div>
+      <h2 id="engineering-heading" class="section-title">How I Build</h2>
+      <div class="section-line" aria-hidden="true"></div>
+      <p class="section-desc">Architecture decisions, performance principles and technical thinking behind my projects.</p>
+    </header>
+
+    <div class="eng-tabs reveal-item" role="tablist" aria-label="Engineering topics">
+      <button class="eng-tab active" role="tab" aria-selected="true"  aria-controls="ep-arch"   id="et-arch">Architecture</button>
+      <button class="eng-tab"        role="tab" aria-selected="false" aria-controls="ep-tech"   id="et-tech">Tech Choices</button>
+      <button class="eng-tab"        role="tab" aria-selected="false" aria-controls="ep-perf"   id="et-perf">Performance</button>
+      <button class="eng-tab"        role="tab" aria-selected="false" aria-controls="ep-a11y"   id="et-a11y">Accessibility</button>
+      <button class="eng-tab"        role="tab" aria-selected="false" aria-controls="ep-deploy" id="et-deploy">Deployment</button>
+    </div>
+
+    <div class="eng-panels reveal-item">
+
+      <div id="ep-arch" class="eng-panel active" role="tabpanel" aria-labelledby="et-arch">
+        <div class="eng-notes">
+          <div class="eng-note"><h4>Separation of concerns</h4><p>UI, data and logic stay cleanly separated. In CivicOS: React components handle rendering, custom hooks manage state and fetching, API modules handle external communication. Each layer is independently testable and replaceable.</p></div>
+          <div class="eng-note"><h4>Composition over inheritance</h4><p>Smaller, focused components assembled into complex UIs rather than deep hierarchies. CivicOS's map, analytics and reporting panels are independent modules composed at the page level.</p></div>
+          <div class="eng-note"><h4>Graceful degradation</h4><p>Every external dependency has a fallback. If an API fails, the UI shows a meaningful empty state. This portfolio works without GitHub API, AI, or any external service — core content is always statically available.</p></div>
+        </div>
+      </div>
+
+      <div id="ep-tech" class="eng-panel" role="tabpanel" aria-labelledby="et-tech">
+        <div class="tech-why-grid">
+          <div class="tw-card"><div class="tw-top"><span class="tw-name">React</span><span class="tw-proj">CivicOS</span></div><p>Component-based for reusable civic UI. Rich state management with hooks. Fast iteration. Chosen over vanilla JS for CivicOS's complexity — interactive data panels benefit from the component model.</p></div>
+          <div class="tw-card"><div class="tw-top"><span class="tw-name">Vite</span><span class="tw-proj">CivicOS</span></div><p>Near-instant HMR during development. Optimized production builds with automatic code-splitting. Significantly faster than CRA — important when iterating on complex map-heavy UI.</p></div>
+          <div class="tw-card"><div class="tw-top"><span class="tw-name">Leaflet 1.9.4</span><span class="tw-proj">CivicOS</span></div><p>~42KB gzipped. No API key or billing. Open-source. React-Leaflet integrates cleanly with the component model. Google Maps would add SDK overhead and usage limit complexity.</p></div>
+          <div class="tw-card"><div class="tw-top"><span class="tw-name">Recharts</span><span class="tw-proj">CivicOS</span></div><p>Native React charting — no DOM conflicts. Declarative chart composition. Responsive SVG. Cleaner React integration than Chart.js for the specific chart types CivicOS needs.</p></div>
+          <div class="tw-card"><div class="tw-top"><span class="tw-name">Plain HTML/CSS/JS</span><span class="tw-proj">This Portfolio</span></div><p>Zero build step. GitHub Pages compatible. Fast to iterate. CSS custom properties handle the entire design system. The right tool for a content-focused site with no complex state.</p></div>
+        </div>
+      </div>
+
+      <div id="ep-perf" class="eng-panel" role="tabpanel" aria-labelledby="et-perf">
+        <div class="eng-notes">
+          <div class="eng-note"><h4>Animation: GPU-only properties</h4><p>All animations use <code>transform</code> and <code>opacity</code> only — no layout-triggering properties. Scroll progress uses <code>transform: scaleX()</code>. Canvas draws are paused via <code>IntersectionObserver</code> when off-screen.</p></div>
+          <div class="eng-note"><h4>JS: passive listeners + rAF</h4><p>All scroll/resize listeners use <code>passive: true</code>. Tilt interpolation and canvas draws run inside <code>requestAnimationFrame</code>. <code>IntersectionObserver</code> replaces scroll event listeners for reveal animations.</p></div>
+          <div class="eng-note"><h4>Assets + fonts</h4><p>Profile image has explicit <code>width</code> and <code>height</code> to prevent CLS. Non-hero images use <code>loading="lazy"</code>. Inter loaded with <code>display=swap</code> to avoid render blocking. No heavy libraries loaded without a genuine reason.</p></div>
+        </div>
+      </div>
+
+      <div id="ep-a11y" class="eng-panel" role="tabpanel" aria-labelledby="et-a11y">
+        <div class="eng-notes">
+          <div class="eng-note"><h4>Semantic HTML first</h4><p>Every element uses the correct semantic tag — <code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;section&gt;</code>, <code>&lt;article&gt;</code>. Heading hierarchy is always correct (one <code>&lt;h1&gt;</code>, logical nesting). Landmark roles are clearly defined.</p></div>
+          <div class="eng-note"><h4>Full keyboard navigation</h4><p>Every interactive element is reachable by keyboard. Command palette has arrow-key navigation, Enter to execute, Escape to close. Modals trap focus correctly. Shortcuts (1–7, /, R, G) don't interfere with input fields.</p></div>
+          <div class="eng-note"><h4>Motion safety</h4><p><code>prefers-reduced-motion: reduce</code> disables all animations — boot sequence skips instantly, constellation is static, word rotator stops, canvas disabled. Content and functionality are identical. <code>prefers-color-scheme</code> informs the default theme.</p></div>
+        </div>
+      </div>
+
+      <div id="ep-deploy" class="eng-panel" role="tabpanel" aria-labelledby="et-deploy">
+        <div class="eng-notes">
+          <div class="eng-note">
+            <h4>This portfolio — GitHub Pages</h4>
+            <p>Deployed from <code>main</code> branch of <a href="https://github.com/shardul-2007/my-portfolio" target="_blank" rel="noopener noreferrer">shardul-2007/my-portfolio</a>. Push to main → live in ~60 seconds. Zero-cost, zero-config, global CDN. The portfolio itself is a project demonstrating clean deployment workflow.</p>
+          </div>
+          <div class="eng-note">
+            <h4>CivicOS — Vercel</h4>
+            <p>Deployed on Vercel for React/Vite optimization, automatic preview deployments on PRs, and global edge network. Zero-configuration detection for Vite projects makes the deployment workflow frictionless.</p>
+          </div>
+          <div class="eng-note">
+            <h4>Build info — this portfolio</h4>
+            <div class="build-info">
+              <div class="bi-row"><span>Stack</span><code>HTML · CSS · JavaScript</code></div>
+              <div class="bi-row"><span>Hosting</span><code>GitHub Pages</code></div>
+              <div class="bi-row"><span>Dependencies</span><code>Inter font · Font Awesome · Zero others</code></div>
+              <div class="bi-row"><span>JS architecture</span><code>16 named init() modules</code></div>
+              <div class="bi-row"><span>Source</span>
+                <a href="https://github.com/shardul-2007/my-portfolio" target="_blank" rel="noopener noreferrer" class="bi-link">
+                  <i class="fab fa-github" aria-hidden="true"></i> View on GitHub
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ 04 LAB ═══════════════════════════════ -->
+<section id="lab" aria-labelledby="lab-heading">
+  <div class="section-container">
+
+    <header class="section-head reveal-item">
+      <div class="section-eyebrow"><span class="sec-num">04</span><span class="sec-tag">LAB</span></div>
+      <h2 id="lab-heading" class="section-title">Experiments</h2>
+      <div class="section-line" aria-hidden="true"></div>
+      <p class="section-desc">Working interactive experiments. Everything here actually runs.</p>
+    </header>
+
+    <div class="lab-grid">
+
+      <!-- SHARDUL AI -->
+      <div class="lab-card lab-ai-card reveal-item" id="labAI">
+        <div class="lab-card-hdr">
+          <div class="lab-icon-wrap"><i class="fa-solid fa-robot" aria-hidden="true"></i></div>
+          <div>
+            <h3 class="lab-card-title">Shardul AI</h3>
+            <p class="lab-card-sub">Ask anything about my work, projects or experience.</p>
+          </div>
+          <span class="lab-badge badge-green">ACTIVE</span>
+        </div>
+        <div class="ai-chat-wrap">
+          <div class="ai-chat" id="aiChat" aria-live="polite" aria-label="AI conversation">
+            <div class="ai-msg ai-sys">
+              <span class="ai-sender">SHARDUL.AI</span>
+              <p>Hi! I can answer questions about Shardul's projects, skills and experience. What would you like to know?</p>
+            </div>
+          </div>
+        </div>
+        <div class="ai-suggestions" id="aiSuggestions" aria-label="Suggested questions">
+          <button class="ai-sug" data-q="What is CivicOS?">What is CivicOS?</button>
+          <button class="ai-sug" data-q="What tech stack do you use?">Tech stack?</button>
+          <button class="ai-sug" data-q="Are you available for opportunities?">Available?</button>
+          <button class="ai-sug" data-q="What open source work have you done?">Open source?</button>
+        </div>
+        <div class="ai-input-row">
+          <label for="aiInput" class="sr-only">Ask Shardul AI</label>
+          <input type="text" id="aiInput" class="ai-input" placeholder="Ask something…" autocomplete="off">
+          <button id="aiSend" class="ai-send" aria-label="Send message">
+            <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- GITHUB EXPLORER -->
+      <div class="lab-card lab-gh-card reveal-item" id="labGitHub">
+        <div class="lab-card-hdr">
+          <div class="lab-icon-wrap"><i class="fab fa-github" aria-hidden="true"></i></div>
+          <div>
+            <h3 class="lab-card-title">GitHub Explorer</h3>
+            <p class="lab-card-sub">Live data from the GitHub public API.</p>
+          </div>
+          <span class="lab-badge" id="ghBadge">LOADING</span>
+        </div>
+        <div id="ghExplorerContent" class="gh-exp-content">
+          <div class="lab-loading">
+            <div class="lab-spinner" aria-hidden="true"></div>
+            <span>Fetching from api.github.com…</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TOKEN LAB -->
+      <div class="lab-card lab-token-card reveal-item" id="labTokens">
+        <div class="lab-card-hdr">
+          <div class="lab-icon-wrap"><i class="fa-solid fa-palette" aria-hidden="true"></i></div>
+          <div>
+            <h3 class="lab-card-title">Design Token Lab</h3>
+            <p class="lab-card-sub">Live CSS custom property editor — changes apply site-wide.</p>
+          </div>
+          <span class="lab-badge badge-amber">INTERACTIVE</span>
+        </div>
+        <div class="token-lab-body">
+          <div class="token-row">
+            <label for="hueSlider">Accent Hue <code id="hueVal">168°</code></label>
+            <input type="range" id="hueSlider" min="0" max="360" value="168" class="token-slider" aria-label="Change accent color hue">
+          </div>
+          <div class="token-row">
+            <label for="satSlider">Saturation <code id="satVal">100%</code></label>
+            <input type="range" id="satSlider" min="20" max="100" value="100" class="token-slider" aria-label="Change accent color saturation">
+          </div>
+          <div class="token-preview" aria-hidden="true">
+            <div class="tp-swatch" id="tpSwatch"></div>
+            <div class="tp-demos">
+              <button class="btn btn-primary tp-btn">Sample Button</button>
+              <a href="#" class="tp-link">Accent link</a>
+              <span class="tp-tag">Tag element</span>
+            </div>
+          </div>
+          <button id="tokenReset" class="btn btn-ghost token-reset">
+            <i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Reset to default
+          </button>
+          <p class="token-note">Demonstrates CSS custom properties. Changes are live and completely reversible.</p>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ 05 OPEN SOURCE ═══════════════════════════════ -->
+<section id="opensource" aria-labelledby="opensource-heading">
+  <div class="section-container">
+
+    <header class="section-head reveal-item">
+      <div class="section-eyebrow"><span class="sec-num">05</span><span class="sec-tag">OPEN SOURCE</span></div>
+      <h2 id="opensource-heading" class="section-title">Open Source</h2>
+      <div class="section-line" aria-hidden="true"></div>
+      <p class="section-desc">Programs, contributions and community open source work.</p>
+    </header>
+
+    <div class="os-programs reveal-item">
+      <article class="os-card">
+        <div class="os-card-hdr">
+          <div class="os-icon"><i class="fab fa-github" aria-hidden="true"></i></div>
+          <div class="os-card-info">
+            <h3>GirlScript Summer of Code</h3>
+            <time class="os-year">2025</time>
+          </div>
+          <span class="os-badge">CONTRIBUTOR</span>
+        </div>
+        <p>Participated in open source, collaborated through GitHub and contributed to community projects under the GSSoC program.</p>
+        <div class="os-links">
+          <a href="images/gssoc.jpg" target="_blank" rel="noopener noreferrer" class="os-link">
+            <i class="fa-solid fa-certificate" aria-hidden="true"></i> Certificate
+          </a>
+          <a href="https://github.com/shardul-2007" target="_blank" rel="noopener noreferrer" class="os-link">
+            <i class="fab fa-github" aria-hidden="true"></i> GitHub
+          </a>
+        </div>
+      </article>
+      <article class="os-card">
+        <div class="os-card-hdr">
+          <div class="os-icon"><i class="fab fa-github" aria-hidden="true"></i></div>
+          <div class="os-card-info">
+            <h3>NSOC</h3>
+            <time class="os-year">2025</time>
+          </div>
+          <span class="os-badge">CONTRIBUTOR</span>
+        </div>
+        <p>Participated in an open source program and collaborated on development projects through NSOC.</p>
+        <div class="os-links">
+          <a href="images/nsoc.jpg" target="_blank" rel="noopener noreferrer" class="os-link">
+            <i class="fa-solid fa-certificate" aria-hidden="true"></i> Certificate
+          </a>
+          <a href="https://github.com/shardul-2007" target="_blank" rel="noopener noreferrer" class="os-link">
+            <i class="fab fa-github" aria-hidden="true"></i> GitHub
+          </a>
+        </div>
+      </article>
+    </div>
+
+    <div class="gh-repos-section reveal-item">
+      <h3 class="repos-section-title">
+        <i class="fab fa-github" aria-hidden="true"></i> Repositories
+      </h3>
+      <div id="ghReposGrid" class="gh-repos-grid">
+        <div class="lab-loading">
+          <div class="lab-spinner" aria-hidden="true"></div>
+          <span>Loading repositories…</span>
+        </div>
+      </div>
+      <a href="https://github.com/shardul-2007" target="_blank" rel="noopener noreferrer" class="btn btn-ghost gh-profile-cta">
+        <i class="fab fa-github" aria-hidden="true"></i> View full profile — shardul-2007
+      </a>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ 06 JOURNEY ═══════════════════════════════ -->
 <section id="journey" aria-labelledby="journey-heading">
   <div class="section-container">
 
-    <div class="section-header reveal-item">
-      <span class="section-tag">04 / Journey</span>
-      <h2 id="journey-heading" class="section-title">My Journey</h2>
+    <header class="section-head reveal-item">
+      <div class="section-eyebrow"><span class="sec-num">06</span><span class="sec-tag">JOURNEY</span></div>
+      <h2 id="journey-heading" class="section-title">Developer Journey</h2>
       <div class="section-line" aria-hidden="true"></div>
-      <p class="section-desc">My path through campus communities, leadership and open source contributions.</p>
+      <p class="section-desc">The path from learning to building to sharing — with every real milestone.</p>
+    </header>
+
+    <!-- Developer Map -->
+    <div class="dev-map reveal-item" role="list" aria-label="Developer journey stages">
+
+      <div class="dev-stage" role="listitem">
+        <div class="ds-header">
+          <span class="ds-num">01</span>
+          <div class="ds-info"><h3 class="ds-title">LEARN</h3><span class="ds-period">2024–2025</span></div>
+          <i class="fa-solid fa-book ds-icon" aria-hidden="true"></i>
+        </div>
+        <p class="ds-desc">Foundations — HTML, CSS, JavaScript, Python, DSA fundamentals. First web projects and understanding of how systems work.</p>
+      </div>
+
+      <div class="ds-connector" aria-hidden="true"><span></span></div>
+
+      <div class="dev-stage" role="listitem">
+        <div class="ds-header">
+          <span class="ds-num">02</span>
+          <div class="ds-info"><h3 class="ds-title">BUILD</h3><span class="ds-period">2025</span></div>
+          <i class="fa-solid fa-hammer ds-icon" aria-hidden="true"></i>
+        </div>
+        <p class="ds-desc">CivicOS — first major full-stack project. React, Vite, Leaflet, AI integration. Learning by shipping real software that solves real problems.</p>
+      </div>
+
+      <div class="ds-connector" aria-hidden="true"><span></span></div>
+
+      <div class="dev-stage" role="listitem">
+        <div class="ds-header">
+          <span class="ds-num">03</span>
+          <div class="ds-info"><h3 class="ds-title">SHARE &amp; COLLABORATE</h3><span class="ds-period">2025–2026</span></div>
+          <i class="fa-solid fa-people-group ds-icon" aria-hidden="true"></i>
+        </div>
+        <p class="ds-desc">Community engagement and open source. Campus ambassadors: Google, Internshala, GUVI, Physics Wallah, RemoteRecruit, HackerRank. Open source via GSSoC and NSOC.</p>
+      </div>
+
+      <div class="ds-connector" aria-hidden="true"><span></span></div>
+
+      <div class="dev-stage dev-stage-current" role="listitem">
+        <div class="ds-header">
+          <span class="ds-num">04</span>
+          <div class="ds-info"><h3 class="ds-title">EXPERIMENT</h3><span class="ds-period">2026 — Now</span></div>
+          <i class="fa-solid fa-flask ds-icon" aria-hidden="true"></i>
+        </div>
+        <p class="ds-desc">SHARDUL.OS — portfolio as a developer environment. AI experiments, scalable systems thinking, pushing into new technical territory.</p>
+        <div class="ds-current-tag">
+          <span class="status-dot pulse" aria-hidden="true"></span> CURRENT STAGE
+        </div>
+      </div>
+
     </div>
 
-    <!-- CAMPUS AMBASSADOR -->
-    <div class="journey-block reveal-item">
-      <div class="jb-header">
-        <div class="jb-icon-wrap">
-          <i class="fa-solid fa-graduation-cap" aria-hidden="true"></i>
-        </div>
-        <div>
-          <h3>Campus Ambassador Journey</h3>
-          <p>Community Building &#183; Networking &#183; Student Engagement</p>
-        </div>
-      </div>
-
+    <!-- Campus Ambassador Timeline -->
+    <div class="tl-section reveal-item">
+      <h3 class="tl-section-title">
+        <i class="fa-solid fa-graduation-cap" aria-hidden="true"></i> Campus &amp; Community
+      </h3>
       <div class="timeline">
-
         <div class="tl-item reveal-timeline">
-          <div class="tl-track" aria-hidden="true">
-            <div class="tl-node"></div>
-            <div class="tl-connector"></div>
-          </div>
-          <div class="tl-body">
-            <time class="tl-year">2025</time>
-            <h4>Google</h4>
-            <p class="tl-role">Campus Ambassador</p>
-            <p class="tl-desc">Participated in student community initiatives and helped promote technology and learning opportunities.</p>
-            <a href="images/google-offer.jpg" target="_blank" rel="noopener noreferrer" class="tl-proof-link">
-              <i class="fa-solid fa-file" aria-hidden="true"></i> View Proof
-            </a>
-          </div>
+          <div class="tl-track" aria-hidden="true"><div class="tl-node"></div><div class="tl-connector"></div></div>
+          <div class="tl-body"><time class="tl-year" datetime="2025">2025</time><h4>Google</h4><p class="tl-role">Campus Ambassador</p><p>Student community initiatives, promoting technology and learning opportunities.</p><a href="images/google-offer.jpg" target="_blank" rel="noopener noreferrer" class="tl-proof"><i class="fa-solid fa-file" aria-hidden="true"></i> View Proof</a></div>
         </div>
-
         <div class="tl-item reveal-timeline">
-          <div class="tl-track" aria-hidden="true">
-            <div class="tl-node"></div>
-            <div class="tl-connector"></div>
-          </div>
-          <div class="tl-body">
-            <time class="tl-year">2025</time>
-            <h4>Internshala</h4>
-            <p class="tl-role">Campus Ambassador</p>
-            <p class="tl-desc">Engaged with students and promoted internships, learning opportunities and career programs.</p>
-            <a href="images/internshala.jpg" target="_blank" rel="noopener noreferrer" class="tl-proof-link">
-              <i class="fa-solid fa-certificate" aria-hidden="true"></i> View Proof
-            </a>
-          </div>
+          <div class="tl-track" aria-hidden="true"><div class="tl-node"></div><div class="tl-connector"></div></div>
+          <div class="tl-body"><time class="tl-year" datetime="2025">2025</time><h4>Internshala</h4><p class="tl-role">Campus Ambassador</p><p>Promoting internships, learning opportunities and career programs to students.</p><a href="images/internshala.jpg" target="_blank" rel="noopener noreferrer" class="tl-proof"><i class="fa-solid fa-certificate" aria-hidden="true"></i> View Proof</a></div>
         </div>
-
         <div class="tl-item reveal-timeline">
-          <div class="tl-track" aria-hidden="true">
-            <div class="tl-node"></div>
-            <div class="tl-connector"></div>
-          </div>
-          <div class="tl-body">
-            <time class="tl-year">2025</time>
-            <h4>GUVI</h4>
-            <p class="tl-role">Campus Ambassador</p>
-            <p class="tl-desc">Supported student engagement and promoted technology and skill-development initiatives.</p>
-            <a href="images/guvi.jpg" target="_blank" rel="noopener noreferrer" class="tl-proof-link">
-              <i class="fa-solid fa-award" aria-hidden="true"></i> View Proof
-            </a>
-          </div>
+          <div class="tl-track" aria-hidden="true"><div class="tl-node"></div><div class="tl-connector"></div></div>
+          <div class="tl-body"><time class="tl-year" datetime="2025">2025</time><h4>GUVI</h4><p class="tl-role">Campus Ambassador</p><p>Student engagement and technology skill-development initiatives.</p><a href="images/guvi.jpg" target="_blank" rel="noopener noreferrer" class="tl-proof"><i class="fa-solid fa-award" aria-hidden="true"></i> View Proof</a></div>
         </div>
-
         <div class="tl-item reveal-timeline">
-          <div class="tl-track" aria-hidden="true">
-            <div class="tl-node"></div>
-            <div class="tl-connector"></div>
-          </div>
-          <div class="tl-body">
-            <time class="tl-year">2025</time>
-            <h4>Physics Wallah</h4>
-            <p class="tl-role">Campus Ambassador</p>
-            <p class="tl-desc">Participated in student community activities and promoted educational opportunities.</p>
-            <a href="images/physics-wallah.jpg" target="_blank" rel="noopener noreferrer" class="tl-proof-link">
-              <i class="fa-solid fa-certificate" aria-hidden="true"></i> View Proof
-            </a>
-          </div>
+          <div class="tl-track" aria-hidden="true"><div class="tl-node"></div><div class="tl-connector"></div></div>
+          <div class="tl-body"><time class="tl-year" datetime="2025">2025</time><h4>Physics Wallah</h4><p class="tl-role">Campus Ambassador</p><p>Student community activities and educational opportunity promotion.</p><a href="images/physics-wallah.jpg" target="_blank" rel="noopener noreferrer" class="tl-proof"><i class="fa-solid fa-certificate" aria-hidden="true"></i> View Proof</a></div>
         </div>
-
         <div class="tl-item reveal-timeline">
-          <div class="tl-track" aria-hidden="true">
-            <div class="tl-node"></div>
-            <div class="tl-connector"></div>
-          </div>
-          <div class="tl-body">
-            <time class="tl-year">2026</time>
-            <h4>RemoteRecruit</h4>
-            <p class="tl-role">Student Ambassador</p>
-            <p class="tl-desc">Selected as a Student Ambassador and participated in a student-focused technology community.</p>
-            <a href="images/remote-recruit.jpg" target="_blank" rel="noopener noreferrer" class="tl-proof-link">
-              <i class="fa-solid fa-file" aria-hidden="true"></i> View Proof
-            </a>
-          </div>
+          <div class="tl-track" aria-hidden="true"><div class="tl-node"></div><div class="tl-connector"></div></div>
+          <div class="tl-body"><time class="tl-year" datetime="2026">2026</time><h4>RemoteRecruit</h4><p class="tl-role">Student Ambassador</p><p>Selected as Student Ambassador in a student-focused technology community.</p><a href="images/remote-recruit.jpg" target="_blank" rel="noopener noreferrer" class="tl-proof"><i class="fa-solid fa-file" aria-hidden="true"></i> View Proof</a></div>
         </div>
-
         <div class="tl-item reveal-timeline">
-          <div class="tl-track" aria-hidden="true">
-            <div class="tl-node"></div>
-          </div>
-          <div class="tl-body">
-            <time class="tl-year">2026</time>
-            <h4>HackerRank</h4>
-            <p class="tl-role">Campus Community</p>
-            <p class="tl-desc">Involved in student community engagement, contests and developer activities.</p>
-            <a href="images/hackerrank.jpg" target="_blank" rel="noopener noreferrer" class="tl-proof-link">
-              <i class="fa-solid fa-award" aria-hidden="true"></i> View Proof
-            </a>
-          </div>
-        </div>
-
-      </div><!-- /.timeline -->
-    </div><!-- /.journey-block -->
-
-    <!-- OPEN SOURCE -->
-    <div class="journey-block reveal-item">
-      <div class="jb-header">
-        <div class="jb-icon-wrap">
-          <i class="fab fa-github" aria-hidden="true"></i>
-        </div>
-        <div>
-          <h3>Open Source Journey</h3>
-          <p>Contributions &#183; Collaboration &#183; GitHub</p>
+          <div class="tl-track" aria-hidden="true"><div class="tl-node"></div></div>
+          <div class="tl-body"><time class="tl-year" datetime="2026">2026</time><h4>HackerRank</h4><p class="tl-role">Campus Community</p><p>Student community engagement, contests and developer activities.</p><a href="images/hackerrank.jpg" target="_blank" rel="noopener noreferrer" class="tl-proof"><i class="fa-solid fa-award" aria-hidden="true"></i> View Proof</a></div>
         </div>
       </div>
-
-      <div class="timeline">
-
-        <div class="tl-item reveal-timeline">
-          <div class="tl-track" aria-hidden="true">
-            <div class="tl-node"></div>
-            <div class="tl-connector"></div>
-          </div>
-          <div class="tl-body">
-            <time class="tl-year">2025</time>
-            <h4>GirlScript Summer of Code</h4>
-            <p class="tl-role">Open Source Contributor</p>
-            <p class="tl-desc">Participated in open source, collaborated through GitHub and contributed to community projects.</p>
-            <div class="tl-link-row">
-              <a href="images/gssoc.jpg" target="_blank" rel="noopener noreferrer" class="tl-proof-link">
-                <i class="fa-solid fa-certificate" aria-hidden="true"></i> View Proof
-              </a>
-              <a href="https://github.com/shardul-2007" target="_blank" rel="noopener noreferrer"
-                 class="tl-proof-link tl-gh-link">
-                <i class="fab fa-github" aria-hidden="true"></i> GitHub
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div class="tl-item reveal-timeline">
-          <div class="tl-track" aria-hidden="true">
-            <div class="tl-node"></div>
-          </div>
-          <div class="tl-body">
-            <time class="tl-year">2025</time>
-            <h4>NSOC</h4>
-            <p class="tl-role">Open Source Contributor</p>
-            <p class="tl-desc">Participated in an open source program and collaborated on development projects.</p>
-            <div class="tl-link-row">
-              <a href="images/nsoc.jpg" target="_blank" rel="noopener noreferrer" class="tl-proof-link">
-                <i class="fa-solid fa-certificate" aria-hidden="true"></i> View Proof
-              </a>
-              <a href="https://github.com/shardul-2007" target="_blank" rel="noopener noreferrer"
-                 class="tl-proof-link tl-gh-link">
-                <i class="fab fa-github" aria-hidden="true"></i> GitHub
-              </a>
-            </div>
-          </div>
-        </div>
-
-      </div><!-- /.timeline -->
-    </div>
-
-    <!-- GITHUB CTA -->
-    <div class="gh-cta reveal-item" data-reveal="scale">
-      <i class="fab fa-github gh-cta-icon" aria-hidden="true"></i>
-      <div class="gh-cta-text">
-        <h3>Find me on GitHub</h3>
-        <p>Explore my repositories, contributions and open source work.</p>
-      </div>
-      <a href="https://github.com/shardul-2007"
-         target="_blank" rel="noopener noreferrer"
-         class="btn btn-outline magnetic">
-        <i class="fab fa-github" aria-hidden="true"></i>
-        <span>shardul-2007</span>
-      </a>
     </div>
 
   </div>
 </section>
 
 
-<!-- ===== CONTACT ===== -->
-<section id="contact" aria-labelledby="contact-heading">
-  <!-- Background decorations -->
-  <div class="contact-bg-glow" aria-hidden="true"></div>
-  <div class="contact-bg-grid" aria-hidden="true"></div>
-
+<!-- ═══════════════════════════════ 07 CONNECT ═══════════════════════════════ -->
+<section id="connect" aria-labelledby="connect-heading">
+  <div class="connect-bg" aria-hidden="true">
+    <div class="connect-glow"></div>
+    <div class="connect-grid-bg"></div>
+  </div>
   <div class="section-container">
 
-    <div class="section-header reveal-item">
-      <span class="section-tag">05 / Contact</span>
-      <h2 id="contact-heading" class="section-title">Let's build something<br>impactful.</h2>
+    <header class="section-head reveal-item">
+      <div class="section-eyebrow"><span class="sec-num">07</span><span class="sec-tag">CONNECT</span></div>
+      <h2 id="connect-heading" class="section-title">Let's Build<br>Something.</h2>
       <div class="section-line" aria-hidden="true"></div>
-      <p class="section-desc">Have a project, opportunity or collaboration in mind? Let's connect.</p>
+    </header>
+
+    <div class="connect-layout reveal-item">
+
+      <!-- Left: Form -->
+      <div class="connect-form-side">
+        <p class="intent-prompt">What would you like to do?</p>
+        <div class="intent-btns" role="group" aria-label="Select your intent">
+          <button class="intent-btn active" data-intent="hire">
+            <i class="fa-solid fa-briefcase" aria-hidden="true"></i> Hire me
+          </button>
+          <button class="intent-btn" data-intent="build">
+            <i class="fa-solid fa-hammer" aria-hidden="true"></i> Build together
+          </button>
+          <button class="intent-btn" data-intent="hackathon">
+            <i class="fa-solid fa-trophy" aria-hidden="true"></i> Hackathon
+          </button>
+          <button class="intent-btn" data-intent="opensource">
+            <i class="fab fa-github" aria-hidden="true"></i> Open source
+          </button>
+          <button class="intent-btn" data-intent="internship">
+            <i class="fa-solid fa-graduation-cap" aria-hidden="true"></i> Internship
+          </button>
+          <button class="intent-btn" data-intent="other">
+            <i class="fa-solid fa-comment" aria-hidden="true"></i> Other
+          </button>
+        </div>
+
+        <div id="intentMessages" aria-live="polite">
+          <p class="ic-msg active" data-intent="hire">I'm currently open to software engineering roles and opportunities. Tell me what you're working on.</p>
+          <p class="ic-msg" data-intent="build">Have a project idea? I'd love to hear about it and discuss how we can build it together.</p>
+          <p class="ic-msg" data-intent="hackathon">Always down for hackathons! Tell me about the event and what you want to build.</p>
+          <p class="ic-msg" data-intent="opensource">Open source collaboration is something I care about. What project are you working on?</p>
+          <p class="ic-msg" data-intent="internship">I'm open to internship opportunities with meaningful engineering work. Tell me more.</p>
+          <p class="ic-msg" data-intent="other">Whatever it is — I'm listening. Send me a message.</p>
+        </div>
+
+        <form id="connectForm" class="connect-form" novalidate aria-label="Contact Shardul">
+          <div class="form-row-2">
+            <div class="form-field">
+              <label for="cfName">Name <span aria-hidden="true">*</span></label>
+              <input type="text" id="cfName" name="name" placeholder="Your name" required autocomplete="name">
+            </div>
+            <div class="form-field">
+              <label for="cfEmail">Email <span aria-hidden="true">*</span></label>
+              <input type="email" id="cfEmail" name="email" placeholder="your@email.com" required autocomplete="email">
+            </div>
+          </div>
+          <div class="form-field">
+            <label for="cfMsg">Message <span aria-hidden="true">*</span></label>
+            <textarea id="cfMsg" name="message" placeholder="Tell me more…" rows="4" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary connect-submit-btn">
+            <span class="submit-label">Send Message</span>
+            <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+          </button>
+          <p id="connectStatus" class="form-status" role="alert" aria-live="polite"></p>
+        </form>
+      </div>
+
+      <!-- Right: Contact cards -->
+      <div class="connect-cards-side">
+        <h3 class="cc-heading">Direct Contact</h3>
+        <a href="mailto:shardulparihar2007@gmail.com" class="contact-card">
+          <div class="cc-icon"><i class="fa-solid fa-envelope" aria-hidden="true"></i></div>
+          <div class="cc-text">
+            <span class="cc-label">Email</span>
+            <span class="cc-val">shardulparihar2007@gmail.com</span>
+          </div>
+          <i class="fa-solid fa-arrow-up-right-from-square cc-arrow" aria-hidden="true"></i>
+        </a>
+        <a href="https://www.linkedin.com/in/shardul-parihar-/" target="_blank" rel="noopener noreferrer" class="contact-card">
+          <div class="cc-icon"><i class="fab fa-linkedin-in" aria-hidden="true"></i></div>
+          <div class="cc-text">
+            <span class="cc-label">LinkedIn</span>
+            <span class="cc-val">shardul-parihar-</span>
+          </div>
+          <i class="fa-solid fa-arrow-up-right-from-square cc-arrow" aria-hidden="true"></i>
+        </a>
+        <a href="https://github.com/shardul-2007" target="_blank" rel="noopener noreferrer" class="contact-card">
+          <div class="cc-icon"><i class="fab fa-github" aria-hidden="true"></i></div>
+          <div class="cc-text">
+            <span class="cc-label">GitHub</span>
+            <span class="cc-val">shardul-2007</span>
+          </div>
+          <i class="fa-solid fa-arrow-up-right-from-square cc-arrow" aria-hidden="true"></i>
+        </a>
+        <div class="avail-card">
+          <div class="avail-row">
+            <span class="status-dot pulse" aria-hidden="true"></span>
+            <strong>AVAILABLE FOR OPPORTUNITIES</strong>
+          </div>
+          <p>Open to engineering roles, internships and interesting collaborations.</p>
+          <span class="avail-loc"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> Pune, Maharashtra, India</span>
+        </div>
+      </div>
+
     </div>
 
-    <div class="contact-layout reveal-item">
-
-      <div class="contact-info-col">
-        <div class="contact-card">
-          <div class="cc-icon"><i class="fab fa-github" aria-hidden="true"></i></div>
-          <div>
-            <span class="cc-label">GitHub</span>
-            <a href="https://github.com/shardul-2007" target="_blank" rel="noopener noreferrer"
-               class="cc-val">github.com/shardul-2007</a>
-          </div>
-        </div>
-        <div class="contact-card">
-          <div class="cc-icon"><i class="fab fa-linkedin-in" aria-hidden="true"></i></div>
-          <div>
-            <span class="cc-label">LinkedIn</span>
-            <a href="https://www.linkedin.com/in/shardul-parihar-/" target="_blank" rel="noopener noreferrer"
-               class="cc-val">Shardul Parihar</a>
-          </div>
-        </div>
-        <div class="contact-card">
-          <div class="cc-icon"><i class="fa-solid fa-envelope" aria-hidden="true"></i></div>
-          <div>
-            <span class="cc-label">Email</span>
-            <a href="mailto:shardulparihar2007@gmail.com"
-               class="cc-val">shardulparihar2007@gmail.com</a>
-          </div>
-        </div>
-        <div class="contact-card">
-          <div class="cc-icon"><i class="fa-solid fa-location-dot" aria-hidden="true"></i></div>
-          <div>
-            <span class="cc-label">Location</span>
-            <span class="cc-val">Pune, Maharashtra, India</span>
-          </div>
-        </div>
-      </div><!-- /.contact-info-col -->
-
-      <form id="contactForm" class="contact-form" novalidate>
-        <div class="form-row">
-          <label for="cName">Name</label>
-          <input type="text" id="cName" name="name" placeholder="Your Name"
-                 required autocomplete="name">
-        </div>
-        <div class="form-row">
-          <label for="cEmail">Email</label>
-          <input type="email" id="cEmail" name="email" placeholder="Your Email"
-                 required autocomplete="email">
-        </div>
-        <div class="form-row">
-          <label for="cMsg">Message</label>
-          <textarea id="cMsg" name="message" placeholder="Your Message"
-                    rows="5" required></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary btn-full magnetic">
-          <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
-          <span>Send Message</span>
-        </button>
-        <p id="formStatus" class="form-status" role="alert" aria-live="polite"></p>
-      </form>
-
-    </div><!-- /.contact-layout -->
   </div>
 </section>
 
+</main><!-- /#main -->
 
-<!-- ===== FOOTER ===== -->
+
+<!-- FOOTER -->
 <footer role="contentinfo">
-  <div class="footer-wrap">
-    <div class="footer-brand">
-      <span class="foot-logo">Shardul<span class="foot-dot">.</span></span>
-      <span class="foot-role">Software Developer</span>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <span class="footer-logo">SHARDUL<span class="footer-dot">.</span>OS</span>
+        <p class="footer-tagline">NOT A PORTFOLIO. A LIVE SNAPSHOT OF HOW I BUILD.</p>
+      </div>
+      <nav class="footer-nav" aria-label="Footer navigation">
+        <a href="#identity">Identity</a>
+        <a href="#work">Work</a>
+        <a href="#engineering">Engineering</a>
+        <a href="#lab">Lab</a>
+        <a href="#opensource">Open Source</a>
+        <a href="#journey">Journey</a>
+        <a href="#connect">Connect</a>
+      </nav>
     </div>
-    <nav class="footer-links" aria-label="Footer navigation">
-      <a href="#home">Home</a>
-      <a href="#about">About</a>
-      <a href="#projects">Projects</a>
-      <a href="#journey">Journey</a>
-      <a href="#contact">Contact</a>
-    </nav>
-    <div class="footer-socials">
-      <a href="https://github.com/shardul-2007" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
-        <i class="fab fa-github" aria-hidden="true"></i>
-      </a>
-      <a href="https://www.linkedin.com/in/shardul-parihar-/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
-        <i class="fab fa-linkedin-in" aria-hidden="true"></i>
-      </a>
-      <a href="mailto:shardulparihar2007@gmail.com" aria-label="Email">
-        <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+
+    <!-- System status -->
+    <div class="status-bar" role="status" aria-label="System status">
+      <div class="sb-item">
+        <span class="status-dot pulse" aria-hidden="true"></span>
+        <span class="sb-label">SHARDUL.OS</span>
+        <span class="sb-val">ONLINE</span>
+      </div>
+      <div class="sb-item">
+        <span class="status-dot" id="ghStatusDot" aria-hidden="true"></span>
+        <span class="sb-label">GITHUB</span>
+        <span class="sb-val" id="ghStatusVal">CHECKING</span>
+      </div>
+      <div class="sb-item">
+        <span class="status-dot pulse" aria-hidden="true"></span>
+        <span class="sb-label">CIVICOS</span>
+        <span class="sb-val">LIVE</span>
+      </div>
+      <div class="sb-item">
+        <span class="status-dot pulse" aria-hidden="true"></span>
+        <span class="sb-label">AI</span>
+        <span class="sb-val">READY</span>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2026 Shardul Parihar · Pune, India</span>
+      <div class="footer-socials">
+        <a href="https://github.com/shardul-2007" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="fab fa-github" aria-hidden="true"></i></a>
+        <a href="https://www.linkedin.com/in/shardul-parihar-/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+        <a href="mailto:shardulparihar2007@gmail.com" aria-label="Email"><i class="fa-solid fa-envelope" aria-hidden="true"></i></a>
+      </div>
+      <a href="https://github.com/shardul-2007/my-portfolio" target="_blank" rel="noopener noreferrer" class="footer-source-link">
+        <i class="fab fa-github" aria-hidden="true"></i> View Source
       </a>
     </div>
-  </div>
-  <div class="footer-bottom">
-    <p>&#169; 2026 Shardul Parihar &#183; Built with care.</p>
   </div>
 </footer>
 
-<!-- BACK TO TOP -->
+<!-- Back to top -->
 <button id="topBtn" aria-label="Back to top">
-  <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
+  <i class="fa-solid fa-chevron-up" aria-hidden="true"></i>
 </button>
 
 <script src="script.js"></script>

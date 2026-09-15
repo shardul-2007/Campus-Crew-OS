@@ -1,619 +1,948 @@
 /**
- * SHARDUL PORTFOLIO — PREMIUM JAVASCRIPT v2
- * 50-Phase Transformation
- * Organised into named init modules.
+ * SHARDUL.OS — JavaScript Modules
+ * 16 named init() functions. No framework. Zero dependencies.
  */
 
 'use strict';
 
-/* ============================================================
-   UTILITIES
-   ============================================================ */
-const qs  = (sel, ctx = document) => ctx.querySelector(sel);
-const qsa = (sel, ctx = document) => [...ctx.querySelectorAll(sel)];
+/* ── Utilities ── */
+const qs  = (s, ctx = document) => ctx.querySelector(s);
+const qsa = (s, ctx = document) => [...ctx.querySelectorAll(s)];
+const on  = (el, ev, fn, opts) => el && el.addEventListener(ev, fn, opts);
+const off = (el, ev, fn) => el && el.removeEventListener(ev, fn);
+const rm  = (el) => el && el.remove();
+const cls = (el, ...c) => el && el.classList;
+const reduced = () => window.matchMedia('(prefers-reduced-motion:reduce)').matches;
 
-const reducedMotion = () =>
-  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const touchDevice = () =>
-  window.matchMedia('(hover: none)').matches;
+/* Apply saved theme before any paint */
+(function () {
+  const t = localStorage.getItem('sos-theme');
+  if (t) document.documentElement.setAttribute('data-theme', t);
+})();
 
-/* ============================================================
-   THEME TOGGLE — dark / light, saved to localStorage
-   ============================================================ */
+
+/* ═══════════════════════════════════════════
+   1. BOOT SEQUENCE
+   ═══════════════════════════════════════════ */
+function initBoot() {
+  const boot = qs('#boot');
+  if (!boot) return;
+
+  const alreadyBooted = localStorage.getItem('sos-booted');
+  const enter = qs('#bootEnter');
+  const skip  = qs('#bootSkip');
+
+  function closeBoot() {
+    boot.classList.add('boot-out');
+    localStorage.setItem('sos-booted', '1');
+    setTimeout(() => rm(boot), 520);
+  }
+
+  if (alreadyBooted || reduced()) {
+    rm(boot);
+    return;
+  }
+
+  /* Animate boot lines */
+  const lines = qsa('.boot-line', boot);
+  lines.forEach(l => {
+    const delay = parseInt(l.dataset.delay, 10) || 0;
+    setTimeout(() => l.classList.add('visible'), delay);
+  });
+
+  /* Show Enter button after last line */
+  const lastDelay = lines.reduce((m, l) => Math.max(m, parseInt(l.dataset.delay, 10) || 0), 0);
+  setTimeout(() => {
+    enter && enter.classList.add('visible');
+    skip  && skip.classList.add('visible');
+    enter && enter.focus();
+  }, lastDelay + 350);
+
+  on(enter, 'click', closeBoot);
+  on(skip,  'click', closeBoot);
+  on(boot,  'keydown', e => { if (e.key === 'Enter' || e.key === ' ') closeBoot(); });
+}
+
+
+/* ═══════════════════════════════════════════
+   2. THEME TOGGLE
+   ═══════════════════════════════════════════ */
 function initThemeToggle() {
-  const btn = document.getElementById('themeToggle');
+  const btn = qs('#themeToggle');
   if (!btn) return;
 
-  // Set theme on <html> and save
-  function setTheme(theme) {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('sp-theme', theme);
-    // Update aria-label
-    btn.setAttribute('aria-label',
-      theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode');
+  function setTheme(t) {
+    document.documentElement.setAttribute('data-theme', t);
+    localStorage.setItem('sos-theme', t);
+    btn.setAttribute('aria-label', t === 'light' ? 'Switch to dark mode' : 'Switch to light mode');
   }
 
-  // Toggle on click
-  btn.addEventListener('click', function () {
-    const current = document.documentElement.getAttribute('data-theme');
-    setTheme(current === 'light' ? 'dark' : 'light');
+  on(btn, 'click', () => {
+    const cur = document.documentElement.getAttribute('data-theme');
+    setTheme(cur === 'light' ? 'dark' : 'light');
   });
+
+  btn.setAttribute('aria-label',
+    document.documentElement.getAttribute('data-theme') === 'light'
+      ? 'Switch to dark mode' : 'Switch to light mode');
 }
 
 
-/* ============================================================
-   LOADER
-   ============================================================ */
-function initLoader() {
-  const loader = qs('#loader');
-  if (!loader) return;
+/* ═══════════════════════════════════════════
+   3. NAVIGATION — scrollspy + mobile menu
+   ═══════════════════════════════════════════ */
+function initNav() {
+  const header  = qs('#header');
+  const navLinks = qsa('.nav-link');
+  const toggle  = qs('#menuToggle');
+  const mMenu   = qs('#mobileMenu');
+  const mClose  = qs('#mobileClose');
+  const mLinks  = qsa('.mm-link');
+  const mmCmd   = qs('#mmCmdBtn');
+  const progress = qs('#scrollProgress');
 
-  const hide = () => {
-    loader.classList.add('out');
-    setTimeout(() => loader.remove(), 520);
-  };
+  /* Scroll progress */
+  on(window, 'scroll', () => {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = max ? window.scrollY / max : 0;
+    if (progress) progress.style.transform = `scaleX(${pct})`;
+    if (header) header.classList.toggle('scrolled', window.scrollY > 20);
+    if (qs('#topBtn')) qs('#topBtn').classList.toggle('visible', window.scrollY > 400);
+  }, { passive: true });
 
-  if (document.readyState === 'complete') {
-    setTimeout(hide, 600);
-  } else {
-    window.addEventListener('load', () => setTimeout(hide, 600), { once: true });
-  }
-}
-
-/* ============================================================
-   SCROLL PROGRESS — GPU (transform: scaleX)
-   ============================================================ */
-function initScrollProgress() {
-  const bar = qs('#scroll-progress');
-  if (!bar) return;
-
-  const update = () => {
-    const scrolled = window.scrollY;
-    const total = document.documentElement.scrollHeight - window.innerHeight;
-    bar.style.transform = `scaleX(${total > 0 ? scrolled / total : 0})`;
-  };
-
-  window.addEventListener('scroll', update, { passive: true });
-  update();
-}
-
-/* ============================================================
-   CUSTOM CURSOR (desktop / non-touch only)
-   ============================================================ */
-function initCursor() {
-  if (reducedMotion() || touchDevice()) return;
-
-  const dot  = qs('#cursor-dot');
-  const ring = qs('#cursor-ring');
-  const glow = qs('#cursor-glow');
-  if (!dot || !ring || !glow) return;
-
-  let mx = -200, my = -200;
-  let rx = -200, ry = -200;
-  let gx = -200, gy = -200;
-
-  const lerp = (a, b, t) => a + (b - a) * t;
-
-  let raf;
-  const tick = () => {
-    rx = lerp(rx, mx, 0.12);
-    ry = lerp(ry, my, 0.12);
-    gx = lerp(gx, mx, 0.07);
-    gy = lerp(gy, my, 0.07);
-
-    dot.style.left  = mx + 'px';
-    dot.style.top   = my + 'px';
-    ring.style.left = rx + 'px';
-    ring.style.top  = ry + 'px';
-    glow.style.left = gx + 'px';
-    glow.style.top  = gy + 'px';
-
-    raf = requestAnimationFrame(tick);
-  };
-
-  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
-
-  const INTERACTIVE = 'a, button, .cap-card, .proj-card, .filter-btn, .chip, .tl-proof-link, .nav-link, .social-btn';
-  document.addEventListener('mouseover', e => {
-    if (e.target.closest(INTERACTIVE)) document.body.classList.add('c-hover');
-  });
-  document.addEventListener('mouseout', e => {
-    if (e.target.closest(INTERACTIVE)) document.body.classList.remove('c-hover');
-  });
-
-  document.addEventListener('mouseleave', () => {
-    dot.style.opacity = ring.style.opacity = glow.style.opacity = '0';
-  });
-  document.addEventListener('mouseenter', () => {
-    dot.style.opacity = ring.style.opacity = '1';
-  });
-
-  tick();
-}
-
-/* ============================================================
-   MAGNETIC BUTTONS
-   ============================================================ */
-function initMagnetic() {
-  if (reducedMotion() || touchDevice()) return;
-
-  qsa('.magnetic').forEach(el => {
-    el.addEventListener('mousemove', e => {
-      const r  = el.getBoundingClientRect();
-      const dx = (e.clientX - (r.left + r.width  / 2)) * 0.28;
-      const dy = (e.clientY - (r.top  + r.height / 2)) * 0.28;
-      el.style.transform = `translate(${dx}px, ${dy}px)`;
-    });
-    el.addEventListener('mouseleave', () => {
-      el.style.transform = '';
-    });
-  });
-}
-
-/* ============================================================
-   HEADER SCROLL BEHAVIOUR
-   ============================================================ */
-function initHeader() {
-  const header = qs('#header');
-  if (!header) return;
-
-  const update = () =>
-    header.classList.toggle('scrolled', window.scrollY > 60);
-
-  window.addEventListener('scroll', update, { passive: true });
-  update();
-}
-
-/* ============================================================
-   ACTIVE NAV — IntersectionObserver scrollspy
-   ============================================================ */
-function initScrollSpy() {
-  const links    = qsa('.nav-link');
+  /* Scrollspy */
   const sections = qsa('section[id]');
-  if (!links.length || !sections.length) return;
-
-  const obs = new IntersectionObserver(entries => {
+  const io = new IntersectionObserver(entries => {
     entries.forEach(e => {
       if (e.isIntersecting) {
-        const id = e.target.id;
-        links.forEach(l =>
-          l.classList.toggle('active', l.dataset.section === id)
-        );
+        navLinks.forEach(l => l.classList.remove('active'));
+        const active = navLinks.find(l => l.dataset.section === e.target.id);
+        active && active.classList.add('active');
       }
     });
   }, { rootMargin: '-40% 0px -55% 0px' });
+  sections.forEach(s => io.observe(s));
 
-  sections.forEach(s => obs.observe(s));
-}
+  /* Mobile menu */
+  function openMenu() {
+    mMenu.hidden = false;
+    toggle.setAttribute('aria-expanded', 'true');
+    qs('.mm-close', mMenu)?.focus();
+    document.body.style.overflow = 'hidden';
+  }
+  function closeMenu() {
+    mMenu.hidden = true;
+    toggle.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+    toggle.focus();
+  }
+  on(toggle, 'click', openMenu);
+  on(mClose, 'click', closeMenu);
+  mLinks.forEach(l => on(l, 'click', closeMenu));
+  on(mmCmd, 'click', () => { closeMenu(); openCommandPalette(); });
 
-/* ============================================================
-   SMOOTH SCROLL — all hash links
-   ============================================================ */
-function initSmoothScroll() {
-  document.addEventListener('click', e => {
-    const link = e.target.closest('a[href^="#"]');
-    if (!link) return;
-    const target = qs(link.getAttribute('href'));
+  /* Smooth scroll for all in-page links */
+  on(document, 'click', e => {
+    const a = e.target.closest('a[href^="#"]');
+    if (!a) return;
+    const target = qs(a.getAttribute('href'));
     if (!target) return;
     e.preventDefault();
     target.scrollIntoView({ behavior: 'smooth' });
-    // Close mobile menu if open
-    const menu = qs('#mobileMenu');
-    if (menu && !menu.hidden) closeMobileMenu();
+    closeMenu();
+  });
+
+  /* Back to top */
+  on(qs('#topBtn'), 'click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+}
+
+
+/* ═══════════════════════════════════════════
+   4. COMMAND PALETTE
+   ═══════════════════════════════════════════ */
+let cmdOpen = false;
+
+const COMMANDS = [
+  { id:'civicos',       icon:'fa-diagram-project', label:'Open CivicOS',         desc:'View the flagship project',            fn: () => { scrollTo('#work');       openCivicOS(); } },
+  { id:'work',          icon:'fa-briefcase',        label:'View Projects',         desc:'Navigate to Work section',            fn: () => scrollTo('#work') },
+  { id:'engineering',   icon:'fa-code',             label:'Engineering Notes',     desc:'How I build and architecture choices', fn: () => scrollTo('#engineering') },
+  { id:'lab',           icon:'fa-flask',            label:'Open Lab',              desc:'Experiments and interactive demos',   fn: () => scrollTo('#lab') },
+  { id:'opensource',    icon:'fa-code-branch',      label:'Open Source',           desc:'GSSoC, NSOC, GitHub contributions',   fn: () => scrollTo('#opensource') },
+  { id:'journey',       icon:'fa-map',              label:'Developer Journey',     desc:'Milestones and growth path',          fn: () => scrollTo('#journey') },
+  { id:'connect',       icon:'fa-envelope',         label:'Contact Shardul',       desc:'Start a conversation',                fn: () => scrollTo('#connect') },
+  { id:'github',        icon:'fab fa-github',       label:'Open GitHub',           desc:'github.com/shardul-2007',             fn: () => openUrl('https://github.com/shardul-2007') },
+  { id:'linkedin',      icon:'fab fa-linkedin',     label:'Open LinkedIn',         desc:'linkedin.com/in/shardul-parihar-/',   fn: () => openUrl('https://www.linkedin.com/in/shardul-parihar-/') },
+  { id:'civicoslive',   icon:'fa-arrow-up-right-from-square', label:'Open CivicOS Live', desc:'civicos-beta.vercel.app',       fn: () => openUrl('https://civicos-beta.vercel.app/') },
+  { id:'ai',            icon:'fa-robot',            label:'Ask Shardul AI',        desc:'Questions about projects and skills', fn: () => { scrollTo('#lab'); focusAI(); } },
+  { id:'source',        icon:'fab fa-github',       label:'View Source',           desc:'github.com/shardul-2007/my-portfolio',fn: () => openUrl('https://github.com/shardul-2007/my-portfolio') },
+  { id:'theme',         icon:'fa-moon',             label:'Toggle Theme',          desc:'Switch dark/light mode',              fn: () => qs('#themeToggle')?.click() },
+  { id:'recruiter',     icon:'fa-briefcase',        label:'View as Recruiter',     desc:'Prioritise key projects and contact', fn: () => setViewMode('recruiter') },
+  { id:'developer',     icon:'fa-code',             label:'View as Developer',     desc:'Highlight engineering and GitHub',    fn: () => setViewMode('developer') },
+  { id:'collaborator',  icon:'fa-handshake',        label:'View as Collaborator',  desc:'Open source and community focus',     fn: () => setViewMode('collaborator') },
+  { id:'default',       icon:'fa-globe',            label:'Reset View Mode',       desc:'Back to full default experience',     fn: () => setViewMode('default') },
+];
+
+function scrollTo(id)   { qs(id)?.scrollIntoView({ behavior: 'smooth' }); }
+function openUrl(u)     { window.open(u, '_blank', 'noopener noreferrer'); }
+function openCivicOS()  { 
+  const btn = qs('#archToggle');
+  if (btn) { btn.click(); }
+}
+function focusAI()      { setTimeout(() => qs('#aiInput')?.focus(), 600); }
+
+function fuzzy(str, q) {
+  if (!q) return 1;
+  const s = str.toLowerCase(), query = q.toLowerCase();
+  if (s.includes(query)) return 2;
+  let qi = 0;
+  for (let i = 0; i < s.length && qi < query.length; i++) {
+    if (s[i] === query[qi]) qi++;
+  }
+  return qi === query.length ? 1 : 0;
+}
+
+function openCommandPalette() {
+  const overlay = qs('#cmdPalette');
+  const input   = qs('#cmdInput');
+  if (!overlay || cmdOpen) return;
+  cmdOpen = true;
+  overlay.hidden = false;
+  renderCommands('');
+  setTimeout(() => input?.focus(), 50);
+  on(qs('#cmdBackdrop'), 'click', closeCommandPalette);
+}
+
+function closeCommandPalette() {
+  const overlay = qs('#cmdPalette');
+  if (!overlay || !cmdOpen) return;
+  cmdOpen = false;
+  overlay.hidden = true;
+  if (qs('#cmdInput')) qs('#cmdInput').value = '';
+  off(qs('#cmdBackdrop'), 'click', closeCommandPalette);
+}
+
+function renderCommands(query) {
+  const list = qs('#cmdList');
+  if (!list) return;
+  const results = COMMANDS
+    .map(c => ({ ...c, score: fuzzy(c.label + ' ' + c.desc, query) }))
+    .filter(c => c.score > 0)
+    .sort((a, b) => b.score - a.score);
+
+  if (!results.length) {
+    list.innerHTML = `<li class="cmd-empty">No commands match "${query}"</li>`;
+    return;
+  }
+  list.innerHTML = results.map((c, i) => `
+    <li class="cmd-item${i === 0 ? ' active' : ''}" role="option"
+        data-id="${c.id}" aria-selected="${i === 0}">
+      <span class="cmd-item-icon"><i class="fa-solid ${c.icon}" aria-hidden="true"></i></span>
+      <span class="cmd-item-label">${c.label}</span>
+      <span class="cmd-item-desc">${c.desc}</span>
+    </li>`).join('');
+
+  list.querySelectorAll('.cmd-item').forEach(item => {
+    on(item, 'click', () => {
+      const cmd = COMMANDS.find(c => c.id === item.dataset.id);
+      if (cmd) { closeCommandPalette(); setTimeout(cmd.fn, 100); }
+    });
   });
 }
 
-/* ============================================================
-   MOBILE MENU
-   ============================================================ */
-function closeMobileMenu() {
-  const menu   = qs('#mobileMenu');
-  const toggle = qs('#menuToggle');
-  if (!menu) return;
-  menu.hidden = true;
-  if (toggle) {
-    toggle.classList.remove('open');
-    toggle.setAttribute('aria-expanded', 'false');
-  }
-  document.body.style.overflow = '';
-}
+function initCommandPalette() {
+  const trigger = qs('#cmdTrigger');
+  const input   = qs('#cmdInput');
+  const list    = qs('#cmdList');
 
-function initMobileMenu() {
-  const toggle = qs('#menuToggle');
-  const menu   = qs('#mobileMenu');
-  const close  = qs('#mobileClose');
-  if (!toggle || !menu) return;
+  on(trigger, 'click', openCommandPalette);
 
-  toggle.addEventListener('click', () => {
-    const open = !menu.hidden;
-    if (open) {
+  on(document, 'keydown', e => {
+    const tag = document.activeElement.tagName;
+    const inInput = ['INPUT','TEXTAREA'].includes(tag);
+
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+      e.preventDefault();
+      cmdOpen ? closeCommandPalette() : openCommandPalette();
+    }
+    if (e.key === '/' && !inInput && !cmdOpen) {
+      e.preventDefault();
+      openCommandPalette();
+    }
+    if (e.key === 'Escape') {
+      closeCommandPalette();
       closeMobileMenu();
-    } else {
-      menu.hidden = false;
-      toggle.classList.add('open');
-      toggle.setAttribute('aria-expanded', 'true');
-      document.body.style.overflow = 'hidden';
+      closeViewModal();
     }
   });
 
-  close && close.addEventListener('click', closeMobileMenu);
+  on(input, 'input', () => renderCommands(input.value.trim()));
 
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && !menu.hidden) closeMobileMenu();
+  on(input, 'keydown', e => {
+    const items = qsa('.cmd-item', list);
+    const cur   = items.findIndex(i => i.classList.contains('active'));
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      const next = (cur + 1) % items.length;
+      items.forEach((i, idx) => { i.classList.toggle('active', idx === next); i.setAttribute('aria-selected', idx === next); });
+      items[next]?.scrollIntoView({ block: 'nearest' });
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      const prev = (cur - 1 + items.length) % items.length;
+      items.forEach((i, idx) => { i.classList.toggle('active', idx === prev); i.setAttribute('aria-selected', idx === prev); });
+      items[prev]?.scrollIntoView({ block: 'nearest' });
+    } else if (e.key === 'Enter') {
+      const active = items[cur];
+      if (active) { const cmd = COMMANDS.find(c => c.id === active.dataset.id); if (cmd) { closeCommandPalette(); setTimeout(cmd.fn, 100); } }
+    }
   });
 }
 
-/* ============================================================
-   GLOBAL BODY SPOTLIGHT — CSS custom props
-   ============================================================ */
-function initBodySpotlight() {
-  if (reducedMotion() || touchDevice()) return;
-
-  const update = e => {
-    const x = ((e.clientX / window.innerWidth)  * 100).toFixed(1) + '%';
-    const y = ((e.clientY / window.innerHeight) * 100).toFixed(1) + '%';
-    document.body.style.setProperty('--mx', x);
-    document.body.style.setProperty('--my', y);
-  };
-
-  document.addEventListener('mousemove', update, { passive: true });
+function closeMobileMenu() {
+  const m = qs('#mobileMenu');
+  if (m) { m.hidden = true; document.body.style.overflow = ''; qs('#menuToggle')?.setAttribute('aria-expanded','false'); }
 }
 
-/* ============================================================
-   HERO SPOTLIGHT — localised radial gradient
-   ============================================================ */
-function initHeroSpotlight() {
-  if (reducedMotion() || touchDevice()) return;
 
-  const hero    = qs('.hero');
-  const radial  = qs('.hero-radial');
-  if (!hero || !radial) return;
+/* ═══════════════════════════════════════════
+   5. KEYBOARD SHORTCUTS
+   ═══════════════════════════════════════════ */
+function initKeyboardShortcuts() {
+  const sectionMap = { '1': '#identity', '2': '#work', '3': '#engineering', '4': '#lab', '5': '#opensource', '6': '#journey', '7': '#connect' };
 
-  hero.addEventListener('mousemove', e => {
-    const r = hero.getBoundingClientRect();
-    const x = ((e.clientX - r.left) / r.width  * 100).toFixed(1);
-    const y = ((e.clientY - r.top)  / r.height * 100).toFixed(1);
-    radial.style.background =
-      `radial-gradient(ellipse 55% 50% at ${x}% ${y}%, rgba(59,130,246,.09), transparent 70%)`;
+  on(document, 'keydown', e => {
+    const tag = document.activeElement.tagName;
+    if (['INPUT','TEXTAREA','SELECT'].includes(tag)) return;
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (sectionMap[e.key]) { e.preventDefault(); scrollTo(sectionMap[e.key]); }
+    if (e.key === 'g' || e.key === 'G') openUrl('https://github.com/shardul-2007');
   });
 }
 
-/* ============================================================
-   AMBIENT DOT CANVAS
-   ============================================================ */
-function initDotCanvas() {
-  if (reducedMotion()) return;
 
-  const canvas = qs('#dotCanvas');
+/* ═══════════════════════════════════════════
+   6. SCROLL REVEALS
+   ═══════════════════════════════════════════ */
+function initScrollReveal() {
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+
+  qsa('.reveal-item, .reveal-timeline').forEach(el => io.observe(el));
+}
+
+
+/* ═══════════════════════════════════════════
+   7. DEVELOPER CONSTELLATION
+   ═══════════════════════════════════════════ */
+function initConstellation() {
+  const svg    = qs('#constellationSVG');
+  const lGroup = qs('#cLines', svg);
+  const nGroup = qs('#cNodes', svg);
+  if (!svg || !lGroup || !nGroup) return;
+
+  /* Define connections: [fromIndex, toIndex] — indices match c-node order */
+  const nodeEls = qsa('.c-node', nGroup);
+  const edges   = [[0,1],[0,2],[0,3],[0,4],[1,3],[2,4],[3,5],[4,5]];
+
+  function getPos(nodeEl) {
+    const t = nodeEl.getAttribute('transform') || 'translate(0,0)';
+    const m = t.match(/translate\(([^,]+),([^)]+)\)/);
+    return m ? { x: parseFloat(m[1]), y: parseFloat(m[2]) } : { x: 0, y: 0 };
+  }
+
+  /* Draw lines */
+  edges.forEach(([ai, bi]) => {
+    const a = nodeEls[ai], b = nodeEls[bi];
+    if (!a || !b) return;
+    const pa = getPos(a), pb = getPos(b);
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', pa.x); line.setAttribute('y1', pa.y);
+    line.setAttribute('x2', pb.x); line.setAttribute('y2', pb.y);
+    const len = Math.hypot(pb.x - pa.x, pb.y - pa.y);
+    line.style.strokeDasharray = len;
+    line.style.strokeDashoffset = len;
+    lGroup.appendChild(line);
+    setTimeout(() => line.classList.add('drawn'), 600 + edges.indexOf([ai, bi]) * 150);
+  });
+
+  /* Wait for boot to close then animate lines */
+  setTimeout(() => {
+    qsa('line', lGroup).forEach((l, i) => {
+      setTimeout(() => l.classList.add('drawn'), i * 120);
+    });
+  }, 2000);
+
+  /* Tooltip */
+  const tooltip = qs('#cTooltip');
+
+  nodeEls.forEach(node => {
+    const href  = node.dataset.href;
+    const label = node.dataset.label;
+    const desc  = node.dataset.desc;
+
+    on(node, 'click', () => href && scrollTo(href));
+    on(node, 'keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); href && scrollTo(href); } });
+
+    on(node, 'mouseenter', (ev) => {
+      if (!tooltip) return;
+      tooltip.hidden = false;
+      qs('.c-tooltip-label', tooltip).textContent = label;
+      qs('.c-tooltip-desc',  tooltip).textContent = desc;
+      const wrap = qs('.constellation-wrap');
+      const wRect = wrap.getBoundingClientRect();
+      const nRect = node.getBoundingClientRect();
+      tooltip.style.left = (nRect.left - wRect.left + nRect.width / 2 - tooltip.offsetWidth / 2) + 'px';
+      tooltip.style.top  = (nRect.top  - wRect.top  - tooltip.offsetHeight - 10) + 'px';
+    });
+
+    on(node, 'mouseleave', () => { if (tooltip) tooltip.hidden = true; });
+    on(node, 'focus', (ev) => {
+      if (!tooltip) return;
+      tooltip.hidden = false;
+      qs('.c-tooltip-label', tooltip).textContent = label;
+      qs('.c-tooltip-desc',  tooltip).textContent = desc;
+    });
+    on(node, 'blur', () => { if (tooltip) tooltip.hidden = true; });
+  });
+}
+
+
+/* ═══════════════════════════════════════════
+   8. ENGINEERING TABS
+   ═══════════════════════════════════════════ */
+function initEngineeringTabs() {
+  const tabs   = qsa('.eng-tab');
+  const panels = qsa('.eng-panel');
+
+  tabs.forEach(tab => {
+    on(tab, 'click', () => {
+      tabs.forEach(t => { t.setAttribute('aria-selected', 'false'); t.classList.remove('active'); });
+      panels.forEach(p => p.classList.remove('active'));
+      tab.setAttribute('aria-selected', 'true');
+      tab.classList.add('active');
+      const panel = qs('#' + tab.getAttribute('aria-controls'));
+      if (panel) panel.classList.add('active');
+    });
+    on(tab, 'keydown', e => {
+      const idx = tabs.indexOf(tab);
+      if (e.key === 'ArrowRight') tabs[(idx + 1) % tabs.length].click();
+      if (e.key === 'ArrowLeft')  tabs[(idx - 1 + tabs.length) % tabs.length].click();
+    });
+  });
+}
+
+
+/* ═══════════════════════════════════════════
+   9. CIVICOS ARCHITECTURE DIAGRAM
+   ═══════════════════════════════════════════ */
+function initCivicOSArch() {
+  /* Architecture toggle */
+  const archBtn  = qs('#archToggle');
+  const archDiv  = qs('#civicosArch');
+  const studyBtn = qs('#studyToggle');
+  const studyDiv = qs('#civicosStudy');
+
+  function toggle(btn, div, other, otherDiv) {
+    const isOpen = !div.hidden;
+    div.hidden = isOpen;
+    btn.setAttribute('aria-expanded', !isOpen);
+    if (!isOpen && other && otherDiv && !otherDiv.hidden) {
+      otherDiv.hidden = true;
+      other.setAttribute('aria-expanded', 'false');
+    }
+    if (!isOpen) setTimeout(() => div.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+  }
+
+  on(archBtn,  'click', () => toggle(archBtn, archDiv, studyBtn, studyDiv));
+  on(studyBtn, 'click', () => toggle(studyBtn, studyDiv, archBtn, archDiv));
+
+  /* Architecture node panels */
+  qsa('.arch-node[data-panel]').forEach(node => {
+    const panelId = node.dataset.panel;
+    on(node, 'click', () => {
+      const allPanels = qsa('.arch-panel');
+      const panel = qs('#' + panelId);
+      const isOpen = !panel.hidden;
+
+      allPanels.forEach(p => { p.hidden = true; });
+      qsa('.arch-node').forEach(n => n.setAttribute('aria-expanded', 'false'));
+
+      if (!isOpen) {
+        panel.hidden = false;
+        node.setAttribute('aria-expanded', 'true');
+        panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    });
+    on(node, 'keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); node.click(); } });
+  });
+}
+
+
+/* ═══════════════════════════════════════════
+   10. SHARDUL AI — FAQ SIMULATION
+   ═══════════════════════════════════════════ */
+const AI_KB = [
+  {
+    q: ['civicos', 'civic', 'flagship', 'what is civicos', 'tell me about civicos'],
+    a: `CivicOS is my flagship project — an AI-powered municipal operating system. It combines interactive maps (Leaflet 1.9.4), real-time analytics (Recharts), and AI-driven intelligence to help citizens interact with municipal services.\n\nStack: React + Vite · Leaflet · Recharts · AI APIs · REST APIs\nLive at: civicos-beta.vercel.app`
+  },
+  {
+    q: ['tech stack', 'what tech', 'technology', 'what languages', 'programming', 'tools'],
+    a: `My primary tech stack includes:\n\n• Frontend: React, HTML, CSS, JavaScript\n• Build tools: Vite\n• Maps: Leaflet\n• Data viz: Recharts\n• Languages: JavaScript, Python\n• Other: REST APIs, AI APIs, Git, GitHub\n\nI'm also building problem-solving skills with DSA and scalable systems thinking.`
+  },
+  {
+    q: ['available', 'hire', 'opportunity', 'job', 'internship', 'open to'],
+    a: `Yes! I'm currently open to:\n• Software engineering internships\n• Entry-level full-stack / AI roles\n• Collaborative projects and hackathons\n• Open source contributions\n\nBest way to reach me: shardulparihar2007@gmail.com or LinkedIn at linkedin.com/in/shardul-parihar-/`
+  },
+  {
+    q: ['open source', 'gssoc', 'girlscript', 'nsoc', 'github contributions'],
+    a: `Open source work:\n\n• GirlScript Summer of Code (GSSoC) 2025 — Contributor. Collaborated through GitHub on community projects.\n• NSOC 2025 — Contributor. Participated in an open source development program.\n\nYou can see my GitHub at: github.com/shardul-2007`
+  },
+  {
+    q: ['campus ambassador', 'google', 'internshala', 'guvi', 'physics wallah', 'remoterecruit', 'hackerrank', 'community'],
+    a: `Campus Ambassador roles:\n\n• Google — Campus Ambassador (2025)\n• Internshala — Campus Ambassador (2025)\n• GUVI — Campus Ambassador (2025)\n• Physics Wallah — Campus Ambassador (2025)\n• RemoteRecruit — Student Ambassador (2026)\n• HackerRank — Campus Community (2026)\n\nAll involve student community engagement and promoting learning opportunities.`
+  },
+  {
+    q: ['contact', 'email', 'linkedin', 'reach', 'connect', 'how to'],
+    a: `Best ways to contact Shardul:\n\n📧 Email: shardulparihar2007@gmail.com\n💼 LinkedIn: linkedin.com/in/shardul-parihar-/\n🐙 GitHub: github.com/shardul-2007\n📍 Location: Pune, Maharashtra, India`
+  },
+  {
+    q: ['about', 'who are you', 'who is shardul', 'biography', 'background'],
+    a: `Shardul Parihar is a Software Developer from Pune, India building AI-powered products, full-stack systems and modern web experiences.\n\nHe's an open-source contributor, problem solver, and focused on DSA + scalable systems. Currently active as a campus ambassador for multiple organizations while building real-world projects.`
+  },
+  {
+    q: ['portfolio', 'shardul os', 'this website', 'how is this built', 'website'],
+    a: `This portfolio (SHARDUL.OS) is itself a project:\n\n• Stack: Plain HTML + CSS + JavaScript (zero framework)\n• Deployment: GitHub Pages\n• Architecture: 16 named JS modules, CSS custom property design system\n• Features: Boot sequence, command palette, developer constellation, AI FAQ, GitHub integration\n\nSource: github.com/shardul-2007/my-portfolio`
+  },
+  {
+    q: ['react', 'vite', 'leaflet', 'recharts', 'why'],
+    a: `Technology decisions for CivicOS:\n\n• React: Component-based architecture for complex civic UI. Fast iteration.\n• Vite: Near-instant HMR, optimized builds. Much faster than CRA.\n• Leaflet: Lightweight (~42KB), no API key needed. Better fit than Google Maps for this use case.\n• Recharts: Native React charting, no DOM conflicts, declarative composition.\n\nAll chosen for specific reasons, not just popularity.`
+  },
+  {
+    q: ['location', 'pune', 'india', 'where are you'],
+    a: `Shardul is based in Pune, Maharashtra, India. He's open to both remote and in-person opportunities.`
+  },
+];
+
+function matchAI(q) {
+  const lower = q.toLowerCase().trim();
+  let best = null, bestScore = 0;
+  AI_KB.forEach(entry => {
+    entry.q.forEach(kw => {
+      if (lower.includes(kw) && kw.length > bestScore) {
+        best = entry; bestScore = kw.length;
+      }
+    });
+  });
+  return best;
+}
+
+function addAIMessage(role, text) {
+  const chat = qs('#aiChat');
+  if (!chat) return;
+  const div = document.createElement('div');
+  div.className = `ai-msg ai-msg-${role}`;
+  const sender = document.createElement('span');
+  sender.className = 'ai-sender';
+  sender.textContent = role === 'user' ? 'YOU' : 'SHARDUL.AI';
+  const p = document.createElement('p');
+  p.style.whiteSpace = 'pre-line';
+  p.textContent = text;
+  div.appendChild(sender);
+  div.appendChild(p);
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function addTypingIndicator() {
+  const chat = qs('#aiChat');
+  if (!chat) return null;
+  const div = document.createElement('div');
+  div.className = 'ai-msg ai-typing';
+  div.innerHTML = '<span class="ai-sender">SHARDUL.AI</span><p>…</p>';
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+  return div;
+}
+
+function initShardulAI() {
+  const input  = qs('#aiInput');
+  const send   = qs('#aiSend');
+  const sugs   = qsa('.ai-sug');
+
+  function sendMessage(q) {
+    if (!q.trim()) return;
+    addAIMessage('user', q);
+    if (input) input.value = '';
+    const typing = addTypingIndicator();
+    setTimeout(() => {
+      rm(typing);
+      const match = matchAI(q);
+      if (match) {
+        addAIMessage('ai', match.a);
+      } else {
+        addAIMessage('ai', `I can only answer questions about Shardul's projects, skills, and experience — and I don't have a good answer for "${q}" yet.\n\nTry asking about: CivicOS, tech stack, availability, open source work, campus ambassador roles, or how to contact Shardul.`);
+      }
+    }, 800 + Math.random() * 400);
+  }
+
+  on(send, 'click', () => input && sendMessage(input.value));
+  on(input, 'keydown', e => { if (e.key === 'Enter') { e.preventDefault(); sendMessage(input.value); } });
+  sugs.forEach(s => on(s, 'click', () => sendMessage(s.dataset.q)));
+}
+
+
+/* ═══════════════════════════════════════════
+   11. GITHUB EXPLORER
+   ═══════════════════════════════════════════ */
+function initGitHub() {
+  const content     = qs('#ghExplorerContent');
+  const badge       = qs('#ghBadge');
+  const reposGrid   = qs('#ghReposGrid');
+  const ghStatusDot = qs('#ghStatusDot');
+  const ghStatusVal = qs('#ghStatusVal');
+
+  const GH_USER = 'shardul-2007';
+
+  async function fetchGH() {
+    try {
+      const [userRes, reposRes] = await Promise.all([
+        fetch(`https://api.github.com/users/${GH_USER}`, { headers: { Accept: 'application/vnd.github.v3+json' } }),
+        fetch(`https://api.github.com/users/${GH_USER}/repos?sort=updated&per_page=6&type=public`, { headers: { Accept: 'application/vnd.github.v3+json' } })
+      ]);
+
+      if (!userRes.ok) throw new Error('GitHub API error');
+      const user  = await userRes.json();
+      const repos = await reposRes.json();
+
+      /* Update status */
+      if (badge) { badge.textContent = 'CONNECTED'; badge.className = 'lab-badge badge-green'; }
+      if (ghStatusDot) { ghStatusDot.classList.add('live', 'pulse'); }
+      if (ghStatusVal) ghStatusVal.textContent = 'CONNECTED';
+
+      /* Render explorer */
+      if (content) {
+        content.innerHTML = `
+          <div class="gh-user-card">
+            <img src="${user.avatar_url}&s=96" alt="${user.login}" class="gh-avatar" width="48" height="48" loading="lazy">
+            <div>
+              <div class="gh-user-name">${user.name || user.login}</div>
+              <div class="gh-user-bio">${user.bio || 'Software Developer'}</div>
+            </div>
+          </div>
+          <div class="gh-stats-row">
+            <div class="gh-stat"><span class="gh-stat-val">${user.public_repos}</span><span class="gh-stat-label">REPOS</span></div>
+            <div class="gh-stat"><span class="gh-stat-val">${user.followers}</span><span class="gh-stat-label">FOLLOWERS</span></div>
+            <div class="gh-stat"><span class="gh-stat-val">${user.following}</span><span class="gh-stat-label">FOLLOWING</span></div>
+          </div>
+          <div class="gh-repos-list">
+            ${repos.filter(r => !r.fork).slice(0,4).map(r => `
+              <a href="${r.html_url}" target="_blank" rel="noopener noreferrer" class="gh-repo">
+                <div class="gh-repo-name">
+                  <i class="fab fa-github" style="margin-right:6px;font-size:.8rem;opacity:.5"></i>${r.name}
+                </div>
+                ${r.description ? `<div class="gh-repo-desc">${r.description}</div>` : ''}
+                <div class="gh-repo-meta">
+                  ${r.language ? `<span class="gh-lang">${r.language}</span>` : ''}
+                  <span>★ ${r.stargazers_count}</span>
+                  <span>⑃ ${r.forks_count}</span>
+                </div>
+              </a>`).join('')}
+          </div>`;
+      }
+
+      /* Render repos in Open Source section */
+      if (reposGrid) {
+        const nonFork = repos.filter(r => !r.fork);
+        if (nonFork.length) {
+          reposGrid.innerHTML = nonFork.slice(0,6).map(r => `
+            <a href="${r.html_url}" target="_blank" rel="noopener noreferrer" class="gh-repo">
+              <div class="gh-repo-name"><i class="fab fa-github" style="margin-right:6px;font-size:.8rem;opacity:.5"></i>${r.name}</div>
+              ${r.description ? `<div class="gh-repo-desc">${r.description}</div>` : ''}
+              <div class="gh-repo-meta">
+                ${r.language ? `<span class="gh-lang">${r.language}</span>` : ''}
+                <span>★ ${r.stargazers_count}</span>
+              </div>
+            </a>`).join('');
+        } else {
+          reposGrid.innerHTML = '<p class="gh-error"><i class="fab fa-github"></i>No public repositories found.</p>';
+        }
+      }
+
+    } catch (err) {
+      if (badge) { badge.textContent = 'OFFLINE'; badge.className = 'lab-badge badge-red'; }
+      if (ghStatusDot) { ghStatusDot.style.background = '#ef4444'; }
+      if (ghStatusVal) ghStatusVal.textContent = 'UNAVAILABLE';
+      if (content) {
+        content.innerHTML = `<div class="gh-error">
+          <i class="fab fa-github"></i>
+          <p>GitHub data temporarily unavailable.</p>
+          <a href="https://github.com/${GH_USER}" target="_blank" rel="noopener noreferrer" class="os-link" style="display:inline-flex;margin-top:8px">
+            <i class="fab fa-github"></i> View on GitHub directly
+          </a></div>`;
+      }
+      if (reposGrid) {
+        reposGrid.innerHTML = `<div class="lab-loading">
+          <i class="fab fa-github" style="font-size:1.2rem;color:var(--text-sub)"></i>
+          <span>GitHub data unavailable — <a href="https://github.com/${GH_USER}" target="_blank" rel="noopener noreferrer" style="color:var(--accent)">view profile directly</a></span></div>`;
+      }
+    }
+  }
+
+  fetchGH();
+}
+
+
+/* ═══════════════════════════════════════════
+   12. TOKEN LAB
+   ═══════════════════════════════════════════ */
+function initTokenLab() {
+  const hueSlider = qs('#hueSlider');
+  const satSlider = qs('#satSlider');
+  const hueVal    = qs('#hueVal');
+  const satVal    = qs('#satVal');
+  const swatch    = qs('#tpSwatch');
+  const resetBtn  = qs('#tokenReset');
+  const DEFAULT_HUE = 168, DEFAULT_SAT = 100;
+
+  function updateAccent(hue, sat) {
+    const accent = `hsl(${hue}, ${sat}%, 50%)`;
+    const accentDark = `hsl(${hue}, ${sat}%, 42%)`;
+    const root = document.documentElement;
+    root.style.setProperty('--accent', accent);
+    root.style.setProperty('--accent-dim', `hsla(${hue}, ${sat}%, 50%, 0.12)`);
+    root.style.setProperty('--accent-glow', `hsla(${hue}, ${sat}%, 50%, 0.20)`);
+    root.style.setProperty('--border-accent', `hsla(${hue}, ${sat}%, 50%, 0.25)`);
+    if (hueVal) hueVal.textContent = hue + '°';
+    if (satVal) satVal.textContent = sat + '%';
+    if (swatch) swatch.style.background = accent;
+  }
+
+  function resetToDefault() {
+    const root = document.documentElement;
+    root.style.removeProperty('--accent');
+    root.style.removeProperty('--accent-dim');
+    root.style.removeProperty('--accent-glow');
+    root.style.removeProperty('--border-accent');
+    if (hueSlider) hueSlider.value = DEFAULT_HUE;
+    if (satSlider) satSlider.value = DEFAULT_SAT;
+    if (hueVal) hueVal.textContent = DEFAULT_HUE + '°';
+    if (satVal) satVal.textContent = DEFAULT_SAT + '%';
+    if (swatch) swatch.style.background = '';
+  }
+
+  on(hueSlider, 'input', () => updateAccent(hueSlider.value, satSlider.value));
+  on(satSlider, 'input', () => updateAccent(hueSlider.value, satSlider.value));
+  on(resetBtn,  'click', resetToDefault);
+
+  /* Init swatch */
+  if (swatch) swatch.style.background = `hsl(${DEFAULT_HUE}, ${DEFAULT_SAT}%, 50%)`;
+}
+
+
+/* ═══════════════════════════════════════════
+   13. CONTACT FLOW
+   ═══════════════════════════════════════════ */
+function initContactFlow() {
+  const intentBtns  = qsa('.intent-btn');
+  const messages    = qsa('.ic-msg');
+  const form        = qs('#connectForm');
+  const statusEl    = qs('#connectStatus');
+
+  intentBtns.forEach(btn => {
+    on(btn, 'click', () => {
+      intentBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const intent = btn.dataset.intent;
+      messages.forEach(m => { m.classList.toggle('active', m.dataset.intent === intent); });
+    });
+  });
+
+  on(form, 'submit', async e => {
+    e.preventDefault();
+    const name  = qs('#cfName').value.trim();
+    const email = qs('#cfEmail').value.trim();
+    const msg   = qs('#cfMsg').value.trim();
+    const intent = qs('.intent-btn.active')?.dataset.intent || 'other';
+
+    /* Validate */
+    let valid = true;
+    [['#cfName', name], ['#cfEmail', email], ['#cfMsg', msg]].forEach(([id, val]) => {
+      const el = qs(id);
+      el.classList.toggle('error', !val);
+      if (!val) valid = false;
+    });
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      qs('#cfEmail').classList.add('error');
+      valid = false;
+    }
+    if (!valid) { statusEl.textContent = 'Please fill in all required fields correctly.'; statusEl.className = 'form-status error'; return; }
+
+    /* Show loading */
+    const submitBtn = form.querySelector('.connect-submit-btn');
+    qs('.submit-label', submitBtn).textContent = 'Sending…';
+    submitBtn.disabled = true;
+    statusEl.textContent = '';
+
+    /* Send via mailto as fallback (no backend) */
+    const body  = encodeURIComponent(`Name: ${name}\nIntent: ${intent}\n\n${msg}`);
+    const mailto = `mailto:shardulparihar2007@gmail.com?subject=Portfolio%20Contact%20[${intent}]%20from%20${encodeURIComponent(name)}&body=${body}`;
+    window.location.href = mailto;
+
+    setTimeout(() => {
+      qs('.submit-label', submitBtn).textContent = 'Send Message';
+      submitBtn.disabled = false;
+      statusEl.textContent = 'Your email client should open with a pre-filled message. Alternatively email shardulparihar2007@gmail.com directly.';
+      statusEl.className = 'form-status success';
+    }, 1200);
+  });
+}
+
+
+/* ═══════════════════════════════════════════
+   14. VIEW MODE
+   ═══════════════════════════════════════════ */
+let currentViewMode = 'default';
+
+function setViewMode(mode) {
+  currentViewMode = mode;
+  document.body.setAttribute('data-view', mode);
+  const banner = qs('#viewBanner');
+  const bannerText = qs('#viewBannerText');
+
+  if (mode === 'default') {
+    if (banner) banner.hidden = true;
+    qsa('.vm-opt').forEach(o => o.classList.toggle('active', o.dataset.mode === 'default'));
+  } else {
+    const labels = { recruiter: 'VIEWING AS RECRUITER', developer: 'VIEWING AS DEVELOPER', collaborator: 'VIEWING AS COLLABORATOR' };
+    if (banner) { banner.hidden = false; if (bannerText) bannerText.textContent = labels[mode] || mode.toUpperCase(); }
+    qsa('.vm-opt').forEach(o => o.classList.toggle('active', o.dataset.mode === mode));
+  }
+  closeViewModal();
+}
+
+function openViewModal() {
+  const modal = qs('#viewModeModal');
+  if (!modal) return;
+  modal.hidden = false;
+  qs('.vm-opt', modal)?.focus();
+}
+
+function closeViewModal() {
+  const modal = qs('#viewModeModal');
+  if (modal) modal.hidden = true;
+}
+
+function initViewMode() {
+  const trigger   = qs('#viewModeToggle');
+  const modal     = qs('#viewModeModal');
+  const backdrop  = qs('#vmBackdrop');
+  const closeBtn  = qs('#vmClose');
+  const bannerReset = qs('#viewBannerReset');
+
+  on(trigger,     'click', openViewModal);
+  on(closeBtn,    'click', closeViewModal);
+  on(backdrop,    'click', closeViewModal);
+  on(bannerReset, 'click', () => setViewMode('default'));
+
+  qsa('.vm-opt', modal).forEach(opt => {
+    on(opt, 'click', () => setViewMode(opt.dataset.mode));
+  });
+}
+
+
+/* ═══════════════════════════════════════════
+   15. WORD ROTATOR
+   ═══════════════════════════════════════════ */
+function initWordRotator() {
+  if (reduced()) return;
+  const words = qsa('.id-word');
+  if (!words.length) return;
+  let cur = 0;
+  setInterval(() => {
+    words[cur].classList.remove('active');
+    cur = (cur + 1) % words.length;
+    words[cur].classList.add('active');
+  }, 2800);
+}
+
+
+/* ═══════════════════════════════════════════
+   16. CANVAS PARTICLES — Subtle background dots
+   ═══════════════════════════════════════════ */
+function initCanvas() {
+  if (reduced()) return;
+  const canvas = qs('#idCanvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
+  let W, H, dots = [], raf;
 
-  let dots = [], w = 0, h = 0, raf;
+  function resize() {
+    W = canvas.width  = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+  }
 
-  const resize = () => {
-    w = canvas.width  = canvas.offsetWidth;
-    h = canvas.height = canvas.offsetHeight;
-    makeDots();
-  };
-
-  const makeDots = () => {
-    const n = Math.floor((w * h) / 16000);
-    dots = Array.from({ length: n }, () => ({
-      x:  Math.random() * w,
-      y:  Math.random() * h,
-      r:  Math.random() * 1.2 + 0.4,
-      vx: (Math.random() - 0.5) * 0.18,
-      vy: (Math.random() - 0.5) * 0.18,
-      a:  Math.random() * 0.35 + 0.08,
+  function init() {
+    dots = Array.from({ length: 60 }, () => ({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: Math.random() * 1.2 + 0.3,
+      vx: (Math.random() - 0.5) * 0.2,
+      vy: (Math.random() - 0.5) * 0.2,
     }));
-  };
+  }
 
-  const draw = () => {
-    ctx.clearRect(0, 0, w, h);
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+    const col = isDark ? 'rgba(0,212,170,' : 'rgba(0,122,99,';
     dots.forEach(d => {
-      d.x = (d.x + d.vx + w) % w;
-      d.y = (d.y + d.vy + h) % h;
+      d.x += d.vx; d.y += d.vy;
+      if (d.x < 0) d.x = W; if (d.x > W) d.x = 0;
+      if (d.y < 0) d.y = H; if (d.y > H) d.y = 0;
       ctx.beginPath();
       ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(96,165,250,${d.a})`;
+      ctx.fillStyle = col + (Math.random() * 0.15 + 0.05) + ')';
       ctx.fill();
     });
     raf = requestAnimationFrame(draw);
-  };
-
-  // Pause when hero not visible (perf)
-  const heroEl = qs('.hero');
-  if (heroEl) {
-    new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) { if (!raf) draw(); }
-      else { cancelAnimationFrame(raf); raf = null; }
-    }).observe(heroEl);
   }
 
-  new ResizeObserver(resize).observe(canvas);
-  resize();
-  draw();
-}
-
-/* ============================================================
-   ROLE ROTATOR — fade + blur word swap
-   ============================================================ */
-function initRoleRotator() {
-  const words = qsa('.role-word');
-  if (!words.length) return;
-
-  let idx = 0;
-
-  // If reduced motion: just show first word, no transitions
-  if (reducedMotion()) {
-    words[0].classList.add('active');
-    return;
-  }
-
-  words[0].classList.add('active');
-
-  const cycle = () => {
-    const current = words[idx];
-    current.classList.remove('active');
-    current.classList.add('exit');
-
-    setTimeout(() => current.classList.remove('exit'), 560);
-
-    idx = (idx + 1) % words.length;
-    words[idx].classList.add('active');
-  };
-
-  setInterval(cycle, 2600);
-}
-
-/* ============================================================
-   SKILLS MARQUEE — pause on hover, reduced-motion safe
-   ============================================================ */
-function initMarquee() {
-  const wrap  = qs('.marquee-wrap');
-  const inner = qs('.marquee-inner');
-  if (!wrap || !inner) return;
-
-  if (reducedMotion()) {
-    inner.style.animation = 'none';
-    return;
-  }
-  // Pause/resume handled entirely by CSS :hover selector
-}
-
-/* ============================================================
-   SCROLL REVEAL — directional (up / left / right / scale)
-   ============================================================ */
-function initScrollReveal() {
-  const items    = qsa('.reveal-item');
-  const timeline = qsa('.reveal-timeline');
-  if (!items.length && !timeline.length) return;
-
-  // Reveal items — grouped for stagger
-  const groups = new Map();
-  items.forEach(el => {
-    const parent = el.parentElement;
-    if (!groups.has(parent)) groups.set(parent, []);
-    groups.get(parent).push(el);
-  });
-
-  const itemObs = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-      const el    = entry.target;
-      const group = groups.get(el.parentElement) || [el];
-      const i     = group.indexOf(el);
-      setTimeout(() => el.classList.add('revealed'), i * 90);
-      itemObs.unobserve(el);
-    });
-  }, { rootMargin: '0px 0px -72px 0px', threshold: 0.05 });
-
-  items.forEach(el => itemObs.observe(el));
-
-  // Timeline stagger
-  if (timeline.length) {
-    let idx = 0;
-    const tlObs = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (!entry.isIntersecting) return;
-        const delay = idx++ * 110;
-        setTimeout(() => entry.target.classList.add('revealed'), delay);
-        tlObs.unobserve(entry.target);
-      });
-    }, { rootMargin: '0px 0px -50px 0px', threshold: 0.05 });
-    timeline.forEach(el => tlObs.observe(el));
-  }
-}
-
-/* ============================================================
-   PROJECT FILTERS
-   ============================================================ */
-function initProjectFilters() {
-  const btns  = qsa('.filter-btn');
-  const grid  = qs('#projectsGrid');
-  if (!btns.length || !grid) return;
-
-  btns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      btns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-
-      const filter = btn.dataset.filter;
-
-      qsa('.proj-card', grid).forEach(card => {
-        const cat   = card.dataset.category || '';
-        const match = filter === 'all' || cat === filter;
-        card.classList.toggle('hidden', !match);
-      });
+  /* Only run when visible */
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { if (!raf) { resize(); init(); draw(); } }
+      else { if (raf) { cancelAnimationFrame(raf); raf = null; } }
     });
   });
+  io.observe(canvas.parentElement);
+
+  on(window, 'resize', () => { resize(); init(); }, { passive: true });
 }
 
-/* ============================================================
-   CARD TILT — requestAnimationFrame, smooth reset
-   ============================================================ */
-function initCardTilt() {
-  if (reducedMotion() || touchDevice()) return;
 
-  qsa('.proj-card:not(.proj-card-soon)').forEach(card => {
-    let raf, targetX = 0, targetY = 0, currX = 0, currY = 0;
-    let active = false;
+/* ═══════════════════════════════════════════
+   BOOT — run immediately
+   ═══════════════════════════════════════════ */
+initBoot();
 
-    const lerp = (a, b, t) => a + (b - a) * t;
-
-    const animate = () => {
-      currX = lerp(currX, targetX, 0.12);
-      currY = lerp(currY, targetY, 0.12);
-      card.style.transform =
-        `perspective(700px) rotateX(${currX}deg) rotateY(${currY}deg) translateY(-4px)`;
-
-      if (active || Math.abs(currX) > 0.01 || Math.abs(currY) > 0.01) {
-        raf = requestAnimationFrame(animate);
-      } else {
-        card.style.transform = '';
-        cancelAnimationFrame(raf);
-      }
-    };
-
-    card.addEventListener('mousemove', e => {
-      const r  = card.getBoundingClientRect();
-      const cx = r.left + r.width  / 2;
-      const cy = r.top  + r.height / 2;
-      targetX = ((e.clientY - cy) / (r.height / 2)) * -4;
-      targetY = ((e.clientX - cx) / (r.width  / 2)) *  4;
-      if (!active) { active = true; animate(); }
-    });
-
-    card.addEventListener('mouseleave', () => {
-      active = false;
-      targetX = 0; targetY = 0;
-    });
-  });
-}
-
-/* ============================================================
-   FEATURED PROJECT SUBTLE TILT
-   ============================================================ */
-function initFeaturedTilt() {
-  if (reducedMotion() || touchDevice()) return;
-
-  const fp = qs('.featured-project');
-  if (!fp) return;
-
-  fp.addEventListener('mousemove', e => {
-    const r  = fp.getBoundingClientRect();
-    const rx = ((e.clientY - (r.top  + r.height/2)) / (r.height/2)) * -1.5;
-    const ry = ((e.clientX - (r.left + r.width /2)) / (r.width /2)) *  1.5;
-    fp.style.transform = `perspective(1200px) rotateX(${rx}deg) rotateY(${ry}deg)`;
-  });
-  fp.addEventListener('mouseleave', () => {
-    fp.style.transform = '';
-  });
-}
-
-/* ============================================================
-   CASE STUDY TOGGLE
-   ============================================================ */
-function initCaseStudy() {
-  qsa('.case-study-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const panelId = btn.getAttribute('aria-controls');
-      const panel   = qs(`#${panelId}`);
-      if (!panel) return;
-
-      const open = !panel.hidden;
-      panel.hidden = open;
-      btn.setAttribute('aria-expanded', String(!open));
-      btn.querySelector('span').textContent = open ? 'Case Study' : 'Close';
-
-      if (!open) {
-        setTimeout(() =>
-          panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 60);
-      }
-    });
-  });
-}
-
-/* ============================================================
-   CONTACT FORM — mailto fallback
-   ============================================================ */
-function initContactForm() {
-  const form   = qs('#contactForm');
-  const status = qs('#formStatus');
-  if (!form || !status) return;
-
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-
-    const name  = (qs('#cName',  form)?.value || '').trim();
-    const email = (qs('#cEmail', form)?.value || '').trim();
-    const msg   = (qs('#cMsg',   form)?.value || '').trim();
-
-    if (!name || !email || !msg) {
-      status.textContent = 'Please fill in all fields.';
-      status.className   = 'form-status error';
-      return;
-    }
-
-    const sub  = encodeURIComponent(`Portfolio Contact from ${name}`);
-    const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${msg}`);
-    window.location.href =
-      `mailto:shardulparihar2007@gmail.com?subject=${sub}&body=${body}`;
-
-    status.textContent = 'Opening your email client… If it didn\'t open, email shardulparihar2007@gmail.com directly.';
-    status.className   = 'form-status success';
-    form.reset();
-
-    setTimeout(() => {
-      status.textContent = '';
-      status.className   = 'form-status';
-    }, 9000);
-  });
-}
-
-/* ============================================================
-   BACK TO TOP
-   ============================================================ */
-function initBackToTop() {
-  const btn = qs('#topBtn');
-  if (!btn) return;
-
-  const update = () => btn.classList.toggle('visible', window.scrollY > 420);
-  window.addEventListener('scroll', update, { passive: true });
-  btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-  update();
-}
-
-/* ============================================================
-   BOOT — run all modules
-   ============================================================ */
-
-// Apply saved theme IMMEDIATELY (avoids flash of wrong theme)
-(function applyThemeEarly() {
-  var saved = localStorage.getItem('sp-theme');
-  if (saved) document.documentElement.setAttribute('data-theme', saved);
-})();
-
+/* ═══════════════════════════════════════════
+   DOMCONTENTLOADED — run everything else
+   ═══════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
   initThemeToggle();
-  initLoader();
-  initScrollProgress();
-  initCursor();
-  initMagnetic();
-  initHeader();
-  initScrollSpy();
-  initSmoothScroll();
-  initMobileMenu();
-  initBodySpotlight();
-  initHeroSpotlight();
-  initDotCanvas();
-  initRoleRotator();
-  initMarquee();
+  initNav();
+  initCommandPalette();
+  initKeyboardShortcuts();
   initScrollReveal();
-  initProjectFilters();
-  initCardTilt();
-  initFeaturedTilt();
-  initCaseStudy();
-  initContactForm();
-  initBackToTop();
+  initConstellation();
+  initEngineeringTabs();
+  initCivicOSArch();
+  initShardulAI();
+  initGitHub();
+  initTokenLab();
+  initContactFlow();
+  initViewMode();
+  initWordRotator();
+  initCanvas();
 });
