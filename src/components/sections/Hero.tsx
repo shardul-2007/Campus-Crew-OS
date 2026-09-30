@@ -14,250 +14,249 @@ const CHIPS = [
   { label: 'Open Source',    accent: false },
 ];
 
+// Nodes that emerge from portrait after reveal
+const EMERGE_NODES = [
+  { label: 'CivicOS',     sub: 'AI Platform',    x: '62%', y: '22%', delay: 2.0 },
+  { label: 'Open Source', sub: 'GSSoC · NSOC',   x: '58%', y: '68%', delay: 2.2 },
+  { label: '10+',         sub: 'Programs',        x: '82%', y: '45%', delay: 2.4 },
+];
+
 export default function Hero() {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
-  const textY   = useTransform(scrollYProgress, [0, 1], [0, -60]);
-  const portraitY = useTransform(scrollYProgress, [0, 1], [0, -40]);
+  const contentY      = useTransform(scrollYProgress, [0, 1], [0, -55]);
+  const photoParallax = useTransform(scrollYProgress, [0, 1], [0, 30]);
+  const photoOpacity  = useTransform(scrollYProgress, [0, 0.75], [1, 0.3]);
 
   return (
     <section ref={ref} id="home" className="relative min-h-screen overflow-hidden flex items-center">
 
-      {/* Deep background */}
-      <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse 80% 70% at 70% 50%, rgba(0,245,200,0.04) 0%, transparent 65%), #050810' }} />
-      <div className="absolute inset-0 grid-bg opacity-25 pointer-events-none" />
+      {/* Grid */}
+      <div className="absolute inset-0 grid-bg opacity-20 pointer-events-none" />
 
-      {/* Ambient glow from portrait side */}
-      <div className="absolute right-0 top-0 bottom-0 w-1/2 pointer-events-none"
-        style={{ background: 'radial-gradient(ellipse 60% 80% at 80% 50%, rgba(0,245,200,0.06) 0%, transparent 70%)' }} />
+      {/* ══════════════════════════════════════════════════════════════
+          LARGE PORTRAIT — fills the right ~55% of the viewport
+      ══════════════════════════════════════════════════════════════ */}
+      <motion.div
+        style={{ y: photoParallax, opacity: photoOpacity }}
+        className="absolute inset-0 pointer-events-none"
+        aria-hidden="true"
+      >
+        {/* Photo reveal — expands circle from face centre */}
+        <motion.div
+          className="absolute right-0 top-0 bottom-0"
+          style={{ width: '62%' }}
+          initial={{ clipPath: 'circle(0% at 48% 36%)' }}
+          animate={{ clipPath: 'circle(130% at 48% 36%)' }}
+          transition={{ duration: 1.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <img
+            src={BASE + '/imageshardul.png'}
+            alt="Shardul Parihar"
+            style={{
+              width: '100%', height: '100%',
+              objectFit: 'cover', objectPosition: 'center top',
+              filter: 'brightness(0.55) contrast(1.12) saturate(0.85)',
+              display: 'block',
+            }}
+          />
+          {/* Left-edge fade: blends photo into page bg */}
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'linear-gradient(to right, #050810 0%, rgba(5,8,16,0.75) 20%, rgba(5,8,16,0.25) 45%, transparent 65%)',
+          }} />
+          {/* Bottom fade */}
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'linear-gradient(to top, #050810 0%, transparent 25%)',
+          }} />
+          {/* Top fade */}
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'linear-gradient(to bottom, #050810 0%, transparent 18%)',
+          }} />
+          {/* Subtle scanlines */}
+          <div style={{
+            position: 'absolute', inset: 0,
+            backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.055) 2px, rgba(0,0,0,0.055) 4px)',
+            pointerEvents: 'none',
+          }} />
+          {/* Cyan left-edge accent line */}
+          <div style={{
+            position: 'absolute', left: 0, top: '15%', bottom: '15%', width: 1,
+            background: 'linear-gradient(to bottom, transparent, rgba(0,245,200,0.35), transparent)',
+          }} />
+        </motion.div>
 
-      <div className="section-container relative z-10 w-full py-32 pt-36">
-        <div className="grid lg:grid-cols-2 gap-12 xl:gap-20 items-center min-h-[80vh]">
+        {/* Scan-sweep animation on reveal */}
+        <motion.div
+          initial={{ top: '36%', opacity: 0 }}
+          animate={{ top: ['36%', '-5%'], opacity: [0, 0.7, 0.7, 0] }}
+          transition={{ duration: 1.8, delay: 0.15, times: [0, 0.05, 0.9, 1] }}
+          style={{
+            position: 'absolute', right: 0, width: '62%', height: 2,
+            background: 'linear-gradient(90deg, transparent 0%, rgba(0,245,200,0.5) 40%, rgba(0,245,200,0.8) 60%, transparent 100%)',
+            boxShadow: '0 0 20px rgba(0,245,200,0.4)',
+          }}
+        />
 
-          {/* ── LEFT: Text ─────────────────────────────────────────── */}
-          <motion.div style={{ y: textY }} className="flex flex-col order-2 lg:order-1">
+        {/* Ambient glow on left from the portrait */}
+        <div style={{
+          position: 'absolute', left: '28%', top: '20%', width: 300, height: 400,
+          background: 'radial-gradient(ellipse, rgba(0,245,200,0.05) 0%, transparent 70%)',
+          pointerEvents: 'none',
+        }} />
+      </motion.div>
 
-            {/* Status badge */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-              className="flex items-center gap-3 mb-8"
-            >
-              <span className="status-dot status-dot-pulse" style={{ width: 7, height: 7 }} />
-              <span className="mono text-xs tracking-[0.22em] text-[var(--accent)]">OPEN TO OPPORTUNITIES</span>
-            </motion.div>
+      {/* "FROM MY MIND → TO MY WORK" emerging nodes */}
+      {EMERGE_NODES.map((node) => (
+        <motion.div
+          key={node.label}
+          initial={{ opacity: 0, scale: 0.6 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: node.delay, ease: [0.16, 1, 0.3, 1] }}
+          className="absolute z-10 pointer-events-none hidden lg:block"
+          style={{ left: node.x, top: node.y }}
+        >
+          <div
+            className="glass rounded-xl px-3 py-2 text-center"
+            style={{
+              borderColor: 'rgba(0,245,200,0.2)',
+              boxShadow: '0 0 20px rgba(0,245,200,0.1)',
+              backdropFilter: 'blur(12px)',
+            }}
+          >
+            <div className="font-bold text-sm text-[var(--accent)]">{node.label}</div>
+            <div className="mono text-[9px] text-[var(--text-sub)] tracking-widest mt-0.5">{node.sub}</div>
+          </div>
+        </motion.div>
+      ))}
 
-            {/* Name */}
-            <motion.h1
-              initial={{ opacity: 0, y: 32 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-              className="font-bold tracking-tight leading-none mb-6"
-              style={{ fontSize: 'clamp(3.2rem, 7vw, 5.5rem)', letterSpacing: '-0.02em' }}
-            >
-              <span className="block text-[var(--text)]">Shardul</span>
-              <span className="block gradient-text">Parihar.</span>
-            </motion.h1>
+      {/* ══════════════════════════════════════════════════════════════
+          HERO TEXT — left side, always readable
+      ══════════════════════════════════════════════════════════════ */}
+      <motion.div style={{ y: contentY }} className="section-container relative z-20 w-full py-28 pt-36">
+        <div className="max-w-[500px]">
 
-            {/* Role */}
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.25 }}
-              className="mono text-sm tracking-[0.15em] text-[var(--text-sub)] mb-6 uppercase"
-            >
-              Software Engineer &nbsp;/&nbsp; Builder &nbsp;/&nbsp; AI Enthusiast
-            </motion.p>
-
-            {/* Chip row */}
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.35 }}
-              className="flex flex-wrap gap-2 mb-8"
-            >
-              {CHIPS.map((c, i) => (
-                <motion.span
-                  key={c.label}
-                  initial={{ opacity: 0, scale: 0.85 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.4 + i * 0.07 }}
-                  className="mono text-[11px] px-3 py-1.5 rounded-full"
-                  style={{
-                    background: c.accent ? 'var(--accent-dim)' : 'rgba(255,255,255,0.04)',
-                    border: c.accent ? '1px solid var(--border-glow)' : '1px solid var(--border)',
-                    color: c.accent ? 'var(--accent)' : 'var(--text-muted)',
-                    letterSpacing: '0.1em',
-                  }}
-                >
-                  {c.label}
-                </motion.span>
-              ))}
-            </motion.div>
-
-            {/* Bio */}
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-              className="text-base text-[var(--text-muted)] leading-relaxed mb-10 max-w-md"
-              style={{ fontWeight: 300 }}
-            >
-              {PERSONAL.bio}
-            </motion.p>
-
-            {/* Meta row */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.55 }}
-              className="flex items-center gap-4 mb-10 text-xs text-[var(--text-sub)] mono"
-            >
-              <span className="flex items-center gap-1.5"><MapPin size={12} /> Pune, India</span>
-              <span className="w-px h-3 bg-[var(--border)]" />
-              <span className="flex items-center gap-1.5"><Zap size={12} className="text-[var(--accent)]" />Open to work</span>
-              <span className="w-px h-3 bg-[var(--border)]" />
-              <span className="text-[var(--text-sub)]">Build {PERSONAL.buildVersion}</span>
-            </motion.div>
-
-            {/* CTAs */}
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.65 }}
-              className="flex flex-wrap gap-3"
-            >
-              <a href="#projects" className="glow-btn glow-btn-primary">See My Work</a>
-              <a href="#contact"  className="glow-btn glow-btn-ghost">Get In Touch</a>
-              <a href="https://www.linkedin.com/in/shardul-parihar/" target="_blank" rel="noopener noreferrer" className="glow-btn glow-btn-ghost">
-                LinkedIn
-              </a>
-            </motion.div>
+          {/* Status */}
+          <motion.div
+            initial={{ opacity: 0, x: -16 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 1.9 }}
+            className="flex items-center gap-3 mb-7"
+          >
+            <span className="status-dot status-dot-pulse" style={{ width: 7, height: 7 }} />
+            <span className="mono text-[10px] tracking-[0.22em] text-[var(--accent)]">AVAILABLE FOR WORK</span>
           </motion.div>
 
-          {/* ── RIGHT: Portrait with cinematic center-reveal ────────── */}
-          <motion.div
-            style={{ y: portraitY }}
-            className="relative flex items-center justify-center order-1 lg:order-2"
+          {/* Name */}
+          <motion.h1
+            initial={{ opacity: 0, y: 28 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 2.0, ease: [0.16, 1, 0.3, 1] }}
+            className="font-bold tracking-tight leading-none mb-5"
+            style={{ fontSize: 'clamp(3rem, 6vw, 5.2rem)', letterSpacing: '-0.025em' }}
           >
-            {/* Outer ambient glow */}
-            <div
-              className="absolute pointer-events-none"
-              style={{
-                width: 420, height: 500,
-                borderRadius: '40% 60% 55% 45% / 45% 40% 60% 55%',
-                background: 'radial-gradient(circle, rgba(0,245,200,0.12) 0%, transparent 70%)',
-                filter: 'blur(40px)',
-              }}
-            />
+            <span className="block text-[var(--text)]">Shardul</span>
+            <span className="block gradient-text">Parihar.</span>
+          </motion.h1>
 
-            {/* Portrait container */}
-            <div className="relative" style={{ width: 'min(340px, 85vw)', aspectRatio: '3/4' }}>
+          {/* Role */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 2.15 }}
+            className="mono text-xs tracking-[0.18em] text-[var(--text-sub)] mb-6 uppercase"
+          >
+            Software Engineer &nbsp;·&nbsp; Builder &nbsp;·&nbsp; AI Enthusiast
+          </motion.p>
 
-              {/* Glass border frame */}
-              <div
-                className="absolute inset-0 rounded-3xl"
+          {/* Skill chips */}
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 2.25 }}
+            className="flex flex-wrap gap-2 mb-7"
+          >
+            {CHIPS.map((c, i) => (
+              <motion.span key={c.label}
+                initial={{ opacity: 0, scale: 0.85 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 2.3 + i * 0.08 }}
+                className="mono text-[11px] px-3 py-1.5 rounded-full select-none"
                 style={{
-                  border: '1px solid rgba(0,245,200,0.18)',
-                  boxShadow: '0 0 40px rgba(0,245,200,0.1), 0 32px 64px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08)',
-                  zIndex: 2,
-                  pointerEvents: 'none',
-                  borderRadius: 24,
+                  background: c.accent ? 'var(--accent-dim)' : 'rgba(255,255,255,0.04)',
+                  border: c.accent ? '1px solid var(--border-glow)' : '1px solid var(--border)',
+                  color: c.accent ? 'var(--accent)' : 'var(--text-muted)',
+                  letterSpacing: '0.1em',
                 }}
-              />
+              >{c.label}</motion.span>
+            ))}
+          </motion.div>
 
-              {/* Scanlines overlay */}
-              <div
-                className="absolute inset-0 pointer-events-none"
-                style={{
-                  zIndex: 3,
-                  borderRadius: 24,
-                  backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.04) 2px, rgba(0,0,0,0.04) 4px)',
-                }}
-              />
+          {/* Bio */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 2.5 }}
+            className="text-sm text-[var(--text-muted)] leading-relaxed mb-9"
+            style={{ fontWeight: 300 }}
+          >
+            {PERSONAL.bio}
+          </motion.p>
 
-              {/* ── The photo with CINEMATIC CENTER REVEAL ── */}
-              <motion.div
-                className="absolute inset-0 overflow-hidden"
-                style={{ borderRadius: 24 }}
-                initial={{ clipPath: 'circle(0% at 50% 40%)' }}
-                animate={{ clipPath: 'circle(120% at 50% 40%)' }}
-                transition={{ duration: 1.4, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              >
-                <img
-                  src={BASE + '/imageshardul.png'}
-                  alt="Shardul Parihar — Software Engineer"
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    objectPosition: 'center top',
-                    display: 'block',
-                  }}
-                />
-                {/* Bottom gradient for text readability */}
-                <div
-                  style={{
-                    position: 'absolute', inset: 0, borderRadius: 24,
-                    background: 'linear-gradient(to top, rgba(5,8,16,0.5) 0%, transparent 50%)',
-                  }}
-                />
-              </motion.div>
+          {/* CTA buttons */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 2.65 }}
+            className="flex flex-wrap gap-3"
+          >
+            <a href="#projects" className="glow-btn glow-btn-primary">
+              View My Work
+            </a>
+            <a href="#contact" className="glow-btn glow-btn-ghost">
+              Get In Touch
+            </a>
+            <a
+              href="https://www.linkedin.com/in/shardul-parihar/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="glow-btn glow-btn-ghost"
+            >
+              LinkedIn ↗
+            </a>
+          </motion.div>
 
-              {/* Bottom label overlay */}
-              <motion.div
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.6, duration: 0.5 }}
-                className="absolute bottom-0 left-0 right-0 p-5 z-10"
-              >
-                <div
-                  className="glass rounded-xl px-4 py-3"
-                  style={{ borderColor: 'rgba(0,245,200,0.15)', backdropFilter: 'blur(12px)' }}
-                >
-                  <div className="font-semibold text-sm">{PERSONAL.name}</div>
-                  <div className="mono text-[10px] text-[var(--accent)] tracking-widest mt-0.5">{PERSONAL.subtitle}</div>
-                </div>
-              </motion.div>
-
-              {/* Corner accent dots */}
-              {[
-                { top: -6, left: -6 }, { top: -6, right: -6 },
-                { bottom: -6, left: -6 }, { bottom: -6, right: -6 },
-              ].map((pos, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, scale: 0 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 1.5 + i * 0.08 }}
-                  style={{
-                    position: 'absolute', width: 12, height: 12,
-                    border: '2px solid var(--accent)', borderRadius: 2,
-                    ...pos,
-                  }}
-                />
-              ))}
-            </div>
+          {/* Location / meta */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 2.9 }}
+            className="flex items-center gap-4 mt-8 text-xs mono text-[var(--text-sub)]"
+          >
+            <span className="flex items-center gap-1.5"><MapPin size={11} /> Pune, India</span>
+            <span className="w-px h-3 bg-[var(--border)]" />
+            <span className="flex items-center gap-1.5"><Zap size={11} className="text-[var(--accent)]" /> Open to work</span>
           </motion.div>
         </div>
-      </div>
+      </motion.div>
 
-      {/* Scroll hint */}
+      {/* Scroll indicator */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 2 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 pointer-events-none"
+        transition={{ delay: 3.2 }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-1.5 pointer-events-none"
       >
-        <span className="mono text-[9px] text-[var(--text-sub)] tracking-[0.25em]">SCROLL</span>
-        <motion.div animate={{ y: [0, 5, 0] }} transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}>
+        <span className="mono text-[9px] tracking-[0.25em] text-[var(--text-sub)]">SCROLL</span>
+        <motion.div animate={{ y: [0, 5, 0] }} transition={{ repeat: Infinity, duration: 1.8 }}>
           <ArrowDown size={13} className="text-[var(--text-sub)]" />
         </motion.div>
       </motion.div>
 
-      {/* Bottom fade */}
-      <div className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none"
+      {/* Bottom page fade */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none z-10"
         style={{ background: 'linear-gradient(to top, #050810, transparent)' }} />
     </section>
   );
