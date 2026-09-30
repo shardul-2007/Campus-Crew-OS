@@ -1,64 +1,56 @@
 'use client';
-import { motion } from 'framer-motion';
-import { PERSONAL } from '@/data/portfolio';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronUp, ChevronDown } from 'lucide-react';
 
 export default function SystemStatus() {
+  const [expanded, setExpanded] = useState(false);
+
   return (
     <motion.div
-      initial={{ opacity: 0, x: -32 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: 1.2, duration: 0.6 }}
-      className="fixed bottom-6 left-6 z-50 glass rounded-2xl p-4 w-[200px] hidden xl:block"
-      style={{ borderColor: 'rgba(0,245,200,0.15)', boxShadow: '0 8px 32px rgba(0,0,0,0.5)' }}
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 2.2, duration: 0.5 }}
+      className="fixed bottom-5 right-5 z-50 hidden lg:flex flex-col items-end gap-0"
     >
-      {/* Header */}
-      <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[var(--border)]">
-        <span className="status-dot status-dot-pulse" style={{ width: 6, height: 6 }} />
-        <span className="sys-label-accent text-[9px] tracking-[0.18em]">SYSTEM STATUS</span>
-      </div>
-
-      {/* Rows */}
-      {[
-        { label: 'ROLE',     value: PERSONAL.role,      accent: false },
-        { label: 'LOCATION', value: PERSONAL.locationShort, accent: false },
-        { label: 'STATUS',   value: PERSONAL.status,    accent: true },
-      ].map(row => (
-        <div key={row.label} className="flex flex-col gap-0.5 mb-3">
-          <div className="sys-label" style={{ fontSize: '0.58rem' }}>{row.label}</div>
-          <div
-            className="mono font-medium"
-            style={{ fontSize: '0.7rem', color: row.accent ? 'var(--accent)' : 'var(--text-muted)' }}
-          >
-            {row.value}
-          </div>
-        </div>
-      ))}
-
-      {/* Focus tags */}
-      <div className="flex flex-col gap-0.5 mb-4">
-        <div className="sys-label mb-1" style={{ fontSize: '0.58rem' }}>FOCUS</div>
-        {PERSONAL.focus.map(f => (
-          <div key={f} className="mono" style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>
-            ▸ {f}
-          </div>
-        ))}
-      </div>
-
-      {/* Build status */}
-      <div>
-        <div className="sys-label mb-1.5" style={{ fontSize: '0.58rem' }}>BUILD STATUS</div>
-        <div className="progress-bar mb-1.5">
+      {/* Expanded detail panel */}
+      <AnimatePresence>
+        {expanded && (
           <motion.div
-            className="progress-fill"
-            initial={{ width: 0 }}
-            animate={{ width: '100%' }}
-            transition={{ delay: 1.8, duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-          />
-        </div>
-        <div className="mono" style={{ fontSize: '0.6rem', color: 'var(--accent)' }}>
-          ██████████ 100%
-        </div>
-      </div>
+            initial={{ opacity: 0, y: 8, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 8, scale: 0.96 }}
+            transition={{ duration: 0.2 }}
+            className="glass rounded-xl p-4 mb-2 min-w-[160px]"
+            style={{ borderColor: 'rgba(0,245,200,0.15)' }}
+          >
+            <div className="mono text-[10px] text-[var(--text-sub)] mb-3 tracking-widest">BUILD INFO</div>
+            {[
+              { k: 'STACK',    v: 'Next.js 14' },
+              { k: 'DEPLOY',   v: 'GitHub Pages' },
+              { k: 'VERSION',  v: 'v5.0 · 2026' },
+              { k: 'STATUS',   v: 'LIVE', accent: true },
+            ].map(r => (
+              <div key={r.k} className="flex justify-between gap-6 mb-1.5">
+                <span className="sys-label" style={{ fontSize: '0.58rem' }}>{r.k}</span>
+                <span className="mono" style={{ fontSize: '0.62rem', color: r.accent ? 'var(--accent)' : 'var(--text-muted)' }}>{r.v}</span>
+              </div>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Compact badge — always visible */}
+      <button
+        onClick={() => setExpanded(e => !e)}
+        className="flex items-center gap-2 glass rounded-full px-3 py-2 hover:border-[var(--border-glow)] transition-colors"
+        style={{ borderColor: 'rgba(0,245,200,0.12)' }}
+        aria-label="Toggle system info"
+      >
+        <span className="status-dot status-dot-pulse" style={{ width: 6, height: 6 }} />
+        <span className="mono text-[9px] tracking-[0.15em] text-[var(--accent)]">AVAILABLE</span>
+        {expanded ? <ChevronDown size={10} className="text-[var(--text-sub)]" /> : <ChevronUp size={10} className="text-[var(--text-sub)]" />}
+      </button>
     </motion.div>
   );
 }
