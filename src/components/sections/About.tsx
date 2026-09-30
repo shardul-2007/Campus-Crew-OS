@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, MapPin } from 'lucide-react';
 import { ABOUT_PANELS, PERSONAL } from '@/data/portfolio';
 
 export default function About() {
@@ -9,27 +9,25 @@ export default function About() {
 
   return (
     <section id="about" className="py-32 relative">
-      <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, #050810 0%, #060a14 100%)' }} />
+      <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, #060a14 0%, #050810 100%)' }} />
       <div className="section-container relative z-10">
 
-        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
           className="mb-16"
         >
-          <div className="flex items-center gap-3 mb-4">
-            <span className="sys-label-accent">SECTION 02</span>
-            <div className="h-px flex-1 max-w-[48px] bg-[var(--accent)] opacity-40" />
+          <div className="flex items-center gap-3 mb-5">
+            <div className="h-px w-8 bg-[var(--accent)] opacity-60" />
+            <span className="sys-label-accent">A BIT ABOUT ME</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-            IDENTITY /<br />
-            <span className="gradient-text">PROFILE</span>
+          <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 leading-tight">
+            Not just a dev.<br />
+            <span className="gradient-text">A builder with context.</span>
           </h2>
-          <p className="text-[var(--text-muted)] max-w-lg">
-            Four facets of how I work, build and collaborate — click any panel to explore.
+          <p className="text-[var(--text-muted)] max-w-lg leading-relaxed">
+            I wear a few hats. Click any one to see what that actually means in practice.
           </p>
         </motion.div>
 
@@ -51,7 +49,7 @@ export default function About() {
                   <div className="flex items-center gap-4">
                     <span
                       className="mono text-3xl font-bold leading-none select-none"
-                      style={{ color: open === panel.id ? 'rgba(0,245,200,0.4)' : 'rgba(255,255,255,0.1)' }}
+                      style={{ color: open === panel.id ? 'rgba(0,245,200,0.4)' : 'rgba(255,255,255,0.08)' }}
                     >
                       {panel.num}
                     </span>
@@ -60,11 +58,7 @@ export default function About() {
                       <div className="font-semibold text-lg leading-tight">{panel.title}</div>
                     </div>
                   </div>
-                  <motion.div
-                    animate={{ rotate: open === panel.id ? 180 : 0 }}
-                    transition={{ duration: 0.22 }}
-                    className="text-[var(--text-muted)] flex-shrink-0 mt-1"
-                  >
+                  <motion.div animate={{ rotate: open === panel.id ? 180 : 0 }} transition={{ duration: 0.22 }} className="text-[var(--text-muted)] flex-shrink-0 mt-1">
                     <ChevronDown size={18} />
                   </motion.div>
                 </div>
@@ -78,14 +72,10 @@ export default function About() {
                       transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                       className="overflow-hidden"
                     >
-                      <p className="text-[var(--text-muted)] text-sm leading-relaxed mt-5 mb-4">
-                        {panel.body}
-                      </p>
+                      <p className="text-[var(--text-muted)] text-sm leading-relaxed mt-5 mb-4">{panel.body}</p>
                       <div className="flex flex-wrap gap-2">
                         {panel.tags.map(t => (
-                          <span key={t} className="tech-pill" style={{ borderColor: 'var(--border-glow)', color: 'var(--accent)' }}>
-                            {t}
-                          </span>
+                          <span key={t} className="tech-pill" style={{ borderColor: 'var(--border-glow)', color: 'var(--accent)', background: 'var(--accent-dim)' }}>{t}</span>
                         ))}
                       </div>
                     </motion.div>
@@ -96,34 +86,29 @@ export default function About() {
           ))}
         </div>
 
-        {/* Profile card */}
+        {/* Personal card */}
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.35 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
           className="mt-6 glass rounded-2xl p-6 flex flex-wrap items-center gap-6"
           style={{ borderColor: 'rgba(0,245,200,0.1)' }}
         >
-          <div
-            className="w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 glass"
-            style={{ borderColor: 'var(--border-glow)', boxShadow: '0 0 20px rgba(0,245,200,0.12)' }}
-          >
+          <div className="w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 glass"
+            style={{ borderColor: 'var(--border-glow)', boxShadow: '0 0 20px rgba(0,245,200,0.1)' }}>
             <span className="mono text-sm font-bold text-[var(--accent)]">SP</span>
           </div>
           <div className="flex-1 min-w-0">
             <div className="font-semibold text-[var(--text)] text-lg">{PERSONAL.name}</div>
-            <div className="sys-label mt-1">{PERSONAL.role} · {PERSONAL.location}</div>
+            <div className="flex items-center gap-2 mt-1">
+              <MapPin size={11} className="text-[var(--text-sub)]" />
+              <span className="sys-label">{PERSONAL.role} · {PERSONAL.location}</span>
+            </div>
           </div>
           <div className="flex flex-wrap gap-2">
             {PERSONAL.focus.map(f => (
-              <span
-                key={f}
-                className="tech-pill"
-                style={{ borderColor: 'var(--border-glow)', color: 'var(--accent)', background: 'var(--accent-dim)' }}
-              >
-                {f}
-              </span>
+              <span key={f} className="tech-pill" style={{ borderColor: 'var(--border-glow)', color: 'var(--accent)', background: 'var(--accent-dim)' }}>{f}</span>
             ))}
           </div>
         </motion.div>
