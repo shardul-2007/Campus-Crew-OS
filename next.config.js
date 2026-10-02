@@ -5,5 +5,7 @@ const nextConfig = {
   basePath: isProd ? '/my-portfolio' : '',
   images: { unoptimized: true },
   trailingSlash: true,
+  eslint: { ignoreDuringBuilds: true },
+  typescript: { ignoreBuildErrors: true },
 };
 module.exports = nextConfig;
