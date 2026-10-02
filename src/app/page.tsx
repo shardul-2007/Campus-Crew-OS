@@ -8,7 +8,6 @@ import Skills from '@/components/sections/Skills';
 import Achievements from '@/components/sections/Achievements';
 import GitHubSection from '@/components/sections/GitHub';
 import Contact from '@/components/sections/Contact';
-import SystemStatus from '@/components/sections/SystemStatus';
 
 export default function Home() {
   return (
@@ -25,7 +24,7 @@ export default function Home() {
         <Contact />
       </main>
       <Footer />
-      <SystemStatus />
     </>
   );
 }
+

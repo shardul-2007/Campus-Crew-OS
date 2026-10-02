@@ -1,176 +1,220 @@
-'use client';
-import { useState, useEffect } from 'react';
+﻿'use client';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Menu, ExternalLink } from 'lucide-react';
-import { PERSONAL } from '@/data/portfolio';
+import { Palette, X, Menu } from 'lucide-react';
+import { useTheme, THEMES, type Theme } from '@/components/layout/ThemeProvider';
 
-const NAV_LINKS = [
-  { label: 'HOME',         href: '#home' },
-  { label: 'ABOUT',        href: '#about' },
-  { label: 'PROJECTS',     href: '#projects' },
-  { label: 'EXPERIENCE',   href: '#experience' },
-  { label: 'SKILLS',       href: '#skills' },
-  { label: 'ACHIEVEMENTS', href: '#achievements' },
-  { label: 'CONTACT',      href: '#contact' },
+const NAV = [
+  { label: 'About',        href: '#about'        },
+  { label: 'Work',         href: '#projects'     },
+  { label: 'Journey',      href: '#experience'   },
+  { label: 'Recognition',  href: '#achievements' },
+  { label: 'Contact',      href: '#contact'      },
 ];
 
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [active, setActive] = useState('home');
+  const [scrolled,   setScrolled]   = useState(false);
+  const [menuOpen,   setMenuOpen]   = useState(false);
+  const [themeOpen,  setThemeOpen]  = useState(false);
+  const [active,     setActive]     = useState('');
+  const { theme, setTheme }         = useTheme();
+  const popoverRef                  = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    const onScroll = () => setScrolled(window.scrollY > 32);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   useEffect(() => {
-    const sections = NAV_LINKS.map(l => document.querySelector(l.href));
-    const io = new IntersectionObserver(entries => {
-      entries.forEach(e => { if (e.isIntersecting) setActive(e.target.id); });
-    }, { rootMargin: '-40% 0px -55% 0px' });
-    sections.forEach(s => s && io.observe(s));
+    const els = NAV.map(n => document.querySelector(n.href));
+    const io = new IntersectionObserver(
+      entries => entries.forEach(e => { if (e.isIntersecting) setActive('#' + e.target.id); }),
+      { rootMargin: '-40% 0px -55% 0px' }
+    );
+    els.forEach(el => el && io.observe(el));
     return () => io.disconnect();
   }, []);
 
-  function closeMenu() { setMenuOpen(false); }
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (popoverRef.current && !popoverRef.current.contains(e.target as Node)) {
+        setThemeOpen(false);
+      }
+    };
+    if (themeOpen) document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [themeOpen]);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') { setThemeOpen(false); setMenuOpen(false); } };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, []);
 
   return (
     <>
-      {/* Scroll progress */}
-      <motion.div
-        className="fixed top-0 left-0 right-0 h-px z-[9999]"
-        style={{ background: 'var(--accent)', transformOrigin: 'left', scaleX: 0 }}
-        animate={{ scaleX: scrolled ? 1 : 0 }}
-        transition={{ duration: 0 }}
-      />
-      {/* Actual scroll progress tracked via useScroll would go here — simplified version */}
-
-      {/* Main navbar */}
-      <nav
-        className="fixed top-4 left-4 right-4 z-50 rounded-2xl transition-all duration-300"
-        style={{
-          background: scrolled ? 'rgba(5,8,16,0.88)' : 'rgba(5,8,16,0.6)',
-          backdropFilter: 'blur(24px)',
-          WebkitBackdropFilter: 'blur(24px)',
-          border: scrolled ? '1px solid rgba(0,245,200,0.12)' : '1px solid rgba(255,255,255,0.06)',
-          boxShadow: scrolled ? '0 8px 32px rgba(0,0,0,0.4)' : 'none',
-        }}
+      <div
+        className="fixed top-5 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none"
+        style={{ paddingTop: 0 }}
       >
-        <div className="flex items-center justify-between px-5 py-3 max-w-7xl mx-auto">
-
-          {/* Left — wordmark */}
-          <a href="#home" className="flex items-center gap-2.5 group">
-            <span className="status-dot status-dot-pulse" style={{ width: 6, height: 6 }} />
-            <div>
-              <div className="mono font-bold text-sm tracking-widest group-hover:text-[var(--accent)] transition-colors">
-                {PERSONAL.shortName}
-              </div>
-              <div className="mono text-[8px] tracking-[0.2em] text-[var(--text-sub)]">
-                SOFTWARE ENGINEER / BUILDER
-              </div>
-            </div>
-          </a>
-
-          {/* Center — nav links (desktop) */}
-          <div className="hidden lg:flex items-center gap-1">
-            {NAV_LINKS.map(link => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="mono text-[10px] tracking-[0.14em] px-3 py-2 rounded-lg transition-all"
-                style={{
-                  color: active === link.href.slice(1) ? 'var(--accent)' : 'var(--text-muted)',
-                  background: active === link.href.slice(1) ? 'var(--accent-dim)' : 'transparent',
-                  fontWeight: active === link.href.slice(1) ? 600 : 400,
-                }}
+        <motion.nav
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="glass-nav pointer-events-auto w-full"
+          style={{
+            maxWidth: 820,
+            boxShadow: scrolled ? '0 8px 40px rgba(0,0,0,0.3)' : '0 4px 20px rgba(0,0,0,0.15)',
+          }}
+        >
+          <div className="flex items-center justify-between px-5 py-3">
+            {/* Wordmark */}
+            <a href="#home" className="flex items-center gap-2.5 group flex-shrink-0">
+              <span className="dot dot-pulse" style={{ width: 5, height: 5 }} />
+              <span
+                className="font-semibold text-sm tracking-tight"
+                style={{ color: 'var(--text)' }}
               >
-                {link.label}
-              </a>
-            ))}
-          </div>
-
-          {/* Right — actions */}
-          <div className="flex items-center gap-2">
-            <span
-              className="hidden sm:flex items-center gap-2 mono text-xs px-3 py-1.5 rounded-full"
-              style={{
-                background: 'var(--accent-dim)',
-                border: '1px solid var(--border-glow)',
-                color: 'var(--accent)',
-              }}
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
-              AVAILABLE
-            </span>
-            <a
-              href={PERSONAL.resumeUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden sm:flex glow-btn glow-btn-ghost text-xs py-1.5 px-3"
-            >
-              RESUME <ExternalLink size={11} />
+                Shardul
+                <span style={{ color: 'var(--accent)' }}>.</span>
+                Parihar
+              </span>
             </a>
-            {/* Mobile hamburger */}
-            <button
-              className="lg:hidden glass rounded-lg p-2 text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors"
-              onClick={() => setMenuOpen(!menuOpen)}
-              aria-label="Toggle menu"
-            >
-              {menuOpen ? <X size={18} /> : <Menu size={18} />}
-            </button>
+
+            {/* Desktop nav links */}
+            <div className="hidden md:flex items-center gap-1">
+              {NAV.map(link => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className="px-3 py-1.5 rounded-lg text-sm transition-all"
+                  style={{
+                    color: active === link.href ? 'var(--accent)' : 'var(--text-2)',
+                    background: active === link.href ? 'var(--ad)' : 'transparent',
+                    fontWeight: active === link.href ? 500 : 400,
+                  }}
+                >
+                  {link.label}
+                </a>
+              ))}
+            </div>
+
+            {/* Right: theme + hamburger */}
+            <div className="flex items-center gap-2">
+              {/* Theme selector */}
+              <div className="relative" ref={popoverRef}>
+                <button
+                  onClick={() => setThemeOpen(!themeOpen)}
+                  className="glass-sm flex items-center gap-2 px-3 py-1.5 text-sm transition-all"
+                  style={{
+                    color: 'var(--text-2)',
+                    borderRadius: 10,
+                    background: 'var(--surface)',
+                  }}
+                  aria-label="Change theme"
+                  aria-expanded={themeOpen}
+                >
+                  <Palette size={14} />
+                  <span className="hidden sm:inline" style={{ fontSize: '0.78rem' }}>Theme</span>
+                </button>
+
+                <AnimatePresence>
+                  {themeOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                      transition={{ duration: 0.18 }}
+                      className="glass absolute top-full right-0 mt-2 p-3"
+                      style={{ width: 168, borderRadius: 16, zIndex: 100 }}
+                    >
+                      <p className="label mb-3 px-1">Appearance</p>
+                      {THEMES.map(t => (
+                        <button
+                          key={t.id}
+                          onClick={() => { setTheme(t.id as Theme); setThemeOpen(false); }}
+                          className="w-full flex items-center gap-3 px-2 py-2 rounded-lg text-sm transition-all text-left"
+                          style={{
+                            background: theme === t.id ? 'var(--ad)' : 'transparent',
+                            color: theme === t.id ? 'var(--accent)' : 'var(--text-2)',
+                          }}
+                        >
+                          <span
+                            style={{
+                              width: 10, height: 10, borderRadius: '50%',
+                              background: t.color, flexShrink: 0,
+                              boxShadow: theme === t.id ? `0 0 8px ${t.color}88` : 'none',
+                            }}
+                          />
+                          {t.label}
+                          {theme === t.id && <span style={{ marginLeft: 'auto', color: 'var(--accent)', fontSize: '0.7rem' }}>✓</span>}
+                        </button>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Mobile menu button */}
+              <button
+                className="md:hidden glass-sm p-2 transition-colors"
+                style={{ borderRadius: 10, color: 'var(--text-2)', background: 'var(--surface)' }}
+                onClick={() => setMenuOpen(!menuOpen)}
+                aria-label="Toggle menu"
+              >
+                {menuOpen ? <X size={16} /> : <Menu size={16} />}
+              </button>
+            </div>
           </div>
-        </div>
-      </nav>
+        </motion.nav>
+      </div>
 
       {/* Mobile menu */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
+            initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-x-4 top-20 z-40 rounded-2xl overflow-hidden"
-            style={{
-              background: 'rgba(5,8,16,0.96)',
-              backdropFilter: 'blur(24px)',
-              WebkitBackdropFilter: 'blur(24px)',
-              border: '1px solid var(--border-md)',
-              boxShadow: '0 24px 64px rgba(0,0,0,0.6)',
-            }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.22 }}
+            className="fixed inset-x-4 top-20 z-40 glass"
+            style={{ borderRadius: 20 }}
           >
             <div className="p-4 flex flex-col gap-1">
-              {NAV_LINKS.map((link, i) => (
-                <motion.a
+              {NAV.map(link => (
+                <a
                   key={link.href}
                   href={link.href}
-                  onClick={closeMenu}
-                  initial={{ opacity: 0, x: -16 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.05 }}
-                  className="mono text-sm tracking-widest px-4 py-3 rounded-xl transition-all"
+                  onClick={() => setMenuOpen(false)}
+                  className="px-4 py-3 rounded-xl text-sm transition-all"
                   style={{
-                    color: active === link.href.slice(1) ? 'var(--accent)' : 'var(--text-muted)',
-                    background: active === link.href.slice(1) ? 'var(--accent-dim)' : 'transparent',
-                    border: '1px solid transparent',
-                    borderColor: active === link.href.slice(1) ? 'var(--border-glow)' : 'transparent',
+                    color: active === link.href ? 'var(--accent)' : 'var(--text-2)',
+                    background: active === link.href ? 'var(--ad)' : 'transparent',
                   }}
                 >
                   {link.label}
-                </motion.a>
-              ))}
-              <div className="pt-4 border-t border-[var(--border)] mt-2 flex flex-wrap gap-2">
-                <span className="flex items-center gap-2 mono text-xs px-3 py-2 rounded-full"
-                  style={{ background: 'var(--accent-dim)', border: '1px solid var(--border-glow)', color: 'var(--accent)' }}>
-                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]" />
-                  AVAILABLE
-                </span>
-                <a href={PERSONAL.resumeUrl} target="_blank" rel="noopener noreferrer"
-                  className="glow-btn glow-btn-ghost text-xs py-2">
-                  RESUME <ExternalLink size={11} />
                 </a>
+              ))}
+              <div className="border-t mt-2 pt-3" style={{ borderColor: 'var(--gb)' }}>
+                <p className="label px-2 mb-2">Theme</p>
+                <div className="grid grid-cols-2 gap-2">
+                  {THEMES.map(t => (
+                    <button
+                      key={t.id}
+                      onClick={() => { setTheme(t.id as Theme); setMenuOpen(false); }}
+                      className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm"
+                      style={{
+                        background: theme === t.id ? 'var(--ad)' : 'var(--surface)',
+                        color: theme === t.id ? 'var(--accent)' : 'var(--text-2)',
+                        border: '1px solid var(--gb)',
+                      }}
+                    >
+                      <span style={{ width: 8, height: 8, borderRadius: '50%', background: t.color, flexShrink: 0 }} />
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           </motion.div>

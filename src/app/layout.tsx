@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import { ThemeProvider } from '@/components/layout/ThemeProvider';
 
 export const metadata: Metadata = {
   title: 'Shardul Parihar — Software Engineer',
@@ -9,9 +10,9 @@ export const metadata: Metadata = {
   creator: 'Shardul Parihar',
   openGraph: {
     title: 'Shardul Parihar — Software Engineer',
-    description: 'Building digital systems that matter. Full-stack dev, AI, open source.',
+    description: 'Building digital systems that matter.',
     url: 'https://shardul-2007.github.io/my-portfolio/',
-    siteName: 'SHARDUL.OS',
+    siteName: 'Shardul Parihar',
     type: 'website',
   },
   robots: { index: true, follow: true },
@@ -21,11 +22,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Manrope:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
           rel="stylesheet"
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('portfolio-theme');if(!t)t=window.matchMedia('(prefers-color-scheme: dark)').matches?'obsidian':'pearl';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`,
+          }}
         />
         <script
           type="application/ld+json"
@@ -35,17 +42,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               '@type': 'Person',
               name: 'Shardul Parihar',
               url: 'https://shardul-2007.github.io/my-portfolio/',
-              sameAs: [
-                'https://github.com/shardul-2007',
-                'https://www.linkedin.com/in/shardul-parihar-/',
-              ],
+              sameAs: ['https://github.com/shardul-2007','https://www.linkedin.com/in/shardul-parihar-/'],
               jobTitle: 'Software Engineer',
-              description: 'Software engineering student focused on full-stack development, AI, cybersecurity and innovative digital products.',
             }),
           }}
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
     </html>
   );
 }
