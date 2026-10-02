@@ -170,7 +170,7 @@ export default function Navbar() {
         </motion.nav>
       </div>
 
-      {/* Mobile menu */}
+      {/* Mobile drawer */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div

@@ -15,13 +15,13 @@ export const PERSONAL = {
   email: 'shardulparihar2007@gmail.com',
   github: 'https://github.com/shardul-2007',
   githubUser: 'shardul-2007',
-  linkedin: 'https://www.linkedin.com/in/shardul-parihar-/',
+  linkedin: 'https://www.linkedin.com/in/shardul-parihar/',
   portfolio: 'https://shardul-2007.github.io/my-portfolio/',
   status: 'AVAILABLE',
   focus: ['Full Stack', 'AI / ML', 'Web Development', 'Cybersecurity'],
   headline: 'BUILDING DIGITAL\nSYSTEMS THAT MATTER.',
   buildVersion: '2026.09',
-  resumeUrl: 'https://www.linkedin.com/in/shardul-parihar-/', // link to LinkedIn until PDF added
+  resumeUrl: 'https://www.linkedin.com/in/shardul-parihar/', // link to LinkedIn until PDF added
 };
 
 export interface Project {
@@ -317,6 +317,6 @@ export const ABOUT_PANELS = [
 
 export const CONTACT_CHANNELS = [
   { id: 'email',    label: 'EMAIL',    value: 'shardulparihar2007@gmail.com', href: 'mailto:shardulparihar2007@gmail.com', icon: 'Mail' },
-  { id: 'linkedin', label: 'LINKEDIN', value: '/in/shardul-parihar-/',         href: 'https://www.linkedin.com/in/shardul-parihar-/', icon: 'Linkedin' },
+  { id: 'linkedin', label: 'LINKEDIN', value: '/in/shardul-parihar-/',         href: 'https://www.linkedin.com/in/shardul-parihar/', icon: 'Linkedin' },
   { id: 'github',   label: 'GITHUB',   value: 'github.com/shardul-2007',       href: 'https://github.com/shardul-2007', icon: 'Github' },
 ];

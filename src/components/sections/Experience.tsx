@@ -9,6 +9,9 @@ const TYPE_CONFIG: Record<string, { color: string; bg: string }> = {
   'OPEN SOURCE': { color: '#4488ff', bg: 'rgba(68,136,255,0.08)' },
   LEARN:         { color: '#ffaa00', bg: 'rgba(255,170,0,0.08)' },
 };
+function getColor(type: string) {
+  return TYPE_COLORS[type] || '#6B7280';
+}
 
 export default function Experience() {
   return (
