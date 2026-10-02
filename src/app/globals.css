@@ -1,4 +1,4 @@
-﻿@tailwind base;
+@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -10,9 +10,9 @@
   --bg-3: #111120;
   --surface: rgba(255,255,255,0.05);
   --surface-h: rgba(255,255,255,0.09);
-  --glass: linear-gradient(135deg, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0.02) 100%);
-  --gb: rgba(255,255,255,0.09);
-  --gb-h: rgba(255,255,255,0.18);
+  --glass: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.03) 100%);
+  --gb: rgba(255,255,255,0.15);
+  --gb-h: rgba(255,255,255,0.3);
   --gs: 0 24px 64px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.08);
   --gs-h: 0 32px 80px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.12);
   --accent: #00d4aa;
@@ -140,8 +140,8 @@ body {
 /* GLASS SYSTEM */
 .glass {
   background: var(--glass);
-  backdrop-filter: blur(24px) saturate(150%);
-  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
   border: 1px solid var(--gb);
   border-radius: var(--r2);
   box-shadow: var(--gs);
@@ -153,16 +153,16 @@ body {
 }
 .glass-sm {
   background: var(--glass);
-  backdrop-filter: blur(16px) saturate(140%);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  backdrop-filter: blur(30px) saturate(200%);
+  -webkit-backdrop-filter: blur(30px) saturate(200%);
   border: 1px solid var(--gb);
   border-radius: var(--r);
   box-shadow: var(--gs);
 }
 .glass-nav {
   background: var(--nav);
-  backdrop-filter: blur(28px) saturate(160%);
-  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
   border: 1px solid var(--gb);
   border-radius: 100px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 var(--surface-h);
@@ -317,3 +317,4 @@ body {
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-8px); }
 }
+
