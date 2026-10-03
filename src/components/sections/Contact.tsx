@@ -51,8 +51,8 @@ export default function Contact() {
             position: 'absolute',
             inset: 0,
             background:
-              'radial-gradient(ellipse 90% 70% at 50% 90%, rgba(30, 25, 70, 0.20) 0%, transparent 70%),' +
-              'linear-gradient(to top, var(--bg) 15%, rgba(6, 8, 16, 0.85) 60%, var(--bg) 100%)',
+              'radial-gradient(ellipse 90% 70% at 50% 90%, var(--cursor-glow) 0%, transparent 70%),' +
+              'linear-gradient(to top, var(--bg) 15%, var(--overlay) 60%, var(--bg) 100%)',
           }}
         />
       </div>

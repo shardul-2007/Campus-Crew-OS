@@ -365,7 +365,8 @@ export default function Hero() {
             {/* Fade to bg at edges */}
             <div style={{
               position: 'absolute', inset: 0,
-              background: 'linear-gradient(to bottom, rgba(6,8,16,0.30) 0%, transparent 40%, rgba(6,8,16,0.15) 100%)',
+              background: 'linear-gradient(to bottom, var(--bg) 0%, transparent 45%, var(--bg) 100%)',
+              opacity: 0.45,
             }} />
           </motion.div>
 
@@ -391,7 +392,8 @@ export default function Hero() {
             />
             <div style={{
               position: 'absolute', inset: 0,
-              background: 'linear-gradient(to top, rgba(6,8,16,0.35) 0%, transparent 40%, rgba(6,8,16,0.15) 100%)',
+              background: 'linear-gradient(to top, var(--bg) 0%, transparent 45%, var(--bg) 100%)',
+              opacity: 0.45,
             }} />
           </motion.div>
 

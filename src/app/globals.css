@@ -3,39 +3,85 @@
 @tailwind utilities;
 
 /* ═══════════════════════════════════════════════════
-   DESIGN TOKENS — single identity, deep atmospheric
+   THEMES: BLACK (DARK) & WHITE (LIGHT) ONLY
    ═══════════════════════════════════════════════════ */
-:root {
-  /* Background atmosphere */
-  --bg:           #060810;
-  --bg-2:         #080b16;
-  --overlay:      rgba(6, 8, 16, 0.62);
+:root,
+[data-theme='dark'] {
+  --theme:          'dark';
+  --bg:             #06070b;
+  --bg-2:           #0a0c14;
+  --overlay:        rgba(6, 7, 11, 0.65);
+  --photo-opacity:  0.26;
+  --photo-filter:   blur(88px) saturate(75%) brightness(0.50);
 
   /* Glass material */
-  --glass-bg:     rgba(255, 255, 255, 0.055);
-  --glass-bg-d:   rgba(255, 255, 255, 0.028);
-  --glass-border: rgba(255, 255, 255, 0.09);
-  --glass-border-h: rgba(255, 255, 255, 0.18);
-  --glass-inset:  rgba(255, 255, 255, 0.07);
-  --glass-shadow: 0 20px 60px rgba(0, 0, 0, 0.38),
-                  inset 0 1px 0 rgba(255, 255, 255, 0.07);
-  --glass-shadow-h: 0 28px 80px rgba(0, 0, 0, 0.50),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  --glass-bg:       rgba(255, 255, 255, 0.055);
+  --glass-bg-d:     rgba(255, 255, 255, 0.025);
+  --glass-border:   rgba(255, 255, 255, 0.09);
+  --glass-border-h: rgba(255, 255, 255, 0.24);
+  --glass-inset:    rgba(255, 255, 255, 0.07);
+  --glass-shadow:   0 20px 60px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  --glass-shadow-h: 0 28px 80px rgba(0, 0, 0, 0.60), inset 0 1px 0 rgba(255, 255, 255, 0.14);
 
   /* Nav glass */
-  --nav-bg: rgba(6, 8, 16, 0.72);
+  --nav-bg: rgba(6, 7, 11, 0.75);
 
   /* Text */
-  --text:   #ece8ff;
-  --text-2: rgba(236, 232, 255, 0.48);
-  --text-3: rgba(236, 232, 255, 0.24);
+  --text:   #f0eeff;
+  --text-2: rgba(240, 238, 255, 0.52);
+  --text-3: rgba(240, 238, 255, 0.26);
 
-  /* Tear/crack glow */
-  --crack: rgba(220, 215, 255, 0.90);
-  --crack-glow: rgba(180, 170, 255, 0.22);
+  /* Tear / crack */
+  --crack:      rgba(220, 215, 255, 0.90);
+  --crack-glow: rgba(180, 170, 255, 0.25);
 
-  /* Subtle atmospheric tint */
-  --atmo: rgba(90, 80, 180, 0.06);
+  /* Buttons */
+  --btn-fill-bg:   #f0eeff;
+  --btn-fill-text: #06070b;
+
+  /* Cursor colors */
+  --cursor-dot:     #ffffff;
+  --cursor-ring:    rgba(255, 255, 255, 0.55);
+  --cursor-glow:    rgba(255, 255, 255, 0.035);
+}
+
+[data-theme='light'] {
+  --theme:          'light';
+  --bg:             #f7f8fc;
+  --bg-2:           #edf0f7;
+  --overlay:        rgba(247, 248, 252, 0.60);
+  --photo-opacity:  0.16;
+  --photo-filter:   blur(88px) saturate(85%) brightness(1.10);
+
+  /* Glass material */
+  --glass-bg:       rgba(255, 255, 255, 0.78);
+  --glass-bg-d:     rgba(255, 255, 255, 0.50);
+  --glass-border:   rgba(0, 0, 0, 0.08);
+  --glass-border-h: rgba(0, 0, 0, 0.22);
+  --glass-inset:    rgba(255, 255, 255, 0.95);
+  --glass-shadow:   0 16px 48px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  --glass-shadow-h: 0 24px 64px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 1);
+
+  /* Nav glass */
+  --nav-bg: rgba(247, 248, 252, 0.85);
+
+  /* Text */
+  --text:   #0b0c12;
+  --text-2: rgba(11, 12, 18, 0.65);
+  --text-3: rgba(11, 12, 18, 0.38);
+
+  /* Tear / crack */
+  --crack:      rgba(30, 25, 70, 0.85);
+  --crack-glow: rgba(50, 45, 110, 0.20);
+
+  /* Buttons */
+  --btn-fill-bg:   #0b0c12;
+  --btn-fill-text: #f7f8fc;
+
+  /* Cursor colors */
+  --cursor-dot:     #0b0c12;
+  --cursor-ring:    rgba(11, 12, 18, 0.50);
+  --cursor-glow:    rgba(0, 0, 0, 0.03);
 }
 
 /* ═══════════════════════════════════════════════════
@@ -57,12 +103,13 @@ body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.35s ease, color 0.35s ease;
 }
 
 ::-webkit-scrollbar { width: 0; }
-::selection { background: rgba(255, 255, 255, 0.12); color: var(--text); }
+::selection { background: rgba(140, 140, 220, 0.25); color: var(--text); }
 
-/* Custom cursor (desktop only) */
+/* Custom cursor (desktop fine pointer only) */
 @media (pointer: fine) {
   * { cursor: none !important; }
 }
@@ -76,14 +123,14 @@ body {
   -webkit-backdrop-filter: blur(32px) saturate(160%);
   border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow);
-  transition: border-color 0.28s ease, box-shadow 0.28s ease;
+  transition: border-color 0.28s ease, box-shadow 0.28s ease, background 0.35s ease;
 }
 .glass:hover {
   border-color: var(--glass-border-h);
   box-shadow: var(--glass-shadow-h);
 }
 .glass-deep {
-  background: rgba(6, 8, 20, 0.55);
+  background: var(--glass-bg);
   backdrop-filter: blur(44px) saturate(180%);
   -webkit-backdrop-filter: blur(44px) saturate(180%);
   border: 1px solid var(--glass-border-h);
@@ -94,9 +141,9 @@ body {
   backdrop-filter: blur(44px) saturate(200%);
   -webkit-backdrop-filter: blur(44px) saturate(200%);
   border: 1px solid var(--glass-border);
-  box-shadow: 0 4px 28px rgba(0, 0, 0, 0.30),
+  box-shadow: 0 4px 28px rgba(0, 0, 0, 0.15),
               inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  transition: all 0.3s ease;
+  transition: all 0.35s ease;
 }
 
 /* ═══════════════════════════════════════════════════
@@ -116,8 +163,6 @@ body {
 /* ═══════════════════════════════════════════════════
    TYPOGRAPHY
    ═══════════════════════════════════════════════════ */
-
-/* Display / editorial headings — NOT all caps by default */
 .display {
   font-family: 'Manrope', system-ui, sans-serif;
   font-weight: 800;
@@ -125,7 +170,6 @@ body {
   line-height: 0.92;
 }
 
-/* Tiny metadata only — use sparingly */
 .meta {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.62rem;
@@ -157,20 +201,21 @@ body {
   font-family: inherit;
 }
 .btn:hover {
-  border-color: rgba(255, 255, 255, 0.30);
+  border-color: var(--text-2);
   transform: translateY(-2px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
 }
 .btn-fill {
-  background: rgba(236, 232, 255, 0.96);
-  color: var(--bg);
+  background: var(--btn-fill-bg);
+  color: var(--btn-fill-text);
   border-color: transparent;
 }
 .btn-fill:hover {
-  background: #fff;
+  opacity: 0.90;
   transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
 }
-.btn:focus-visible { outline: 2px solid rgba(255,255,255,0.6); outline-offset: 4px; }
+.btn:focus-visible { outline: 2px solid var(--text); outline-offset: 4px; }
 
 /* ═══════════════════════════════════════════════════
    TECH TAG
@@ -186,13 +231,8 @@ body {
   color: var(--text-2);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+  transition: all 0.2s ease;
 }
-
-/* ═══════════════════════════════════════════════════
-   SVG PORTRAIT TEAR — inline SVG clipPath in Hero.tsx
-   We define the clip-paths in the SVG defs,
-   not as polygon() CSS, for maximum browser support
-   ═══════════════════════════════════════════════════ */
 
 /* ═══════════════════════════════════════════════════
    STATUS DOT (available indicator)
@@ -201,14 +241,14 @@ body {
   display: inline-block;
   width: 7px; height: 7px;
   border-radius: 50%;
-  background: #86efac;
-  box-shadow: 0 0 0 0 rgba(134, 239, 172, 0.5);
+  background: #22c55e;
+  box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5);
   animation: pulse-available 2.8s ease infinite;
   flex-shrink: 0;
 }
 @keyframes pulse-available {
-  0%,100% { box-shadow: 0 0 0 0 rgba(134, 239, 172, 0.5); }
-  60%     { box-shadow: 0 0 0 8px rgba(134, 239, 172, 0); }
+  0%,100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5); }
+  60%     { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
 }
 
 /* ═══════════════════════════════════════════════════
@@ -218,7 +258,7 @@ body {
 @keyframes orb-ccw { to { transform: rotate(-360deg); } }
 
 /* ═══════════════════════════════════════════════════
-   GRAIN — very subtle photographic texture
+   GRAIN — subtle photographic texture
    ═══════════════════════════════════════════════════ */
 .grain {
   position: fixed;
@@ -226,7 +266,7 @@ body {
   width: 500%; height: 500%;
   pointer-events: none;
   z-index: 9990;
-  opacity: 0.028;
+  opacity: 0.024;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
   animation: grain-move 8s steps(9) infinite;
 }

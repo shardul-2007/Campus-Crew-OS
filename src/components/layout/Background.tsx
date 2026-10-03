@@ -13,9 +13,10 @@ export default function Background() {
         pointerEvents: 'none',
         overflow: 'hidden',
         backgroundColor: 'var(--bg)',
+        transition: 'background-color 0.35s ease',
       }}
     >
-      {/* ── Portrait — massive, blurred, atmospheric ── */}
+      {/* ── Portrait — massive, blurred, atmospheric photographic layer ── */}
       <div
         style={{
           position: 'absolute',
@@ -26,46 +27,45 @@ export default function Background() {
           backgroundImage: `url(${BASE}/imageshardul.png)`,
           backgroundSize: 'cover',
           backgroundPosition: 'center 15%',
-          filter: 'blur(88px) saturate(80%) brightness(0.55)',
-          opacity: 0.28,
+          filter: 'var(--photo-filter)',
+          opacity: 'var(--photo-opacity)' as unknown as number,
           transform: 'scale(1.06)',
           willChange: 'transform',
+          transition: 'filter 0.35s ease, opacity 0.35s ease',
         }}
       />
 
-      {/* ── Dark atmospheric overlay — navy depth ── */}
+      {/* ── Atmospheric overlay layer ── */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'var(--overlay)',
+          transition: 'background 0.35s ease',
+        }}
+      />
+
+      {/* ── Cursor-reactive light illumination ── */}
       <div
         style={{
           position: 'absolute',
           inset: 0,
           background:
-            'radial-gradient(ellipse 120% 80% at 60% 20%, rgba(60,55,120,0.12) 0%, transparent 60%),' +
-            'radial-gradient(ellipse 80% 60% at 10% 80%, rgba(30,25,80,0.10) 0%, transparent 60%),' +
-            'rgba(6, 8, 16, 0.55)',
+            'radial-gradient(circle 520px at var(--cx, 50%) var(--cy, 35%), var(--cursor-glow) 0%, transparent 75%)',
         }}
       />
 
-      {/* ── Cursor-reactive light — set by Cursor.tsx via CSS vars ── */}
+      {/* ── Vignette edge depth ── */}
       <div
         style={{
           position: 'absolute',
           inset: 0,
           background:
-            'radial-gradient(circle 520px at var(--cx, 50%) var(--cy, 35%), rgba(255,255,255,0.020) 0%, transparent 75%)',
+            'radial-gradient(ellipse 100% 100% at 50% 50%, transparent 48%, rgba(0,0,0,0.35) 100%)',
         }}
       />
 
-      {/* ── Vignette: edges darker ── */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background:
-            'radial-gradient(ellipse 100% 100% at 50% 50%, transparent 48%, rgba(0,0,0,0.55) 100%)',
-        }}
-      />
-
-      {/* ── Grain — defined in globals.css ── */}
+      {/* ── Grain ── */}
       <div className="grain" />
     </div>
   );

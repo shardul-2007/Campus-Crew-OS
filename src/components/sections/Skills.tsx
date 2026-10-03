@@ -54,9 +54,9 @@ export default function Skills() {
             style={{
               padding: '7px 18px', borderRadius: 100,
               fontSize: '0.80rem', fontWeight: filter === null ? 600 : 400,
-              border: `1px solid ${filter === null ? 'rgba(255,255,255,0.22)' : 'var(--glass-border)'}`,
-              background: filter === null ? 'rgba(255,255,255,0.09)' : 'var(--glass-bg)',
-              color: filter === null ? 'var(--text)' : 'var(--text-2)',
+              border: `1px solid ${filter === null ? 'var(--glass-border-h)' : 'var(--glass-border)'}`,
+              background: filter === null ? 'var(--btn-fill-bg)' : 'var(--glass-bg)',
+              color: filter === null ? 'var(--btn-fill-text)' : 'var(--text-2)',
               backdropFilter: 'blur(12px)',
               transition: 'all 0.18s ease',
               fontFamily: 'inherit',
@@ -72,9 +72,9 @@ export default function Skills() {
               style={{
                 padding: '7px 18px', borderRadius: 100,
                 fontSize: '0.80rem', fontWeight: filter === g.key ? 600 : 400,
-                border: `1px solid ${filter === g.key ? 'rgba(255,255,255,0.22)' : 'var(--glass-border)'}`,
-                background: filter === g.key ? 'rgba(255,255,255,0.09)' : 'var(--glass-bg)',
-                color: filter === g.key ? 'var(--text)' : 'var(--text-2)',
+                border: `1px solid ${filter === g.key ? 'var(--glass-border-h)' : 'var(--glass-border)'}`,
+                background: filter === g.key ? 'var(--btn-fill-bg)' : 'var(--glass-bg)',
+                color: filter === g.key ? 'var(--btn-fill-text)' : 'var(--text-2)',
                 backdropFilter: 'blur(12px)',
                 transition: 'all 0.18s ease',
                 fontFamily: 'inherit',
@@ -101,7 +101,7 @@ export default function Skills() {
                 padding: '10px 22px',
                 borderRadius: 100,
                 borderColor: skill.level === 'primary'
-                  ? 'rgba(255,255,255,0.14)'
+                  ? 'var(--glass-border-h)'
                   : 'var(--glass-border)',
               }}
               data-cursor="hover"
