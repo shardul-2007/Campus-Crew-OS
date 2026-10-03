@@ -2,6 +2,8 @@
 import { motion } from 'framer-motion';
 import { ABOUT_PANELS, PERSONAL } from '@/data/portfolio';
 
+const BASE = process.env.NODE_ENV === 'production' ? '/my-portfolio' : '';
+
 export default function About() {
   return (
     <section id="about" className="section" aria-label="About Shardul">
@@ -12,7 +14,7 @@ export default function About() {
         <div style={{
           position: 'absolute', top: '-20%', right: '-10%',
           width: '60%', height: '140%',
-          backgroundImage: 'url(/my-portfolio/imageshardul.png)',
+          backgroundImage: `url(${BASE}/imageshardul.png)`,
           backgroundSize: 'cover', backgroundPosition: 'center top',
           filter: 'blur(80px) saturate(80%)',
           opacity: 'var(--photo-opacity)',
