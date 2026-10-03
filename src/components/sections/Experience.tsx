@@ -3,108 +3,115 @@ import { motion } from 'framer-motion';
 import { ExternalLink } from 'lucide-react';
 import { EXPERIENCE } from '@/data/portfolio';
 
-const TYPE_COLOR: Record<string, string> = {
-  BUILD:          'rgba(74,222,128,0.80)',
-  COMMUNITY:      'rgba(160,140,255,0.80)',
-  'OPEN SOURCE':  'rgba(96,165,250,0.80)',
-  LEARN:          'rgba(250,200,80,0.80)',
+const vp = { once: true, margin: '-60px' };
+
+// Color per type — restrained, not neon
+const TYPE_STYLE: Record<string, { dot: string; badge: string; text: string }> = {
+  BUILD:          { dot: '#86efac', badge: 'rgba(74,222,128,0.08)',  text: '#86efac' },
+  COMMUNITY:      { dot: '#c4b5fd', badge: 'rgba(160,140,255,0.08)', text: '#c4b5fd' },
+  'OPEN SOURCE':  { dot: '#93c5fd', badge: 'rgba(96,165,250,0.08)',  text: '#93c5fd' },
+  LEARN:          { dot: '#fde68a', badge: 'rgba(250,200,80,0.08)',   text: '#fde68a' },
 };
-const TYPE_BG: Record<string, string> = {
-  BUILD:          'rgba(74,222,128,0.08)',
-  COMMUNITY:      'rgba(160,140,255,0.08)',
-  'OPEN SOURCE':  'rgba(96,165,250,0.08)',
-  LEARN:          'rgba(250,200,80,0.08)',
-};
+const DEFAULT_STYLE = { dot: 'var(--text-3)', badge: 'rgba(255,255,255,0.04)', text: 'var(--text-3)' };
 
 export default function Experience() {
   return (
     <section id="experience" className="section" aria-label="Experience and community">
       <div className="wrap">
+        {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
+          viewport={vp} transition={{ duration: 0.65 }}
           style={{ marginBottom: 72 }}
         >
-          <div className="section-eyebrow">
-            <span className="label">Experience</span>
-            <div className="section-line" />
-          </div>
+          <span className="s-label">Experience</span>
           <h2
             className="display"
-            style={{ fontSize: 'clamp(2.2rem,5vw,4rem)', color: 'var(--text)' }}
+            style={{ fontSize: 'clamp(2.4rem, 6vw, 5rem)', color: 'var(--text)', marginTop: 20 }}
           >
-            Community<br />&amp; Builds
+            Community &amp;<br />open source
           </h2>
-          <p style={{ fontSize: '0.92rem', color: 'var(--text-2)', marginTop: 16, maxWidth: 460 }}>
+          <p style={{ fontSize: '0.93rem', color: 'var(--text-2)', marginTop: 16, maxWidth: 460, lineHeight: 1.7 }}>
             Personal projects, open-source contributions, and campus community roles.
+            No fabricated responsibilities — just what actually happened.
           </p>
         </motion.div>
 
-        {/* Timeline */}
-        <div style={{ position: 'relative', maxWidth: 760 }}>
-          {/* Vertical line */}
-          <div style={{
-            position: 'absolute', left: 14, top: 10, bottom: 10,
-            width: 1, background: 'var(--glass-border)',
+        {/* Vertical timeline — max width so it stays editorial */}
+        <div style={{ position: 'relative', maxWidth: 740 }}>
+          {/* Line */}
+          <div aria-hidden="true" style={{
+            position: 'absolute',
+            top: 8, bottom: 8, left: 16,
+            width: 1,
+            background: 'linear-gradient(to bottom, transparent, var(--glass-border) 10%, var(--glass-border) 90%, transparent)',
           }} />
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             {EXPERIENCE.map((exp, i) => {
-              const col = TYPE_COLOR[exp.type] || 'var(--text-3)';
-              const bg  = TYPE_BG[exp.type]   || 'var(--glass)';
+              const s = TYPE_STYLE[exp.type] || DEFAULT_STYLE;
               return (
                 <motion.div
                   key={exp.id}
                   initial={{ opacity: 0, x: -20 }}
                   whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: i * 0.055 }}
-                  style={{ display: 'flex', gap: 28 }}
+                  viewport={vp}
+                  transition={{ duration: 0.48, delay: i * 0.05 }}
+                  style={{ display: 'flex', gap: 24, alignItems: 'flex-start' }}
                 >
-                  {/* Node */}
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, width: 28 }}>
+                  {/* Timeline node */}
+                  <div style={{
+                    flexShrink: 0, width: 32,
+                    display: 'flex', justifyContent: 'center', paddingTop: 20,
+                  }}>
                     <div style={{
-                      width: 10, height: 10, borderRadius: '50%',
-                      border: `2px solid ${col}`,
-                      background: bg,
-                      marginTop: 22, flexShrink: 0,
-                      boxShadow: exp.current ? `0 0 14px ${col}` : 'none',
+                      width: 9, height: 9,
+                      borderRadius: '50%',
+                      border: `2px solid ${s.dot}`,
+                      background: s.badge,
+                      boxShadow: exp.current ? `0 0 12px ${s.dot}` : 'none',
                     }} />
                   </div>
 
-                  {/* Card */}
+                  {/* Card — clean, not resume-template */}
                   <div
                     className="glass"
-                    style={{ flex: 1, padding: '20px 24px', borderRadius: 20, marginBottom: 4 }}
-                    data-cursor="hover"
+                    style={{
+                      flex: 1,
+                      padding: '18px 22px',
+                      borderRadius: 18,
+                      marginBottom: 2,
+                    }}
                   >
-                    {/* Meta row */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10, flexWrap: 'wrap' }}>
-                      <span style={{ fontSize: '0.78rem', fontWeight: 700, color: col }}>{exp.year}</span>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+                      <span style={{ fontSize: '0.76rem', fontWeight: 700, color: s.text }}>{exp.year}</span>
                       <span style={{
-                        fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.10em',
+                        fontSize: '0.62rem', fontWeight: 600, letterSpacing: '0.10em',
                         padding: '2px 10px', borderRadius: 100,
-                        background: bg, color: col, textTransform: 'uppercase',
-                      }}>{exp.type}</span>
+                        background: s.badge, color: s.text, textTransform: 'uppercase',
+                        fontFamily: 'JetBrains Mono, monospace',
+                      }}>
+                        {exp.type}
+                      </span>
                       {exp.current && (
-                        <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.7rem', color: '#4ade80' }}>
-                          <span className="dot-live" style={{ width: 5, height: 5 }} />
+                        <span style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: '0.72rem', color: '#86efac' }}>
+                          <span className="dot-available" style={{ width: 5, height: 5 }} />
                           Current
                         </span>
                       )}
                     </div>
 
-                    <h3 style={{ fontSize: '0.97rem', fontWeight: 700, color: 'var(--text)', marginBottom: 4, lineHeight: 1.3 }}>
+                    <h3 style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text)', marginBottom: 4, lineHeight: 1.3 }}>
                       {exp.title}
                     </h3>
+
                     {exp.role && exp.org && (
-                      <p style={{ fontSize: '0.8rem', color: 'var(--text-2)', marginBottom: 8, fontWeight: 500 }}>
+                      <p style={{ fontSize: '0.80rem', color: 'var(--text-2)', fontWeight: 500, marginBottom: 8 }}>
                         {exp.role} · {exp.org}
                       </p>
                     )}
-                    <p style={{ fontSize: '0.85rem', color: 'var(--text-2)', lineHeight: 1.65, marginBottom: 12 }}>
+
+                    <p style={{ fontSize: '0.84rem', color: 'var(--text-2)', lineHeight: 1.70, marginBottom: 12 }}>
                       {exp.description}
                     </p>
 
@@ -116,9 +123,13 @@ export default function Experience() {
                         <a
                           href={exp.link} target="_blank" rel="noopener noreferrer"
                           data-cursor="hover"
-                          style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: '0.76rem', color: 'var(--text-2)', textDecoration: 'none', marginLeft: 4 }}
+                          style={{
+                            display: 'inline-flex', alignItems: 'center', gap: 5,
+                            fontSize: '0.76rem', color: 'var(--text-2)',
+                            textDecoration: 'none', marginLeft: 4,
+                          }}
                         >
-                          View <ExternalLink size={11} />
+                          View <ExternalLink size={10} />
                         </a>
                       )}
                     </div>

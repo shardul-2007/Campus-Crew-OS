@@ -1,94 +1,192 @@
 'use client';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Linkedin, ExternalLink, X } from 'lucide-react';
-import { ACHIEVEMENTS } from '@/data/portfolio';
+import { Linkedin, ExternalLink, X, ShieldCheck, Award } from 'lucide-react';
+import { ACHIEVEMENTS, PERSONAL } from '@/data/portfolio';
 
-const CAT_COLOR: Record<string, string> = {
-  'OPEN SOURCE': 'rgba(96,165,250,0.80)',
-  COMMUNITY:     'rgba(160,140,255,0.80)',
-  PROGRAM:       'rgba(74,222,128,0.80)',
-};
-const CAT_BG: Record<string, string> = {
-  'OPEN SOURCE': 'rgba(96,165,250,0.08)',
-  COMMUNITY:     'rgba(160,140,255,0.08)',
-  PROGRAM:       'rgba(74,222,128,0.08)',
+const vp = { once: true, margin: '-60px' };
+
+const CATEGORY_STYLES: Record<string, { badge: string; text: string; border: string }> = {
+  'OPEN SOURCE': {
+    badge: 'rgba(147, 197, 253, 0.08)',
+    text: '#93c5fd',
+    border: 'rgba(147, 197, 253, 0.20)',
+  },
+  COMMUNITY: {
+    badge: 'rgba(196, 181, 253, 0.08)',
+    text: '#c4b5fd',
+    border: 'rgba(196, 181, 253, 0.20)',
+  },
+  PROGRAM: {
+    badge: 'rgba(134, 239, 172, 0.08)',
+    text: '#86efac',
+    border: 'rgba(134, 239, 172, 0.20)',
+  },
 };
 
 export default function Achievements() {
   const [showModal, setShowModal] = useState(false);
 
   return (
-    <section id="achievements" className="section" aria-label="Achievements">
+    <section id="achievements" className="section" aria-label="Achievements and recognition">
       <div className="wrap">
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          viewport={vp}
+          transition={{ duration: 0.65 }}
           style={{ marginBottom: 64 }}
         >
-          <div className="section-eyebrow">
-            <span className="label">Achievements</span>
-            <div className="section-line" />
-          </div>
+          <span className="s-label">Achievements</span>
           <h2
             className="display"
-            style={{ fontSize: 'clamp(2.2rem,5vw,4rem)', color: 'var(--text)' }}
+            style={{ fontSize: 'clamp(2.4rem, 6vw, 5rem)', color: 'var(--text)', marginTop: 20 }}
           >
-            Community &amp;<br />Open Source
+            Verified credentials &amp;<br />open source
           </h2>
-          <p style={{ fontSize: '0.92rem', color: 'var(--text-2)', marginTop: 16, maxWidth: 440 }}>
-            Campus ambassador roles, open-source contributions. All verified.
+          <p style={{ fontSize: '0.93rem', color: 'var(--text-2)', marginTop: 16, maxWidth: 500, lineHeight: 1.7 }}>
+            Factual community leadership and open-source contributions. All badges, certificates, and appointment letters are documented on LinkedIn.
           </p>
         </motion.div>
 
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill,minmax(230px,1fr))',
-          gap: 14,
-        }}>
+        {/* Editorial list / gallery */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))',
+            gap: 16,
+          }}
+        >
           {ACHIEVEMENTS.map((a, i) => {
-            const col = CAT_COLOR[a.cat] || 'var(--text-3)';
-            const bg  = CAT_BG[a.cat]   || 'var(--glass)';
+            const style = CATEGORY_STYLES[a.cat] || {
+              badge: 'rgba(255, 255, 255, 0.06)',
+              text: 'var(--text-2)',
+              border: 'var(--glass-border)',
+            };
+
             return (
-              <motion.div
+              <motion.article
                 key={a.id}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.42, delay: i * 0.055 }}
-                whileHover={{ y: -4 }}
+                viewport={vp}
+                transition={{ duration: 0.45, delay: i * 0.04 }}
+                whileHover={{ y: -3 }}
                 className="glass"
-                style={{ padding: 24, borderRadius: 22, overflow: 'hidden', position: 'relative' }}
+                style={{
+                  padding: '24px 26px',
+                  borderRadius: 22,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  position: 'relative',
+                  overflow: 'hidden',
+                }}
                 data-cursor="hover"
               >
-                {/* Category */}
-                <span style={{
-                  fontSize: '0.62rem', fontWeight: 600, letterSpacing: '0.12em',
-                  padding: '3px 10px', borderRadius: 100,
-                  background: bg, color: col,
-                  display: 'inline-block', marginBottom: 16, textTransform: 'uppercase',
-                }}>
-                  {a.cat}
-                </span>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginBottom: 16 }}>
+                    <span
+                      style={{
+                        fontSize: '0.62rem',
+                        fontWeight: 600,
+                        letterSpacing: '0.12em',
+                        padding: '3px 10px',
+                        borderRadius: 100,
+                        background: style.badge,
+                        color: style.text,
+                        border: `1px solid ${style.border}`,
+                        textTransform: 'uppercase',
+                        fontFamily: 'JetBrains Mono, monospace',
+                      }}
+                    >
+                      {a.cat}
+                    </span>
+                    <span className="meta">{a.year}</span>
+                  </div>
 
-                <h3 style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text)', marginBottom: 4, lineHeight: 1.3 }}>
-                  {a.name}
-                </h3>
-                <p style={{ fontSize: '0.78rem', color: col, fontWeight: 600, marginBottom: 8 }}>{a.org}</p>
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-2)', lineHeight: 1.55, marginBottom: 14 }}>{a.detail}</p>
-                <span className="label">{a.year}</span>
-              </motion.div>
+                  <h3
+                    style={{
+                      fontSize: '1.02rem',
+                      fontWeight: 700,
+                      color: 'var(--text)',
+                      marginBottom: 4,
+                      lineHeight: 1.3,
+                    }}
+                  >
+                    {a.name}
+                  </h3>
+                  <p
+                    style={{
+                      fontSize: '0.82rem',
+                      color: style.text,
+                      fontWeight: 600,
+                      marginBottom: 10,
+                    }}
+                  >
+                    {a.org}
+                  </p>
+                  <p
+                    style={{
+                      fontSize: '0.84rem',
+                      color: 'var(--text-2)',
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    {a.detail}
+                  </p>
+                </div>
+
+                <div
+                  style={{
+                    marginTop: 20,
+                    paddingTop: 14,
+                    borderTop: '1px solid var(--glass-border)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: '0.74rem',
+                      color: 'var(--text-3)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 5,
+                    }}
+                  >
+                    <ShieldCheck size={13} color={style.text} /> Verified credential
+                  </span>
+                  <button
+                    onClick={() => setShowModal(true)}
+                    style={{
+                      background: 'transparent',
+                      border: 'none',
+                      color: 'var(--text-2)',
+                      fontSize: '0.74rem',
+                      cursor: 'pointer',
+                      padding: 0,
+                      textDecoration: 'underline',
+                      fontFamily: 'inherit',
+                    }}
+                    data-cursor="hover"
+                  >
+                    Proof
+                  </button>
+                </div>
+              </motion.article>
             );
           })}
         </div>
 
+        {/* Action button */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.5 }}
+          viewport={vp}
+          transition={{ duration: 0.5, delay: 0.4 }}
           style={{ marginTop: 48, display: 'flex', justifyContent: 'center' }}
         >
           <button
@@ -96,7 +194,7 @@ export default function Achievements() {
             className="btn"
             data-cursor="hover"
           >
-            <Linkedin size={15} /> View proofs &amp; certificates on LinkedIn
+            <Award size={15} /> View credential proofs
           </button>
         </motion.div>
       </div>
@@ -110,40 +208,64 @@ export default function Achievements() {
             exit={{ opacity: 0 }}
             onClick={() => setShowModal(false)}
             style={{
-              position: 'fixed', inset: 0, zIndex: 999,
-              display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24,
-              background: 'rgba(0,0,0,0.7)',
-              backdropFilter: 'blur(24px)',
+              position: 'fixed',
+              inset: 0,
+              zIndex: 999,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 24,
+              background: 'rgba(6, 8, 16, 0.78)',
+              backdropFilter: 'blur(28px)',
             }}
           >
             <motion.div
-              initial={{ scale: 0.9, y: 20 }}
+              initial={{ scale: 0.92, y: 20 }}
               animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 20 }}
+              exit={{ scale: 0.92, y: 20 }}
               transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
               className="glass-deep"
-              style={{ maxWidth: 440, width: '100%', borderRadius: 28, overflow: 'hidden' }}
+              style={{
+                maxWidth: 480,
+                width: '100%',
+                borderRadius: 24,
+                overflow: 'hidden',
+              }}
               onClick={e => e.stopPropagation()}
             >
               {/* Header */}
-              <div style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                padding: '20px 24px',
-                borderBottom: '1px solid var(--glass-border)',
-              }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '20px 24px',
+                  borderBottom: '1px solid var(--glass-border)',
+                }}
+              >
                 <div>
-                  <p style={{ fontWeight: 700, color: 'var(--text)', fontSize: '0.95rem' }}>Verified credentials</p>
-                  <p className="label" style={{ marginTop: 4 }}>All on LinkedIn</p>
+                  <p style={{ fontWeight: 700, color: 'var(--text)', fontSize: '0.98rem' }}>
+                    Documented Credentials
+                  </p>
+                  <p className="meta" style={{ marginTop: 4 }}>
+                    LinkedIn Experience &amp; Certifications
+                  </p>
                 </div>
                 <button
                   onClick={() => setShowModal(false)}
-                  aria-label="Close"
+                  aria-label="Close dialog"
                   data-cursor="hover"
                   style={{
-                    width: 32, height: 32, borderRadius: 10,
+                    width: 32,
+                    height: 32,
+                    borderRadius: 10,
                     border: '1px solid var(--glass-border)',
-                    background: 'var(--glass)', color: 'var(--text-2)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    background: 'var(--glass-bg)',
+                    color: 'var(--text-2)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
                   }}
                 >
                   <X size={14} />
@@ -151,31 +273,46 @@ export default function Achievements() {
               </div>
 
               {/* List */}
-              <div style={{ padding: '16px 24px 24px' }}>
-                {ACHIEVEMENTS.map(a => (
-                  <div
-                    key={a.id}
-                    style={{
-                      display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                      padding: '10px 0', borderBottom: '1px solid var(--glass-border)',
-                    }}
-                  >
-                    <span style={{ fontSize: '0.875rem', color: 'var(--text-2)' }}>{a.name}</span>
-                    <span className="label">{a.year}</span>
-                  </div>
-                ))}
-                <p style={{ fontSize: '0.83rem', color: 'var(--text-2)', textAlign: 'center', marginTop: 20, lineHeight: 1.65 }}>
-                  Offer letters, badges and certificates are in my{' '}
-                  <span style={{ color: 'var(--text)', fontWeight: 600 }}>LinkedIn Experience section</span>.
+              <div style={{ padding: '20px 24px 26px' }}>
+                <div style={{ maxHeight: '320px', overflowY: 'auto', marginBottom: 20 }}>
+                  {ACHIEVEMENTS.map(a => (
+                    <div
+                      key={a.id}
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        padding: '10px 0',
+                        borderBottom: '1px solid var(--glass-border)',
+                        gap: 12,
+                      }}
+                    >
+                      <div>
+                        <p style={{ fontSize: '0.86rem', color: 'var(--text)', fontWeight: 500 }}>
+                          {a.name}
+                        </p>
+                        <p style={{ fontSize: '0.76rem', color: 'var(--text-3)' }}>
+                          {a.org} · {a.detail}
+                        </p>
+                      </div>
+                      <span className="meta">{a.year}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <p style={{ fontSize: '0.82rem', color: 'var(--text-2)', textAlign: 'center', marginBottom: 18, lineHeight: 1.6 }}>
+                  All appointment letters, badges, and contributor proofs are archived and viewable directly on my LinkedIn profile.
                 </p>
+
                 <a
-                  href="https://www.linkedin.com/in/shardul-parihar/"
-                  target="_blank" rel="noopener noreferrer"
+                  href={PERSONAL.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="btn btn-fill"
                   data-cursor="hover"
-                  style={{ width: '100%', justifyContent: 'center', marginTop: 18 }}
+                  style={{ width: '100%', justifyContent: 'center' }}
                 >
-                  <Linkedin size={15} /> Open LinkedIn <ExternalLink size={13} />
+                  <Linkedin size={15} /> Open LinkedIn profile <ExternalLink size={13} />
                 </a>
               </div>
             </motion.div>

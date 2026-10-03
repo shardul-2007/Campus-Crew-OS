@@ -1,127 +1,188 @@
 'use client';
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useId } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { PERSONAL } from '@/data/portfolio';
 
-/* ─── Abstract Neural SVG (not an emoji, not a Lucide icon) ─── */
-function NeuralSVG() {
+const BASE = process.env.NODE_ENV === 'production' ? '/my-portfolio' : '';
+
+/* ─────────────────────────────────────────────────────────────
+   INLINE SVG DEFS — organic torn paper clip-paths
+   Paths describe irregular tear edge.
+   Top mask: full portrait from top down to the torn edge.
+   Bot mask: from the torn edge down to the bottom.
+   The tear line is a hand-crafted organic bezier curve path.
+   ───────────────────────────────────────────────────────────── */
+function TearSVGDefs({ topId, botId }: { topId: string; botId: string }) {
   return (
     <svg
-      width="160" height="160" viewBox="0 0 160 160" fill="none"
-      aria-label="Neural network visualization"
-      style={{ display: 'block' }}
+      aria-hidden="true"
+      style={{ position: 'absolute', width: 0, height: 0, pointerEvents: 'none' }}
     >
-      {/* Outer orbit */}
-      <circle cx="80" cy="80" r="72" stroke="rgba(255,255,255,0.08)" strokeWidth="0.75" />
-      {/* Mid orbit */}
-      <circle cx="80" cy="80" r="46" stroke="rgba(255,255,255,0.12)" strokeWidth="0.75" />
-      {/* Inner orbit */}
-      <circle cx="80" cy="80" r="22" stroke="rgba(255,255,255,0.20)" strokeWidth="0.75" />
-
-      {/* Radial connection lines — outer nodes */}
-      {[0, 45, 90, 135, 180, 225, 270, 315].map((deg, i) => {
-        const rad = (deg * Math.PI) / 180;
-        const ox = 80 + Math.cos(rad) * 72;
-        const oy = 80 + Math.sin(rad) * 72;
-        const mx = 80 + Math.cos(rad) * 46;
-        const my = 80 + Math.sin(rad) * 46;
-        return (
-          <g key={deg}>
-            <line x1={ox} y1={oy} x2={mx} y2={my}
-              stroke="rgba(255,255,255,0.14)" strokeWidth="0.75" />
-            <circle cx={ox} cy={oy} r={i % 2 === 0 ? 2.5 : 1.8}
-              fill="rgba(255,255,255,0.55)" />
-          </g>
-        );
-      })}
-
-      {/* Mid-orbit nodes */}
-      {[22, 112, 202, 292].map((deg) => {
-        const rad = (deg * Math.PI) / 180;
-        const mx = 80 + Math.cos(rad) * 46;
-        const my = 80 + Math.sin(rad) * 46;
-        const ix = 80 + Math.cos(rad) * 22;
-        const iy = 80 + Math.sin(rad) * 22;
-        return (
-          <g key={deg}>
-            <line x1={mx} y1={my} x2={ix} y2={iy}
-              stroke="rgba(255,255,255,0.20)" strokeWidth="0.75" />
-            <circle cx={mx} cy={my} r="3" fill="rgba(255,255,255,0.70)" />
-          </g>
-        );
-      })}
-
-      {/* Cross connections — inner to mid */}
-      <line x1="80" y1="58" x2="104" y2="80" stroke="rgba(255,255,255,0.15)" strokeWidth="0.6" />
-      <line x1="80" y1="58" x2="56" y2="80" stroke="rgba(255,255,255,0.15)" strokeWidth="0.6" />
-      <line x1="80" y1="102" x2="104" y2="80" stroke="rgba(255,255,255,0.15)" strokeWidth="0.6" />
-      <line x1="80" y1="102" x2="56" y2="80" stroke="rgba(255,255,255,0.15)" strokeWidth="0.6" />
-
-      {/* Center — glowing core */}
-      <circle cx="80" cy="80" r="10" fill="rgba(255,255,255,0.12)" />
-      <circle cx="80" cy="80" r="6"  fill="rgba(255,255,255,0.50)" />
-      <circle cx="80" cy="80" r="3"  fill="rgba(255,255,255,0.95)" />
+      <defs>
+        {/*
+          The tear line — reading left to right across the image at ~50% height.
+          Using cubic bezier curves for organic irregularity.
+          The path starts at (0, 50%) and ends at (100%, 50%) via an
+          asymmetric, slightly tilted organic edge.
+          All values in percentage of the image bounding box (0..100).
+        */}
+        <clipPath id={topId} clipPathUnits="objectBoundingBox">
+          <path d="
+            M 0,0
+            L 1,0
+            L 1,0.485
+            C 0.93,0.500 0.87,0.468 0.80,0.492
+            C 0.73,0.516 0.67,0.480 0.60,0.505
+            C 0.53,0.530 0.47,0.488 0.40,0.513
+            C 0.33,0.538 0.27,0.496 0.20,0.518
+            C 0.13,0.540 0.07,0.502 0,0.522
+            Z
+          " />
+        </clipPath>
+        <clipPath id={botId} clipPathUnits="objectBoundingBox">
+          <path d="
+            M 0,0.522
+            C 0.07,0.502 0.13,0.540 0.20,0.518
+            C 0.27,0.496 0.33,0.538 0.40,0.513
+            C 0.47,0.488 0.53,0.530 0.60,0.505
+            C 0.67,0.480 0.73,0.516 0.80,0.492
+            C 0.87,0.468 0.93,0.500 1,0.485
+            L 1,1
+            L 0,1
+            Z
+          " />
+        </clipPath>
+      </defs>
     </svg>
   );
 }
 
-/* ─── Glass Orb that reveals in the tear gap ─── */
+/* ─────────────────────────────────────────────────────────────
+   ABSTRACT NEURAL VISUAL — SVG art, not emoji, not Lucide Brain
+   Fine organic lines + nodes that resemble a neural structure.
+   ───────────────────────────────────────────────────────────── */
+function NeuralArt() {
+  return (
+    <svg
+      width="140" height="140" viewBox="0 0 140 140" fill="none"
+      aria-label="Abstract neural visualization"
+      style={{ display: 'block' }}
+    >
+      {/* Concentric orbit rings */}
+      <circle cx="70" cy="70" r="64" stroke="rgba(255,255,255,0.06)" strokeWidth="0.6" />
+      <circle cx="70" cy="70" r="42" stroke="rgba(255,255,255,0.09)" strokeWidth="0.6" />
+      <circle cx="70" cy="70" r="20" stroke="rgba(255,255,255,0.14)" strokeWidth="0.6" />
+
+      {/* Outer dendrite paths — organic, not perfectly radial */}
+      <path d="M 70,6 C 62,22 58,38 64,50" stroke="rgba(255,255,255,0.28)" strokeWidth="0.8" fill="none" strokeLinecap="round" />
+      <path d="M 134,70 C 118,62 102,60 90,66" stroke="rgba(255,255,255,0.24)" strokeWidth="0.8" fill="none" strokeLinecap="round" />
+      <path d="M 70,134 C 78,118 82,102 76,90" stroke="rgba(255,255,255,0.22)" strokeWidth="0.8" fill="none" strokeLinecap="round" />
+      <path d="M 6,70 C 22,78 38,80 52,74" stroke="rgba(255,255,255,0.20)" strokeWidth="0.8" fill="none" strokeLinecap="round" />
+
+      {/* Diagonal dendrites */}
+      <path d="M 116,24 C 104,36 94,46 86,56" stroke="rgba(255,255,255,0.18)" strokeWidth="0.7" fill="none" strokeLinecap="round" />
+      <path d="M 24,116 C 36,104 46,94 56,86" stroke="rgba(255,255,255,0.15)" strokeWidth="0.7" fill="none" strokeLinecap="round" />
+      <path d="M 116,116 C 104,104 94,94 86,86" stroke="rgba(255,255,255,0.14)" strokeWidth="0.7" fill="none" strokeLinecap="round" />
+      <path d="M 24,24 C 36,36 46,46 56,56" stroke="rgba(255,255,255,0.12)" strokeWidth="0.7" fill="none" strokeLinecap="round" />
+
+      {/* Mid-ring branching connections */}
+      <path d="M 70,28 Q 80,50 70,50" stroke="rgba(255,255,255,0.18)" strokeWidth="0.6" fill="none" />
+      <path d="M 112,70 Q 90,60 90,70" stroke="rgba(255,255,255,0.18)" strokeWidth="0.6" fill="none" />
+      <path d="M 70,112 Q 60,90 70,90" stroke="rgba(255,255,255,0.18)" strokeWidth="0.6" fill="none" />
+      <path d="M 28,70 Q 50,80 50,70" stroke="rgba(255,255,255,0.18)" strokeWidth="0.6" fill="none" />
+
+      {/* Outer nodes */}
+      <circle cx="70"  cy="6"   r="2.2" fill="rgba(255,255,255,0.55)" />
+      <circle cx="134" cy="70"  r="1.8" fill="rgba(255,255,255,0.45)" />
+      <circle cx="70"  cy="134" r="1.8" fill="rgba(255,255,255,0.40)" />
+      <circle cx="6"   cy="70"  r="1.8" fill="rgba(255,255,255,0.40)" />
+      <circle cx="116" cy="24"  r="1.5" fill="rgba(255,255,255,0.32)" />
+      <circle cx="24"  cy="116" r="1.5" fill="rgba(255,255,255,0.30)" />
+      <circle cx="116" cy="116" r="1.5" fill="rgba(255,255,255,0.28)" />
+      <circle cx="24"  cy="24"  r="1.5" fill="rgba(255,255,255,0.28)" />
+
+      {/* Mid ring nodes */}
+      <circle cx="70"  cy="28"  r="2.5" fill="rgba(255,255,255,0.60)" />
+      <circle cx="112" cy="70"  r="2"   fill="rgba(255,255,255,0.50)" />
+      <circle cx="70"  cy="112" r="2"   fill="rgba(255,255,255,0.45)" />
+      <circle cx="28"  cy="70"  r="2"   fill="rgba(255,255,255,0.45)" />
+
+      {/* Core */}
+      <circle cx="70" cy="70" r="9"  fill="rgba(255,255,255,0.10)" />
+      <circle cx="70" cy="70" r="5"  fill="rgba(255,255,255,0.45)" />
+      <circle cx="70" cy="70" r="2.5" fill="rgba(255,255,255,0.92)" />
+    </svg>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────
+   GLASS ORB
+   ───────────────────────────────────────────────────────────── */
 function GlassOrb() {
   return (
     <div
       style={{
-        width: 180, height: 180,
-        borderRadius: '50%',
-        background: 'radial-gradient(circle at 35% 35%, rgba(255,255,255,0.14), rgba(255,255,255,0.03) 60%)',
-        backdropFilter: 'blur(32px) saturate(180%)',
-        WebkitBackdropFilter: 'blur(32px) saturate(180%)',
-        border: '1px solid rgba(255,255,255,0.18)',
-        boxShadow: '0 0 80px rgba(255,255,255,0.08), inset 0 1px 0 rgba(255,255,255,0.25)',
         position: 'relative',
+        width: 200, height: 200,
+        borderRadius: '50%',
+        background:
+          'radial-gradient(circle at 32% 28%, rgba(255,255,255,0.13) 0%, rgba(255,255,255,0.035) 55%, transparent 100%)',
+        backdropFilter: 'blur(40px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(40px) saturate(180%)',
+        border: '1px solid rgba(255,255,255,0.14)',
+        boxShadow:
+          'inset 0 1px 0 rgba(255,255,255,0.20), 0 0 100px rgba(255,255,255,0.06)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}
     >
-      {/* Slow-spinning outer ring */}
+      {/* Spinning outer orbit */}
       <div style={{
         position: 'absolute',
-        inset: -18,
+        inset: -20,
         borderRadius: '50%',
-        border: '1px solid rgba(255,255,255,0.10)',
-        animation: 'spin-cw 24s linear infinite',
+        border: '1px solid rgba(255,255,255,0.07)',
+        animation: 'orb-cw 26s linear infinite',
       }}>
-        {/* Ring knots */}
-        {[0, 120, 240].map(deg => {
+        {/* 3 knots on ring */}
+        {[60, 180, 300].map(deg => {
           const r = (deg * Math.PI) / 180;
-          const x = 50 + Math.cos(r) * 50;
-          const y = 50 + Math.sin(r) * 50;
           return (
             <div key={deg} style={{
               position: 'absolute',
               width: 5, height: 5,
               borderRadius: '50%',
-              background: 'rgba(255,255,255,0.55)',
-              top: `${y}%`, left: `${x}%`,
+              background: 'rgba(255,255,255,0.40)',
+              top: `${50 + Math.sin(r) * 50}%`,
+              left: `${50 + Math.cos(r) * 50}%`,
               transform: 'translate(-50%,-50%)',
             }} />
           );
         })}
       </div>
-      {/* Counter-spinning inner ring */}
+      {/* Slow counter-spin inner dashed ring */}
       <div style={{
         position: 'absolute',
-        inset: -4,
+        inset: -6,
         borderRadius: '50%',
-        border: '1px dashed rgba(255,255,255,0.07)',
-        animation: 'spin-ccw 16s linear infinite',
+        border: '1px dashed rgba(255,255,255,0.05)',
+        animation: 'orb-ccw 18s linear infinite',
       }} />
-      <NeuralSVG />
+      <NeuralArt />
     </div>
   );
 }
 
+/* ─────────────────────────────────────────────────────────────
+   HERO — 480vh scroll container
+   ───────────────────────────────────────────────────────────── */
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
+
+  // Unique IDs for SVG clip paths (SSR safe)
+  const uid = useId().replace(/:/g, '');
+  const topClipId = `tear-top-${uid}`;
+  const botClipId = `tear-bot-${uid}`;
 
   useEffect(() => { setMounted(true); }, []);
 
@@ -130,205 +191,280 @@ export default function Hero() {
     offset: ['start start', 'end end'],
   });
 
-  // ── Phase 0 (0–18%): hero text + portrait visible ──
-  const heroTextOpacity = useTransform(scrollYProgress, [0, 0.14, 0.22], [1, 1, 0]);
-  const heroTextY       = useTransform(scrollYProgress, [0, 0.22], [0, -48]);
+  // ── PHASE 0 (0→20%): editorial layout, name + portrait ──
+  const heroOpacity = useTransform(scrollYProgress, [0.00, 0.14, 0.22], [1, 1, 0]);
+  const heroY       = useTransform(scrollYProgress, [0.00, 0.22], [0, -56]);
 
-  // ── Phase 1 (10–42%): portrait scales up from side to center ──
-  const portraitScale   = useTransform(scrollYProgress, [0, 0.18, 0.42], [1, 1, 1.45]);
-  const portraitX       = useTransform(scrollYProgress, [0, 0.18, 0.42], ['25%', '25%', '0%']);
+  // ── PHASE 1 (10→44%): portrait grows to fill viewport ──
+  const prtScale = useTransform(scrollYProgress, [0.00, 0.20, 0.44], [1, 1.05, 1.55]);
+  const prtX     = useTransform(scrollYProgress, [0.00, 0.20, 0.44], ['20%', '20%', '0%']);
 
-  // ── Phase 2 (42–68%): organic tear ──
-  const tearTopY        = useTransform(scrollYProgress, [0.40, 0.68], ['0%', '-62%']);
-  const tearBotY        = useTransform(scrollYProgress, [0.40, 0.68], ['0%',  '62%']);
-  const portraitOpacity = useTransform(scrollYProgress, [0.58, 0.70], [1, 0]);
+  // ── PHASE 2 (42→70%): organic tear ──
+  const topY  = useTransform(scrollYProgress, [0.42, 0.70], ['0%', '-65%']);
+  const botY  = useTransform(scrollYProgress, [0.42, 0.70], ['0%',  '65%']);
+  const prtOp = useTransform(scrollYProgress, [0.58, 0.72], [1, 0]);
 
-  // Crack energy glow between halves
-  const crackOpacity    = useTransform(scrollYProgress, [0.44, 0.55, 0.65, 0.72], [0, 1, 1, 0]);
+  // Crack glow at tear seam
+  const crackOp = useTransform(scrollYProgress, [0.46, 0.55, 0.66, 0.74], [0, 1, 1, 0]);
 
-  // ── Phase 3 (68–88%): orb + text reveal ──
-  const orbOpacity      = useTransform(scrollYProgress, [0.66, 0.80], [0, 1]);
-  const orbScale        = useTransform(scrollYProgress, [0.66, 0.82], [0.5, 1]);
-  const textRevealOp    = useTransform(scrollYProgress, [0.78, 0.88, 0.96, 1.0], [0, 1, 1, 0]);
+  // ── PHASE 3 (70→90%): orb reveals ──
+  const orbOp    = useTransform(scrollYProgress, [0.68, 0.82], [0, 1]);
+  const orbScale = useTransform(scrollYProgress, [0.68, 0.84], [0.55, 1]);
+  const orbTextOp = useTransform(scrollYProgress, [0.80, 0.90, 0.97, 1.0], [0, 1, 1, 0]);
 
-  // ── Scroll hint ──
-  const hintOpacity     = useTransform(scrollYProgress, [0, 0.07], [1, 0]);
-
-  const basePath = process.env.NODE_ENV === 'production' ? '/my-portfolio' : '';
+  // Scroll hint fades away
+  const hintOp = useTransform(scrollYProgress, [0, 0.08], [1, 0]);
 
   return (
-    <div ref={containerRef} id="home" style={{ height: '420vh', position: 'relative' }}>
+    <div
+      ref={containerRef}
+      id="home"
+      style={{ height: '480vh', position: 'relative' }}
+    >
+      {/* Inline SVG clip path definitions */}
+      <TearSVGDefs topId={topClipId} botId={botClipId} />
+
+      {/* ── STICKY VIEWPORT ── */}
       <div
         style={{ position: 'sticky', top: 0, height: '100vh', overflow: 'hidden' }}
         aria-label="Hero section"
       >
-
-        {/* ── Background: portrait also behind hero (even more blurred) ── */}
+        {/* Extra deep portrait atmosphere in hero */}
         {mounted && (
-          <div style={{
-            position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none',
-          }}>
+          <div
+            aria-hidden="true"
+            style={{
+              position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none',
+            }}
+          >
             <div style={{
               position: 'absolute',
-              top: '-5%', right: '-5%',
-              width: '65%', height: '110%',
-              backgroundImage: `url(${basePath}/imageshardul.png)`,
-              backgroundSize: 'cover', backgroundPosition: 'center top',
-              filter: 'blur(90px) saturate(80%)',
-              opacity: 0.22,
+              top: '-10%', right: '-5%',
+              width: '70%', height: '120%',
+              backgroundImage: `url(${BASE}/imageshardul.png)`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center top',
+              filter: 'blur(100px) saturate(70%) brightness(0.45)',
+              opacity: 0.26,
             }} />
           </div>
         )}
 
-        {/* ═══════════════════════════════════════════
-            PHASE 0 — Hero text + portrait side by side
-            ═══════════════════════════════════════════ */}
+        {/* ═════════════════════════════════════════════════════
+            PHASE 0 — Name + bio + CTA (editorial layout)
+            ═════════════════════════════════════════════════════ */}
         <motion.div
           style={{
             position: 'absolute', inset: 0, zIndex: 10,
-            opacity: heroTextOpacity, y: heroTextY,
+            opacity: heroOpacity, y: heroY,
             pointerEvents: 'none',
           }}
         >
-          <div className="wrap" style={{
-            height: '100%',
-            display: 'flex', alignItems: 'center',
-            paddingTop: 90,
-          }}>
-            {/* Left: text */}
+          <div
+            className="wrap"
+            style={{
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              paddingTop: 80,
+            }}
+          >
             <motion.div
-              initial={{ opacity: 0, x: -32 }}
+              initial={{ opacity: 0, x: -28 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-              style={{ flex: '0 0 auto', maxWidth: 520, pointerEvents: 'auto' }}
+              transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
+              style={{ maxWidth: 520, pointerEvents: 'auto' }}
             >
-              {/* Available status */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 32 }}>
-                <span className="dot-live" />
-                <span className="label" style={{ color: 'var(--text-2)' }}>Available for opportunities</span>
+              {/* Available indicator */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 36 }}>
+                <span className="dot-available" />
+                <span style={{ fontSize: '0.78rem', color: 'var(--text-2)', letterSpacing: '0.02em' }}>
+                  Available for opportunities
+                </span>
               </div>
 
-              {/* Name — the most important thing */}
+              {/* Name */}
               <h1
                 className="display"
-                style={{ fontSize: 'clamp(3.6rem,9vw,7.5rem)', color: 'var(--text)', marginBottom: '0.15em' }}
+                style={{
+                  fontSize: 'clamp(3.8rem, 9.5vw, 8rem)',
+                  color: 'var(--text)',
+                  marginBottom: '0.12em',
+                }}
               >
                 Shardul<br />Parihar
               </h1>
 
-              <p style={{ fontSize: '1.1rem', color: 'var(--text-2)', fontWeight: 500, marginBottom: 20 }}>
+              <p style={{
+                fontSize: '1.05rem',
+                color: 'var(--text-2)',
+                fontWeight: 500,
+                marginBottom: 18,
+                letterSpacing: '-0.01em',
+              }}>
                 Software Engineer
               </p>
-              <p style={{ fontSize: '0.95rem', color: 'var(--text-2)', lineHeight: 1.7, maxWidth: 400, marginBottom: 40 }}>
+
+              <p style={{
+                fontSize: '0.93rem',
+                color: 'var(--text-2)',
+                lineHeight: 1.75,
+                maxWidth: 400,
+                marginBottom: 40,
+              }}>
                 {PERSONAL.bio}
               </p>
 
               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-                <a href="#projects" className="btn btn-fill" data-cursor="hover">View my work</a>
-                <a href="#contact"  className="btn"          data-cursor="hover">Get in touch</a>
+                <a href="#projects" className="btn btn-fill" data-cursor="hover">
+                  View my work
+                </a>
+                <a href="#contact" className="btn" data-cursor="hover">
+                  Get in touch
+                </a>
               </div>
             </motion.div>
           </div>
         </motion.div>
 
-        {/* ═══════════════════════════════════════════
-            PHASES 1–2 — Portrait grows then tears
-            ═══════════════════════════════════════════ */}
+        {/* ═════════════════════════════════════════════════════
+            PHASE 1–2 — Portrait: grows → organic SVG tear
+            ═════════════════════════════════════════════════════ */}
         <motion.div
           style={{
-            position: 'absolute', zIndex: 5,
+            position: 'absolute',
+            zIndex: 5,
             top: '50%', left: '50%',
             translateX: '-50%', translateY: '-50%',
-            width: 'clamp(280px, 42vw, 520px)',
+            width: 'clamp(300px, 44vw, 560px)',
             aspectRatio: '3 / 4',
-            scale: portraitScale,
-            x: portraitX,
+            scale: prtScale,
+            x: prtX,
             pointerEvents: 'none',
           }}
         >
-          {/* TOP HALF */}
+          {/* TOP HALF — clips via SVG clipPath, slides up */}
           <motion.div
-            className="tear-top"
             style={{
               position: 'absolute', inset: 0,
-              y: tearTopY,
-              opacity: portraitOpacity,
+              clipPath: `url(#${topClipId})`,
+              y: topY,
+              opacity: prtOp,
             }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={`${basePath}/imageshardul.png`}
+              src={`${BASE}/imageshardul.png`}
               alt="Shardul Parihar"
-              style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }}
+              style={{
+                width: '100%', height: '100%',
+                objectFit: 'cover', objectPosition: 'center top',
+                display: 'block',
+              }}
             />
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent 55%, var(--bg) 100%)' }} />
+            {/* Fade to bg at edges */}
+            <div style={{
+              position: 'absolute', inset: 0,
+              background: 'linear-gradient(to bottom, rgba(6,8,16,0.30) 0%, transparent 40%, rgba(6,8,16,0.15) 100%)',
+            }} />
           </motion.div>
 
-          {/* BOTTOM HALF */}
+          {/* BOTTOM HALF — clips via SVG clipPath, slides down */}
           <motion.div
-            className="tear-bot"
             style={{
               position: 'absolute', inset: 0,
-              y: tearBotY,
-              opacity: portraitOpacity,
+              clipPath: `url(#${botClipId})`,
+              y: botY,
+              opacity: prtOp,
             }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={`${basePath}/imageshardul.png`}
+              src={`${BASE}/imageshardul.png`}
               alt=""
-              aria-hidden
-              style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }}
+              aria-hidden="true"
+              style={{
+                width: '100%', height: '100%',
+                objectFit: 'cover', objectPosition: 'center top',
+                display: 'block',
+              }}
             />
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, transparent 55%, var(--bg) 100%)' }} />
+            <div style={{
+              position: 'absolute', inset: 0,
+              background: 'linear-gradient(to top, rgba(6,8,16,0.35) 0%, transparent 40%, rgba(6,8,16,0.15) 100%)',
+            }} />
           </motion.div>
 
-          {/* Crack energy line */}
+          {/* Tear crack — luminous edge at split point */}
           <motion.div
             style={{
-              position: 'absolute', left: 0, right: 0, top: '48.5%',
-              translateY: '-50%',
-              opacity: crackOpacity,
-              zIndex: 20, pointerEvents: 'none',
+              position: 'absolute',
+              left: 0, right: 0,
+              top: '50%',
+              translateY: '-1px',
+              zIndex: 20,
+              opacity: crackOp,
+              pointerEvents: 'none',
             }}
           >
+            {/* The main glow line */}
             <div style={{
-              height: 1.5,
-              background: 'linear-gradient(90deg, transparent 0%, var(--crack) 25%, rgba(255,255,255,1) 50%, var(--crack) 75%, transparent 100%)',
-              boxShadow: '0 0 24px var(--crack-glow), 0 0 60px var(--crack-glow)',
+              height: 2,
+              background:
+                'linear-gradient(90deg, transparent 0%, var(--crack) 20%, rgba(255,255,255,1) 50%, var(--crack) 80%, transparent 100%)',
+              boxShadow:
+                '0 0 18px var(--crack-glow), 0 0 48px var(--crack-glow)',
+              filter: 'blur(0.5px)',
             }} />
-            {/* Glow diffusion */}
+            {/* Diffuse atmospheric glow around tear */}
             <div style={{
-              position: 'absolute', top: -40, left: 0, right: 0, height: 80,
-              background: 'radial-gradient(ellipse 70% 40px at 50% 50%, var(--crack-glow) 0%, transparent 70%)',
+              position: 'absolute',
+              top: -48, left: '5%', right: '5%', height: 96,
+              background:
+                'radial-gradient(ellipse 80% 48px at 50% 50%, var(--crack-glow) 0%, transparent 70%)',
+              pointerEvents: 'none',
             }} />
           </motion.div>
         </motion.div>
 
-        {/* ═══════════════════════════════════════════
-            PHASE 3 — Glass orb + bio reveal
-            ═══════════════════════════════════════════ */}
+        {/* ═════════════════════════════════════════════════════
+            PHASE 3 — Glass orb + neural visual
+            ═════════════════════════════════════════════════════ */}
         <motion.div
           style={{
             position: 'absolute', inset: 0, zIndex: 8,
-            opacity: orbOpacity,
+            opacity: orbOp,
             display: 'flex', flexDirection: 'column',
             alignItems: 'center', justifyContent: 'center',
-            gap: 40, pointerEvents: 'none',
+            gap: 44,
+            pointerEvents: 'none',
           }}
         >
           <motion.div style={{ scale: orbScale }}>
             <GlassOrb />
           </motion.div>
 
-          <motion.div style={{ opacity: textRevealOp, textAlign: 'center' }}>
-            <h2
-              className="display"
-              style={{ fontSize: 'clamp(1.8rem, 4vw, 3rem)', color: 'var(--text)', marginBottom: 12 }}
-            >
+          <motion.div
+            style={{ opacity: orbTextOp, textAlign: 'center', padding: '0 24px' }}
+          >
+            <p style={{
+              fontSize: 'clamp(1.5rem, 3.5vw, 2.4rem)',
+              fontWeight: 700,
+              fontFamily: 'Manrope, system-ui, sans-serif',
+              letterSpacing: '-0.03em',
+              color: 'var(--text)',
+              marginBottom: 12,
+              lineHeight: 1.1,
+            }}>
               Shardul Parihar
-            </h2>
-            <p style={{ fontSize: '0.9rem', color: 'var(--text-2)', maxWidth: 340, margin: '0 auto', lineHeight: 1.65 }}>
+            </p>
+            <p style={{
+              fontSize: '0.9rem',
+              color: 'var(--text-2)',
+              maxWidth: 320,
+              margin: '0 auto',
+              lineHeight: 1.65,
+            }}>
               {PERSONAL.bio}
             </p>
           </motion.div>
@@ -337,16 +473,25 @@ export default function Hero() {
         {/* Scroll hint */}
         <motion.div
           style={{
-            position: 'absolute', bottom: 36, left: '50%', translateX: '-50%',
-            opacity: hintOpacity, zIndex: 20, pointerEvents: 'none',
-            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
+            position: 'absolute',
+            bottom: 32, left: '50%',
+            translateX: '-50%',
+            opacity: hintOp,
+            zIndex: 20,
+            pointerEvents: 'none',
+            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10,
           }}
         >
-          <span className="label">Scroll</span>
+          <span style={{ fontSize: '0.6rem', letterSpacing: '0.2em', color: 'var(--text-3)', textTransform: 'uppercase' }}>
+            scroll
+          </span>
           <motion.div
-            animate={{ y: [0, 10, 0] }}
-            transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
-            style={{ width: 1, height: 36, background: 'linear-gradient(to bottom, var(--text-2), transparent)' }}
+            animate={{ y: [0, 12, 0] }}
+            transition={{ repeat: Infinity, duration: 2.2, ease: 'easeInOut' }}
+            style={{
+              width: 1, height: 40,
+              background: 'linear-gradient(to bottom, var(--text-3), transparent)',
+            }}
           />
         </motion.div>
       </div>

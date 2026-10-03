@@ -1,59 +1,71 @@
 'use client';
-// Photographic atmospheric background using the real portrait.
-// Three layers: blurred portrait + dark overlay + cursor-reactive light + grain
-import { useEffect, useState } from 'react';
 
 const BASE = process.env.NODE_ENV === 'production' ? '/my-portfolio' : '';
 
 export default function Background() {
-  const [ready, setReady] = useState(false);
-  useEffect(() => { setReady(true); }, []);
-
   return (
     <div
-      aria-hidden
+      aria-hidden="true"
       style={{
-        position: 'fixed', inset: 0, zIndex: 0,
-        pointerEvents: 'none', overflow: 'hidden',
+        position: 'fixed',
+        inset: 0,
+        zIndex: 0,
+        pointerEvents: 'none',
+        overflow: 'hidden',
         backgroundColor: 'var(--bg)',
       }}
     >
-      {/* Portrait atmospheric layer */}
+      {/* ── Portrait — massive, blurred, atmospheric ── */}
       <div
         style={{
           position: 'absolute',
-          top: '-15%', left: '-5%',
-          width: '110%', height: '130%',
+          top: '-20%',
+          left: '-10%',
+          width: '120%',
+          height: '140%',
           backgroundImage: `url(${BASE}/imageshardul.png)`,
           backgroundSize: 'cover',
-          backgroundPosition: 'center 20%',
-          filter: 'blur(72px) saturate(90%)',
-          opacity: 'var(--photo-opacity)' as React.CSSProperties['opacity'],
-          transform: 'scale(1.08)',
+          backgroundPosition: 'center 15%',
+          filter: 'blur(88px) saturate(80%) brightness(0.55)',
+          opacity: 0.28,
+          transform: 'scale(1.06)',
+          willChange: 'transform',
         }}
       />
 
-      {/* Dark overlay so glass has depth */}
-      <div style={{
-        position: 'absolute', inset: 0,
-        background: 'var(--photo-overlay)',
-      }} />
+      {/* ── Dark atmospheric overlay — navy depth ── */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background:
+            'radial-gradient(ellipse 120% 80% at 60% 20%, rgba(60,55,120,0.12) 0%, transparent 60%),' +
+            'radial-gradient(ellipse 80% 60% at 10% 80%, rgba(30,25,80,0.10) 0%, transparent 60%),' +
+            'rgba(6, 8, 16, 0.55)',
+        }}
+      />
 
-      {/* Cursor-reactive light — reads --cx/--cy set by Cursor.tsx via rAF */}
-      {ready && (
-        <div style={{
-          position: 'absolute', inset: 0,
-          background: 'radial-gradient(circle 480px at var(--cx,50vw) var(--cy,40vh), rgba(255,255,255,0.022) 0%, transparent 80%)',
-        }} />
-      )}
+      {/* ── Cursor-reactive light — set by Cursor.tsx via CSS vars ── */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background:
+            'radial-gradient(circle 520px at var(--cx, 50%) var(--cy, 35%), rgba(255,255,255,0.020) 0%, transparent 75%)',
+        }}
+      />
 
-      {/* Corner vignette for depth */}
-      <div style={{
-        position: 'absolute', inset: 0,
-        background: 'radial-gradient(ellipse 100% 100% at 50% 50%, transparent 50%, rgba(0,0,0,0.50) 100%)',
-      }} />
+      {/* ── Vignette: edges darker ── */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background:
+            'radial-gradient(ellipse 100% 100% at 50% 50%, transparent 48%, rgba(0,0,0,0.55) 100%)',
+        }}
+      />
 
-      {/* Grain overlay — defined in globals.css */}
+      {/* ── Grain — defined in globals.css ── */}
       <div className="grain" />
     </div>
   );
