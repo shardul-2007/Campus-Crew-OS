@@ -2,132 +2,277 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --bg: #030712;
-  --bg-2: #0a0f1c;
-  --text: #f9fafb;
-  --text-2: #9ca3af;
-  --text-3: #6b7280;
-  
-  --glass-bg: rgba(15, 25, 45, 0.45);
-  --glass-border: rgba(255, 255, 255, 0.12);
-  --glass-border-h: rgba(255, 255, 255, 0.25);
-  
-  --accent: #e5e7eb;
+/* ─────────────────────────────────────────────
+   DESIGN TOKENS — 4 THEMES
+   ───────────────────────────────────────────── */
+:root,
+[data-theme='obsidian'] {
+  --bg:              #07080f;
+  --photo-opacity:   0.20;
+  --photo-overlay:   rgba(7, 8, 15, 0.55);
+  --glass:           rgba(255,255,255, 0.06);
+  --glass-border:    rgba(255,255,255, 0.11);
+  --glass-border-h:  rgba(255,255,255, 0.22);
+  --glass-inset:     rgba(255,255,255, 0.08);
+  --nav-bg:          rgba(5, 7, 13, 0.68);
+  --text:            #f0eeff;
+  --text-2:          rgba(240,238,255, 0.50);
+  --text-3:          rgba(240,238,255, 0.25);
+  --crack:           rgba(255,255,255,0.90);
+  --crack-glow:      rgba(200,200,255,0.35);
 }
-
 [data-theme='pearl'] {
-  --bg: #f9fafb;
-  --bg-2: #f3f4f6;
-  --text: #030712;
-  --text-2: #4b5563;
-  --text-3: #9ca3af;
-  
-  --glass-bg: rgba(255, 255, 255, 0.65);
-  --glass-border: rgba(0, 0, 0, 0.1);
-  --glass-border-h: rgba(0, 0, 0, 0.2);
+  --bg:              #edecf8;
+  --photo-opacity:   0.12;
+  --photo-overlay:   rgba(237,236,248, 0.50);
+  --glass:           rgba(255,255,255, 0.70);
+  --glass-border:    rgba(0,0,0, 0.08);
+  --glass-border-h:  rgba(0,0,0, 0.18);
+  --glass-inset:     rgba(255,255,255, 0.90);
+  --nav-bg:          rgba(237,236,248, 0.82);
+  --text:            #16122a;
+  --text-2:          rgba(22,18,42, 0.52);
+  --text-3:          rgba(22,18,42, 0.28);
+  --crack:           rgba(60,40,160, 0.85);
+  --crack-glow:      rgba(80,60,200, 0.28);
+}
+[data-theme='aurora'] {
+  --bg:              #03041a;
+  --photo-opacity:   0.16;
+  --photo-overlay:   rgba(3,4,26, 0.58);
+  --glass:           rgba(60,100,255, 0.06);
+  --glass-border:    rgba(120,160,255, 0.14);
+  --glass-border-h:  rgba(140,180,255, 0.28);
+  --glass-inset:     rgba(150,180,255, 0.10);
+  --nav-bg:          rgba(3,4,26, 0.70);
+  --text:            #dce8ff;
+  --text-2:          rgba(220,232,255, 0.48);
+  --text-3:          rgba(200,218,255, 0.25);
+  --crack:           rgba(100,180,255, 0.90);
+  --crack-glow:      rgba(60,140,255, 0.35);
+}
+[data-theme='dream'] {
+  --bg:              #0a0712;
+  --photo-opacity:   0.17;
+  --photo-overlay:   rgba(10,7,18, 0.56);
+  --glass:           rgba(180,120,255, 0.06);
+  --glass-border:    rgba(210,160,255, 0.12);
+  --glass-border-h:  rgba(230,180,255, 0.25);
+  --glass-inset:     rgba(220,180,255, 0.08);
+  --nav-bg:          rgba(8,5,16, 0.70);
+  --text:            #ede8ff;
+  --text-2:          rgba(237,232,255, 0.48);
+  --text-3:          rgba(220,210,255, 0.25);
+  --crack:           rgba(200,140,255, 0.90);
+  --crack-glow:      rgba(160,80,255, 0.35);
 }
 
+/* ─────────────────────────────────────────────
+   RESET
+   ───────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-html {
-  scroll-behavior: smooth;
-  scroll-padding-top: 100px;
-}
-
+html { scroll-behavior: smooth; scroll-padding-top: 96px; }
 body {
-  background-color: var(--bg);
+  background: var(--bg);
   color: var(--text);
-  font-family: 'Inter', 'Manrope', system-ui, sans-serif;
+  font-family: 'Manrope', 'Inter', system-ui, -apple-system, sans-serif;
   font-size: 16px;
-  line-height: 1.6;
+  line-height: 1.65;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+::-webkit-scrollbar { width: 0; }
+::selection { background: rgba(255,255,255,0.15); }
+
+/* Custom cursor — hide system cursor */
+@media (pointer: fine) {
+  * { cursor: none !important; }
 }
 
-::selection { background: rgba(255,255,255,0.2); color: var(--text); }
+/* ─────────────────────────────────────────────
+   GLASS
+   ───────────────────────────────────────────── */
+.glass {
+  background: var(--glass);
+  backdrop-filter: blur(28px) saturate(160%);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  border: 1px solid var(--glass-border);
+  box-shadow: inset 0 1px 0 var(--glass-inset), 0 20px 60px rgba(0,0,0,0.28);
+  transition: border-color 0.25s, box-shadow 0.25s, background 0.4s;
+}
+.glass:hover {
+  border-color: var(--glass-border-h);
+  box-shadow: inset 0 1px 0 var(--glass-border-h), 0 28px 80px rgba(0,0,0,0.38);
+}
+.glass-deep {
+  background: rgba(0,0,0,0.35);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid var(--glass-border-h);
+  box-shadow: inset 0 1px 0 var(--glass-border-h), 0 32px 80px rgba(0,0,0,0.5);
+}
+.glass-nav {
+  background: var(--nav-bg);
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  transition: background 0.4s, border-color 0.25s;
+}
 
-::-webkit-scrollbar { width: 0px; } /* hide scrollbar for cinematic feel */
+/* ─────────────────────────────────────────────
+   LAYOUT
+   ───────────────────────────────────────────── */
+.wrap { max-width: 1240px; margin: 0 auto; padding: 0 clamp(24px,5vw,72px); }
+.section { padding: clamp(96px,14vh,160px) 0; position: relative; }
 
-/* Typography */
-.heading-editorial {
+/* ─────────────────────────────────────────────
+   TYPOGRAPHY
+   ───────────────────────────────────────────── */
+.display {
   font-family: 'Manrope', system-ui, sans-serif;
   font-weight: 800;
   letter-spacing: -0.04em;
-  line-height: 0.95;
+  line-height: 0.92;
   text-transform: uppercase;
 }
-
-.text-meta {
+.label {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--text-3);
 }
 
-/* Glass System */
-.glass {
-  background: var(--glass-bg);
-  backdrop-filter: blur(25px) saturate(140%);
-  -webkit-backdrop-filter: blur(25px) saturate(140%);
+/* ─────────────────────────────────────────────
+   BUTTONS
+   ───────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 26px;
+  font-size: 0.83rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  border-radius: 100px;
+  border: 1px solid var(--glass-border-h);
+  background: var(--glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: var(--text);
+  text-decoration: none;
+  transition: all 0.22s ease;
+  white-space: nowrap;
+}
+.btn:hover { border-color: rgba(255,255,255,0.35); transform: translateY(-2px); box-shadow: 0 12px 36px rgba(0,0,0,0.3); }
+.btn-fill { background: var(--text); color: var(--bg); border-color: var(--text); }
+.btn-fill:hover { opacity: 0.88; transform: translateY(-2px); }
+.btn:focus-visible { outline: 2px solid var(--text); outline-offset: 4px; }
+
+/* ─────────────────────────────────────────────
+   TAG PILL
+   ───────────────────────────────────────────── */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  font-size: 0.77rem;
+  border-radius: 100px;
   border: 1px solid var(--glass-border);
-  box-shadow: inset 0 1px 1px rgba(255,255,255,0.1), 0 8px 32px rgba(0,0,0,0.3);
-  transition: border-color 0.3s ease;
-}
-.glass-soft {
-  background: rgba(15, 25, 45, 0.25);
-  backdrop-filter: blur(15px) saturate(120%);
-  -webkit-backdrop-filter: blur(15px) saturate(120%);
-  border: 1px solid rgba(255,255,255,0.08);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-}
-.glass-deep {
-  background: rgba(5, 10, 20, 0.75);
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
-  border: 1px solid rgba(255,255,255,0.16);
-  box-shadow: inset 0 1px 2px rgba(255,255,255,0.15), 0 12px 48px rgba(0,0,0,0.5);
-}
-.glass:hover {
-  border-color: var(--glass-border-h);
+  background: var(--glass);
+  color: var(--text-2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
-/* Utility layout */
-.container-new {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 clamp(24px, 5vw, 80px);
+/* ─────────────────────────────────────────────
+   PORTRAIT TEAR — ORGANIC SVG CLIP PATHS
+   Use polygon with irregular midpoints so
+   the split edge is jagged / torn, not straight
+   ───────────────────────────────────────────── */
+.tear-top {
+  clip-path: polygon(
+    0% 0%, 100% 0%, 100% 48%,
+    93% 51%, 87% 47%, 80% 52%, 73% 48%, 66% 53%,
+    59% 48%, 52% 52%, 45% 47%, 38% 51%, 31% 48%,
+    24% 52%, 17% 47%, 9% 51%, 0% 48%
+  );
 }
-.section-new { padding: 160px 0; }
-
-/* Hide default cursor on desktop */
-@media (pointer: fine) {
-  body { cursor: none; }
-  a, button, [role="button"], input, select, textarea { cursor: none; }
-}
-
-/* Atmospheric Grain */
-.bg-grain {
-  position: fixed;
-  inset: -100%;
-  width: 300%;
-  height: 300%;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  opacity: 0.03;
-  pointer-events: none;
-  z-index: 9999;
-  animation: grain 8s steps(10) infinite;
-}
-@keyframes grain {
-  0%, 100% { transform: translate(0, 0); }
-  10% { transform: translate(-5%, -10%); }
-  30% { transform: translate(5%, -15%); }
-  50% { transform: translate(-10%, 5%); }
-  70% { transform: translate(10%, 15%); }
-  90% { transform: translate(-5%, 10%); }
+.tear-bot {
+  clip-path: polygon(
+    0% 48%, 9% 51%, 17% 47%, 24% 52%, 31% 48%,
+    38% 51%, 45% 47%, 52% 52%, 59% 48%, 66% 53%,
+    73% 48%, 80% 52%, 87% 47%, 93% 51%, 100% 48%,
+    100% 100%, 0% 100%
+  );
 }
 
-/* Image Tear Mask */
-.clip-tear-top { clip-path: polygon(0 0, 100% 0, 100% 48%, 80% 44%, 60% 50%, 40% 45%, 20% 49%, 0 45%); }
-.clip-tear-bot { clip-path: polygon(0 45%, 20% 49%, 40% 45%, 60% 50%, 80% 44%, 100% 48%, 100% 100%, 0 100%); }
+/* ─────────────────────────────────────────────
+   LIVE DOT
+   ───────────────────────────────────────────── */
+.dot-live {
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #4ade80;
+  flex-shrink: 0;
+  animation: pulse-dot 2.4s ease infinite;
+}
+@keyframes pulse-dot {
+  0%,100% { box-shadow: 0 0 0 0 rgba(74,222,128,0.55); }
+  60%     { box-shadow: 0 0 0 7px rgba(74,222,128,0); }
+}
+
+/* ─────────────────────────────────────────────
+   SPIN — neural orb rings
+   ───────────────────────────────────────────── */
+@keyframes spin-cw  { to { transform: rotate( 360deg); } }
+@keyframes spin-ccw { to { transform: rotate(-360deg); } }
+
+/* ─────────────────────────────────────────────
+   GRAIN OVERLAY
+   ───────────────────────────────────────────── */
+.grain {
+  position: fixed; inset: -200%; width: 500%; height: 500%;
+  pointer-events: none; z-index: 9997; opacity: 0.032;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain-shift 7s steps(8) infinite;
+}
+@keyframes grain-shift {
+  0%   { transform: translate(0,0); }
+  14%  { transform: translate(-5%,-8%); }
+  28%  { transform: translate(4%,-14%); }
+  42%  { transform: translate(-9%,5%); }
+  57%  { transform: translate(7%,12%); }
+  71%  { transform: translate(-4%,8%); }
+  85%  { transform: translate(6%,-4%); }
+  100% { transform: translate(0,0); }
+}
+
+/* ─────────────────────────────────────────────
+   SECTION HEADING COMMON
+   ───────────────────────────────────────────── */
+.section-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.section-line {
+  flex: 1;
+  max-width: 48px;
+  height: 1px;
+  background: var(--text-3);
+}
+
+/* ─────────────────────────────────────────────
+   REDUCED MOTION
+   ───────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

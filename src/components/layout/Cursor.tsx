@@ -1,84 +1,90 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, useSpring, useMotionValue } from 'framer-motion';
 
 export default function Cursor() {
+  const [visible, setVisible] = useState(false);
+  const [size, setSize] = useState<'sm' | 'md' | 'lg'>('sm');
   const [isTouch, setIsTouch] = useState(true);
-  const [hoverState, setHoverState] = useState<'normal' | 'hover' | 'glass' | 'image'>('normal');
 
-  const mouseX = useMotionValue(-100);
-  const mouseY = useMotionValue(-100);
+  const mx = useMotionValue(-200);
+  const my = useMotionValue(-200);
 
-  const springConfig = { damping: 25, stiffness: 300, mass: 0.5 };
-  const smoothX = useSpring(mouseX, springConfig);
-  const smoothY = useSpring(mouseY, springConfig);
+  const spring = { damping: 22, stiffness: 280, mass: 0.45 };
+  const rx = useSpring(mx, spring);
+  const ry = useSpring(my, spring);
+
+  const frameRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (window.matchMedia('(pointer: fine)').matches) {
-      setIsTouch(false);
-    }
-    
-    const handleMouseMove = (e: MouseEvent) => {
-      mouseX.set(e.clientX);
-      mouseY.set(e.clientY);
-      document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
-      document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
+    if (!window.matchMedia('(pointer: fine)').matches) return;
+    setIsTouch(false);
+
+    const move = (e: MouseEvent) => {
+      if (frameRef.current) cancelAnimationFrame(frameRef.current);
+      frameRef.current = requestAnimationFrame(() => {
+        mx.set(e.clientX);
+        my.set(e.clientY);
+        // cursor-reactive light via CSS vars (no React state)
+        document.documentElement.style.setProperty('--cx', `${e.clientX}px`);
+        document.documentElement.style.setProperty('--cy', `${e.clientY}px`);
+        setVisible(true);
+      });
     };
 
-    const handleMouseOver = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      const hoverType = target.closest('[data-cursor]')?.getAttribute('data-cursor');
-      const isClickable = target.closest('a, button, [role="button"], input');
-      
-      if (hoverType === 'glass') setHoverState('glass');
-      else if (hoverType === 'image') setHoverState('image');
-      else if (isClickable) setHoverState('hover');
-      else setHoverState('normal');
+    const over = (e: MouseEvent) => {
+      const t = e.target as HTMLElement;
+      if (t.closest('img, [data-cursor="image"]')) setSize('lg');
+      else if (t.closest('a, button, [data-cursor="hover"]')) setSize('md');
+      else setSize('sm');
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseover', handleMouseOver);
+    const leave = () => setVisible(false);
+
+    window.addEventListener('mousemove', move, { passive: true });
+    window.addEventListener('mouseover', over, { passive: true });
+    document.documentElement.addEventListener('mouseleave', leave);
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseover', handleMouseOver);
+      window.removeEventListener('mousemove', move);
+      window.removeEventListener('mouseover', over);
+      document.documentElement.removeEventListener('mouseleave', leave);
+      if (frameRef.current) cancelAnimationFrame(frameRef.current);
     };
-  }, [mouseX, mouseY]);
+  }, [mx, my]);
 
   if (isTouch) return null;
 
+  const ringSize = size === 'sm' ? 36 : size === 'md' ? 56 : 80;
+  const ringOpacity = size === 'sm' ? 0.35 : size === 'md' ? 0.55 : 0.22;
+
   return (
     <>
+      {/* Dot — follows mouse exactly */}
       <motion.div
         style={{
-          position: 'fixed', top: 0, left: 0,
-          x: mouseX, y: mouseY,
-          translateX: '-50%', translateY: '-50%',
-          width: 8, height: 8,
-          backgroundColor: '#fff',
-          borderRadius: '50%',
+          position: 'fixed', top: 0, left: 0, zIndex: 10001,
           pointerEvents: 'none',
-          zIndex: 10000,
-          mixBlendMode: 'difference'
+          x: mx, y: my,
+          translateX: '-50%', translateY: '-50%',
+          width: 6, height: 6,
+          borderRadius: '50%',
+          backgroundColor: 'var(--text)',
+          opacity: visible ? 0.9 : 0,
+          mixBlendMode: 'difference',
         }}
       />
+      {/* Ring — spring-follows */}
       <motion.div
-        animate={{
-          width: hoverState === 'hover' ? 60 : hoverState === 'glass' ? 80 : hoverState === 'image' ? 100 : 40,
-          height: hoverState === 'hover' ? 60 : hoverState === 'glass' ? 80 : hoverState === 'image' ? 100 : 40,
-          opacity: hoverState === 'normal' ? 0.4 : hoverState === 'glass' ? 0.15 : 0.2,
-          borderWidth: hoverState === 'image' ? 1 : 2
-        }}
-        transition={{ type: 'spring', damping: 20, stiffness: 200 }}
+        animate={{ width: ringSize, height: ringSize, opacity: visible ? ringOpacity : 0 }}
+        transition={{ type: 'spring', damping: 18, stiffness: 200 }}
         style={{
-          position: 'fixed', top: 0, left: 0,
-          x: smoothX, y: smoothY,
-          translateX: '-50%', translateY: '-50%',
-          borderStyle: 'solid',
-          borderColor: '#ffffff',
-          borderRadius: '50%',
+          position: 'fixed', top: 0, left: 0, zIndex: 10000,
           pointerEvents: 'none',
-          zIndex: 9999,
-          filter: hoverState === 'glass' ? 'blur(4px)' : 'none',
+          x: rx, y: ry,
+          translateX: '-50%', translateY: '-50%',
+          borderRadius: '50%',
+          border: '1px solid var(--text)',
+          backdropFilter: size === 'lg' ? 'blur(4px)' : 'none',
         }}
       />
     </>

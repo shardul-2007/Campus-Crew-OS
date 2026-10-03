@@ -4,35 +4,125 @@ import { ABOUT_PANELS, PERSONAL } from '@/data/portfolio';
 
 export default function About() {
   return (
-    <section id="about" className="section-new" style={{ position: 'relative' }}>
-      <div className="container-new">
-        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-          <h2 className="heading-editorial" style={{ fontSize: 'clamp(3rem, 8vw, 6rem)', marginBottom: '4rem' }}>
-            Who I Am
+    <section id="about" className="section" aria-label="About Shardul">
+      {/* Blurred portrait behind this section */}
+      <div style={{
+        position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none', overflow: 'hidden',
+      }}>
+        <div style={{
+          position: 'absolute', top: '-20%', right: '-10%',
+          width: '60%', height: '140%',
+          backgroundImage: 'url(/my-portfolio/imageshardul.png)',
+          backgroundSize: 'cover', backgroundPosition: 'center top',
+          filter: 'blur(80px) saturate(80%)',
+          opacity: 'var(--photo-opacity)',
+        }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'var(--photo-overlay)' }} />
+      </div>
+
+      <div className="wrap" style={{ position: 'relative', zIndex: 1 }}>
+        {/* Section header */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+          style={{ marginBottom: 72 }}
+        >
+          <div className="section-eyebrow">
+            <span className="label">About</span>
+            <div className="section-line" />
+          </div>
+          <h2
+            className="display"
+            style={{ fontSize: 'clamp(2.4rem,6vw,5rem)', color: 'var(--text)', maxWidth: 640 }}
+          >
+            Shardul<br />Parihar
           </h2>
+          <p style={{ fontSize: '1.05rem', color: 'var(--text-2)', maxWidth: 520, marginTop: 20, lineHeight: 1.7 }}>
+            Software engineering student from Pune, India. Building full-stack products, contributing to open source, and active in developer communities.
+          </p>
         </motion.div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
+        {/* 4 panels from real ABOUT_PANELS data */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+          gap: 16,
+        }}>
           {ABOUT_PANELS.map((panel, i) => (
             <motion.div
               key={panel.id}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 28 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
+              transition={{ duration: 0.55, delay: i * 0.09 }}
               className="glass"
-              style={{ padding: '3rem', position: 'relative', overflow: 'hidden' }}
-              data-cursor="glass"
+              style={{ padding: 32, borderRadius: 24, position: 'relative', overflow: 'hidden' }}
+              data-cursor="hover"
             >
-              <div style={{ position: 'absolute', top: '-1rem', right: '-1rem', fontSize: '10rem', opacity: 0.03, fontWeight: 900, pointerEvents: 'none' }}>
+              {/* Large number watermark */}
+              <span style={{
+                position: 'absolute', top: 12, right: 20,
+                fontSize: '5.5rem', fontWeight: 800, lineHeight: 1,
+                color: 'var(--text)', opacity: 0.035, userSelect: 'none',
+                fontFamily: 'Manrope, system-ui',
+              }}>
                 {panel.num}
-              </div>
-              <p className="text-meta" style={{ marginBottom: '1rem', color: '#fff' }}>{panel.label}</p>
-              <h3 style={{ fontSize: '1.5rem', fontWeight: 600, marginBottom: '1rem' }}>{panel.title}</h3>
-              <p style={{ color: 'var(--text-2)', fontSize: '0.95rem' }}>{panel.body}</p>
+              </span>
+
+              <p className="label" style={{ marginBottom: 16, color: 'var(--text-2)' }}>
+                {panel.label}
+              </p>
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text)', marginBottom: 14, lineHeight: 1.3 }}>
+                {panel.title}
+              </h3>
+              <p style={{ fontSize: '0.875rem', color: 'var(--text-2)', lineHeight: 1.7 }}>
+                {panel.body}
+              </p>
+              {panel.tags && (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 20 }}>
+                  {panel.tags.map(t => (
+                    <span key={t} className="tag" style={{ fontSize: '0.72rem' }}>{t}</span>
+                  ))}
+                </div>
+              )}
             </motion.div>
           ))}
         </div>
+
+        {/* Simple profile line */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+          style={{
+            marginTop: 40,
+            display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap',
+            padding: '18px 24px', borderRadius: 16,
+            border: '1px solid var(--glass-border)',
+            background: 'var(--glass)',
+            backdropFilter: 'blur(20px)',
+          }}
+        >
+          <div style={{
+            width: 44, height: 44, borderRadius: '50%', flexShrink: 0,
+            border: '1px solid var(--glass-border-h)',
+            background: 'var(--glass)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-2)',
+          }}>SP</div>
+          <div>
+            <p style={{ fontWeight: 600, color: 'var(--text)', lineHeight: 1.3 }}>{PERSONAL.name}</p>
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-2)' }}>{PERSONAL.role} · {PERSONAL.location}</p>
+          </div>
+          <div style={{ marginLeft: 'auto', display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            {PERSONAL.focus.map(f => (
+              <span key={f} className="tag" style={{ fontSize: '0.72rem' }}>{f}</span>
+            ))}
+          </div>
+        </motion.div>
       </div>
     </section>
   );

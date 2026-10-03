@@ -1,6 +1,6 @@
-import Navbar from '@/components/layout/Navbar';
 import Cursor from '@/components/layout/Cursor';
 import Background from '@/components/layout/Background';
+import Navbar from '@/components/layout/Navbar';
 import Hero from '@/components/sections/Hero';
 import About from '@/components/sections/About';
 import Skills from '@/components/sections/Skills';
@@ -12,10 +12,10 @@ import Contact from '@/components/sections/Contact';
 export default function Home() {
   return (
     <>
-      <Cursor />
       <Background />
+      <Cursor />
       <Navbar />
-      <main id="home">
+      <main>
         <Hero />
         <About />
         <Skills />
