@@ -1,353 +1,308 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import { useMotionValue, useSpring, motion, AnimatePresence } from 'framer-motion';
 
-type CursorMode = 'default' | 'hover' | 'image' | 'text';
+interface WakePoint {
+  x: number;
+  y: number;
+  opacity: number;
+}
 
 export default function Cursor() {
-  const [mode, setMode] = useState<CursorMode>('default');
-  const [visible, setVisible] = useState(false);
-  const [isClicking, setIsClicking] = useState(false);
-  const [isFinePointer, setIsFinePointer] = useState(false);
+  const [isActive, setIsActive] = useState(false);
 
-  // Position motion values
-  const mouseX = useMotionValue(-200);
-  const mouseY = useMotionValue(-200);
-
-  // Velocity-smoothed spring values for the transformative outer ring
-  const ringX = useSpring(mouseX, { damping: 26, stiffness: 320, mass: 0.45 });
-  const ringY = useSpring(mouseY, { damping: 26, stiffness: 320, mass: 0.45 });
-
-  // Secondary delayed aura for atmospheric trail
-  const auraX = useSpring(mouseX, { damping: 36, stiffness: 180, mass: 0.8 });
-  const auraY = useSpring(mouseY, { damping: 36, stiffness: 180, mass: 0.8 });
-
-  // Velocity orientation
-  const angle = useMotionValue(0);
-  const stretch = useMotionValue(1);
-  const prevPos = useRef({ x: 0, y: 0, time: Date.now() });
-  const frameRef = useRef<number | null>(null);
+  // DOM node references for 60fps GPU transforms (zero React re-renders on move)
+  const coreRef = useRef<HTMLDivElement>(null);
+  const haloRef = useRef<HTMLDivElement>(null);
+  const fieldRef = useRef<HTMLDivElement>(null);
+  const wakeRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
-    // Only desktop fine-pointer devices
+    // Only desktop fine-pointer devices without reduced-motion preference
+    if (typeof window === 'undefined') return;
     if (!window.matchMedia('(pointer: fine)').matches) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    setIsFinePointer(true);
+
+    setIsActive(true);
+
+    let isVisible = false;
+    let targetX = -100;
+    let targetY = -100;
+
+    // Intermediate physics coordinates
+    let haloX = -100;
+    let haloY = -100;
+    let fieldX = -100;
+    let fieldY = -100;
+
+    // Magnetic pull coordinates
+    let magneticTargetX = 0;
+    let magneticTargetY = 0;
+    let isMagnetic = false;
+
+    // Hover context states
+    type ContextMode = 'default' | 'nav' | 'button' | 'card' | 'portrait';
+    let currentMode: ContextMode = 'default';
+
+    // 4 decaying wake impressions
+    const wakeHistory: WakePoint[] = [
+      { x: -100, y: -100, opacity: 0 },
+      { x: -100, y: -100, opacity: 0 },
+      { x: -100, y: -100, opacity: 0 },
+      { x: -100, y: -100, opacity: 0 },
+    ];
+    let wakeCounter = 0;
+
+    let animId: number;
 
     const onMouseMove = (e: MouseEvent) => {
-      if (frameRef.current) cancelAnimationFrame(frameRef.current);
+      targetX = e.clientX;
+      targetY = e.clientY;
 
-      frameRef.current = requestAnimationFrame(() => {
-        const x = e.clientX;
-        const y = e.clientY;
-        const now = Date.now();
-        const dt = Math.max(now - prevPos.current.time, 16);
+      if (!isVisible) {
+        isVisible = true;
+        haloX = targetX;
+        haloY = targetY;
+        fieldX = targetX;
+        fieldY = targetY;
+      }
 
-        // Velocity & angle calculation for fluid kinetic stretch
-        const dx = x - prevPos.current.x;
-        const dy = y - prevPos.current.y;
-        const speed = Math.sqrt(dx * dx + dy * dy) / dt;
+      // Check contextual elements underneath cursor
+      const target = e.target as HTMLElement | null;
+      if (target) {
+        const btn = target.closest('button, .btn, [data-cursor="button"]') as HTMLElement | null;
+        const nav = target.closest('nav a, [data-cursor="nav"]') as HTMLElement | null;
+        const card = target.closest('article, [data-cursor="card"]') as HTMLElement | null;
+        const portrait = target.closest('[data-cursor="portrait"]') as HTMLElement | null;
 
-        if (speed > 0.15) {
-          const moveAngle = (Math.atan2(dy, dx) * 180) / Math.PI;
-          angle.set(moveAngle);
-          // Subtle stretch based on speed, clamped for refinement
-          const stretchFactor = Math.min(1 + speed * 0.15, 1.45);
-          stretch.set(stretchFactor);
+        if (btn) {
+          currentMode = 'button';
+          const rect = btn.getBoundingClientRect();
+          const centerX = rect.left + rect.width / 2;
+          const centerY = rect.top + rect.height / 2;
+          // Subtle magnetic attraction — pulls by up to 5px toward button center
+          const dx = centerX - targetX;
+          const dy = centerY - targetY;
+          magneticTargetX = dx * 0.14;
+          magneticTargetY = dy * 0.14;
+          isMagnetic = true;
+        } else if (nav) {
+          currentMode = 'nav';
+          isMagnetic = false;
+        } else if (portrait) {
+          currentMode = 'portrait';
+          isMagnetic = false;
+        } else if (card) {
+          currentMode = 'card';
+          isMagnetic = false;
         } else {
-          stretch.set(1);
+          currentMode = 'default';
+          isMagnetic = false;
+        }
+      }
+
+      // Update background atmospheric illumination via CSS variables
+      document.documentElement.style.setProperty('--cx', `${targetX}px`);
+      document.documentElement.style.setProperty('--cy', `${targetY}px`);
+    };
+
+    const onMouseLeave = () => {
+      isVisible = false;
+    };
+
+    const onMouseEnter = () => {
+      isVisible = true;
+    };
+
+    // Physics Animation Loop
+    const render = () => {
+      if (isVisible) {
+        const actualCoreX = isMagnetic ? targetX + magneticTargetX : targetX;
+        const actualCoreY = isMagnetic ? targetY + magneticTargetY : targetY;
+
+        // 1. Core (Immediate responsive tracking)
+        if (coreRef.current) {
+          coreRef.current.style.transform = `translate3d(${actualCoreX}px, ${actualCoreY}px, 0) translate(-50%, -50%)`;
+          coreRef.current.style.opacity = '1';
         }
 
-        prevPos.current = { x, y, time: now };
+        // 2. Micro Halo (~40ms delay, lerp factor 0.42)
+        haloX += (actualCoreX - haloX) * 0.42;
+        haloY += (actualCoreY - haloY) * 0.42;
+        if (haloRef.current) {
+          haloRef.current.style.transform = `translate3d(${haloX}px, ${haloY}px, 0) translate(-50%, -50%)`;
+          haloRef.current.style.opacity = currentMode === 'button' ? '0.9' : '0.65';
+        }
 
-        mouseX.set(x);
-        mouseY.set(y);
+        // 3. Delayed Spatial Field (~100ms delay, lerp factor 0.16)
+        fieldX += (actualCoreX - fieldX) * 0.16;
+        fieldY += (actualCoreY - fieldY) * 0.16;
+        if (fieldRef.current) {
+          fieldRef.current.style.transform = `translate3d(${fieldX}px, ${fieldY}px, 0) translate(-50%, -50%)`;
+          fieldRef.current.style.opacity = '1';
 
-        // Set global CSS variables for atmospheric illumination in Background.tsx
-        document.documentElement.style.setProperty('--cx', `${x}px`);
-        document.documentElement.style.setProperty('--cy', `${y}px`);
+          // Contextual morphing styles
+          if (currentMode === 'button') {
+            fieldRef.current.style.width = '48px';
+            fieldRef.current.style.height = '48px';
+            fieldRef.current.style.borderColor = 'rgba(255, 255, 255, 0.45)';
+            fieldRef.current.style.backgroundColor = 'rgba(255, 255, 255, 0.08)';
+          } else if (currentMode === 'nav') {
+            fieldRef.current.style.width = '44px';
+            fieldRef.current.style.height = '44px';
+            fieldRef.current.style.borderColor = 'rgba(255, 255, 255, 0.35)';
+            fieldRef.current.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+          } else if (currentMode === 'portrait') {
+            fieldRef.current.style.width = '64px';
+            fieldRef.current.style.height = '64px';
+            fieldRef.current.style.borderColor = 'rgba(255, 255, 255, 0.28)';
+            fieldRef.current.style.backgroundColor = 'rgba(255, 255, 255, 0.03)';
+          } else if (currentMode === 'card') {
+            fieldRef.current.style.width = '52px';
+            fieldRef.current.style.height = '52px';
+            fieldRef.current.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+            fieldRef.current.style.backgroundColor = 'rgba(255, 255, 255, 0.04)';
+          } else {
+            fieldRef.current.style.width = '36px';
+            fieldRef.current.style.height = '36px';
+            fieldRef.current.style.borderColor = 'var(--cursor-ring)';
+            fieldRef.current.style.backgroundColor = 'transparent';
+          }
+        }
 
-        setVisible(true);
-      });
-    };
+        // 4. Short Decaying Spatial Wake (3-4 discrete light stamps, decays rapidly)
+        wakeCounter++;
+        if (wakeCounter % 3 === 0) {
+          // Push current field position into wake history
+          wakeHistory.unshift({ x: fieldX, y: fieldY, opacity: 0.32 });
+          wakeHistory.pop();
+        }
 
-    const onMouseOver = (e: MouseEvent) => {
-      const target = e.target as HTMLElement | null;
-      if (!target) return;
-
-      if (target.closest('img, [data-cursor="image"]')) {
-        setMode('image');
-      } else if (target.closest('h1, h2, [data-cursor="text"]')) {
-        setMode('text');
-      } else if (
-        target.closest('a, button, [role="button"], input, textarea, select, [data-cursor="hover"]')
-      ) {
-        setMode('hover');
+        // Decay wake opacities
+        for (let i = 0; i < wakeHistory.length; i++) {
+          wakeHistory[i].opacity *= 0.88;
+          const wakeEl = wakeRefs.current[i];
+          if (wakeEl) {
+            wakeEl.style.transform = `translate3d(${wakeHistory[i].x}px, ${wakeHistory[i].y}px, 0) translate(-50%, -50%)`;
+            wakeEl.style.opacity = `${wakeHistory[i].opacity}`;
+          }
+        }
       } else {
-        setMode('default');
+        if (coreRef.current) coreRef.current.style.opacity = '0';
+        if (haloRef.current) haloRef.current.style.opacity = '0';
+        if (fieldRef.current) fieldRef.current.style.opacity = '0';
+        wakeRefs.current.forEach(w => {
+          if (w) w.style.opacity = '0';
+        });
       }
-    };
 
-    const onMouseDown = () => setIsClicking(true);
-    const onMouseUp = () => setIsClicking(false);
-    const onMouseLeave = () => setVisible(false);
-    const onMouseEnter = () => setVisible(true);
+      animId = requestAnimationFrame(render);
+    };
 
     window.addEventListener('mousemove', onMouseMove, { passive: true });
-    window.addEventListener('mouseover', onMouseOver, { passive: true });
-    window.addEventListener('mousedown', onMouseDown);
-    window.addEventListener('mouseup', onMouseUp);
     document.documentElement.addEventListener('mouseleave', onMouseLeave);
     document.documentElement.addEventListener('mouseenter', onMouseEnter);
+    animId = requestAnimationFrame(render);
 
     return () => {
       window.removeEventListener('mousemove', onMouseMove);
-      window.removeEventListener('mouseover', onMouseOver);
-      window.removeEventListener('mousedown', onMouseDown);
-      window.removeEventListener('mouseup', onMouseUp);
       document.documentElement.removeEventListener('mouseleave', onMouseLeave);
       document.documentElement.removeEventListener('mouseenter', onMouseEnter);
-      if (frameRef.current) cancelAnimationFrame(frameRef.current);
+      cancelAnimationFrame(animId);
     };
-  }, [mouseX, mouseY, angle, stretch]);
+  }, []);
 
-  if (!isFinePointer) return null;
-
-  // Mode dimensions and styles
-  const isDefault = mode === 'default';
-  const isHover = mode === 'hover';
-  const isImage = mode === 'image';
-  const isText = mode === 'text';
-
-  // Ring size transforms
-  let ringSize = 34;
-  let ringRadius = '50%';
-  if (isHover) ringSize = 58;
-  if (isImage) ringSize = 88;
-  if (isText) ringSize = 46;
-
-  if (isClicking) ringSize = Math.max(ringSize * 0.75, 24);
+  if (!isActive) return null;
 
   return (
     <div
       aria-hidden="true"
       style={{
         position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
+        inset: 0,
         pointerEvents: 'none',
         zIndex: 99999,
         overflow: 'hidden',
       }}
     >
-      {/* ── Layer 1: Ambient Trailing Aura (Atmospheric Glow) ── */}
-      <motion.div
+      {/* ── Layer 4: Decaying Spatial Wake Points (3-4 points) ── */}
+      {[0, 1, 2, 3].map(i => (
+        <div
+          key={i}
+          ref={el => {
+            wakeRefs.current[i] = el;
+          }}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: `${Math.max(6 - i, 3)}px`,
+            height: `${Math.max(6 - i, 3)}px`,
+            borderRadius: '50%',
+            backgroundColor: 'rgba(215, 230, 255, 0.45)',
+            boxShadow: '0 0 6px rgba(180, 215, 255, 0.3)',
+            opacity: 0,
+            pointerEvents: 'none',
+            willChange: 'transform, opacity',
+          }}
+        />
+      ))}
+
+      {/* ── Layer 3: Delayed Spatial Field (~100ms lag, subtle translucent depth) ── */}
+      <div
+        ref={fieldRef}
         style={{
           position: 'absolute',
           top: 0,
           left: 0,
-          x: auraX,
-          y: auraY,
-          translateX: '-50%',
-          translateY: '-50%',
-          width: isImage ? 160 : isHover ? 120 : 80,
-          height: isImage ? 160 : isHover ? 120 : 80,
+          width: '36px',
+          height: '36px',
           borderRadius: '50%',
-          background: 'radial-gradient(circle, var(--cursor-glow) 0%, transparent 70%)',
-          opacity: visible ? 1 : 0,
-          transition: 'width 0.4s ease, height 0.4s ease, opacity 0.3s ease',
+          border: '1px solid var(--cursor-ring)',
+          backgroundColor: 'transparent',
+          backdropFilter: 'blur(2px)',
+          WebkitBackdropFilter: 'blur(2px)',
+          opacity: 0,
+          transition: 'width 0.28s ease, height 0.28s ease, border-color 0.25s ease, background-color 0.25s ease',
           pointerEvents: 'none',
+          willChange: 'transform',
         }}
       />
 
-      {/* ── Layer 2: Transformative Kinetic Spring Ring ── */}
-      <motion.div
+      {/* ── Layer 2: Micro Halo (~40ms lag, soft atmospheric boundary) ── */}
+      <div
+        ref={haloRef}
         style={{
           position: 'absolute',
           top: 0,
           left: 0,
-          x: ringX,
-          y: ringY,
-          translateX: '-50%',
-          translateY: '-50%',
-          rotate: angle,
-          scaleX: stretch,
+          width: '14px',
+          height: '14px',
+          borderRadius: '50%',
+          background:
+            'radial-gradient(circle, rgba(190, 215, 255, 0.25) 0%, rgba(190, 215, 255, 0.05) 60%, transparent 100%)',
+          opacity: 0,
           pointerEvents: 'none',
+          willChange: 'transform',
         }}
-      >
-        <motion.div
-          animate={{
-            width: ringSize,
-            height: isText ? 28 : ringSize,
-            borderRadius: ringRadius,
-            borderColor: isHover
-              ? 'var(--text)'
-              : isImage
-              ? 'var(--text)'
-              : 'var(--cursor-ring)',
-            borderWidth: isHover ? 1.5 : 1,
-            backgroundColor: isHover
-              ? 'rgba(128, 128, 128, 0.08)'
-              : isImage
-              ? 'rgba(128, 128, 128, 0.05)'
-              : 'transparent',
-            backdropFilter: isImage ? 'blur(6px)' : isHover ? 'blur(2px)' : 'none',
-            opacity: visible ? (isClicking ? 0.9 : 0.75) : 0,
-          }}
-          transition={{
-            type: 'spring',
-            damping: 22,
-            stiffness: 300,
-            mass: 0.5,
-          }}
-          style={{
-            borderStyle: 'solid',
-            boxShadow: isHover
-              ? '0 0 20px rgba(128,128,255,0.18), inset 0 0 10px rgba(255,255,255,0.06)'
-              : isImage
-              ? '0 0 24px rgba(255,255,255,0.12), inset 0 0 12px rgba(255,255,255,0.08)'
-              : 'none',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            position: 'relative',
-          }}
-        >
-          {/* Subtle spinning orbital accent on hover state */}
-          <AnimatePresence>
-            {isHover && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.5 }}
-                transition={{ duration: 0.2 }}
-                style={{
-                  position: 'absolute',
-                  inset: -6,
-                  borderRadius: '50%',
-                  border: '1px dashed var(--cursor-ring)',
-                  animation: 'orb-cw 12s linear infinite',
-                }}
-              />
-            )}
-          </AnimatePresence>
+      />
 
-          {/* Camera lens corner reticles on image state */}
-          <AnimatePresence>
-            {isImage && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.2 }}
-                style={{ position: 'absolute', inset: 6 }}
-              >
-                <span
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: 5,
-                    height: 5,
-                    borderTop: '1.5px solid var(--text)',
-                    borderLeft: '1.5px solid var(--text)',
-                  }}
-                />
-                <span
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    right: 0,
-                    width: 5,
-                    height: 5,
-                    borderTop: '1.5px solid var(--text)',
-                    borderRight: '1.5px solid var(--text)',
-                  }}
-                />
-                <span
-                  style={{
-                    position: 'absolute',
-                    bottom: 0,
-                    left: 0,
-                    width: 5,
-                    height: 5,
-                    borderBottom: '1.5px solid var(--text)',
-                    borderLeft: '1.5px solid var(--text)',
-                  }}
-                />
-                <span
-                  style={{
-                    position: 'absolute',
-                    bottom: 0,
-                    right: 0,
-                    width: 5,
-                    height: 5,
-                    borderBottom: '1.5px solid var(--text)',
-                    borderRight: '1.5px solid var(--text)',
-                  }}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
-      </motion.div>
-
-      {/* ── Layer 3: Tight Precision Core Dot ── */}
-      <motion.div
+      {/* ── Layer 1: Core (Immediate 4.5px luminous point with subtle blue tint) ── */}
+      <div
+        ref={coreRef}
         style={{
           position: 'absolute',
           top: 0,
           left: 0,
-          x: mouseX,
-          y: mouseY,
-          translateX: '-50%',
-          translateY: '-50%',
+          width: '5px',
+          height: '5px',
+          borderRadius: '50%',
+          backgroundColor: '#ffffff',
+          boxShadow: '0 0 8px rgba(180, 215, 255, 0.85), 0 0 2px rgba(255, 255, 255, 1)',
+          opacity: 0,
           pointerEvents: 'none',
+          willChange: 'transform',
         }}
-      >
-        <motion.div
-          animate={{
-            width: isHover ? 7 : isClicking ? 3 : 5,
-            height: isHover ? 7 : isClicking ? 3 : 5,
-            scale: isClicking ? 0.6 : 1,
-            backgroundColor: 'var(--cursor-dot)',
-            opacity: visible ? (isImage ? 0.5 : 1) : 0,
-          }}
-          transition={{ type: 'spring', damping: 18, stiffness: 400 }}
-          style={{
-            borderRadius: '50%',
-            boxShadow: '0 0 10px var(--cursor-dot)',
-          }}
-        />
-      </motion.div>
-
-      {/* ── Layer 4: Click Impulse Shockwave ── */}
-      <AnimatePresence>
-        {isClicking && (
-          <motion.div
-            initial={{ scale: 0.7, opacity: 0.6 }}
-            animate={{ scale: 1.6, opacity: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.35, ease: 'easeOut' }}
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              x: mouseX,
-              y: mouseY,
-              translateX: '-50%',
-              translateY: '-50%',
-              width: ringSize,
-              height: ringSize,
-              borderRadius: '50%',
-              border: '1px solid var(--text)',
-              pointerEvents: 'none',
-            }}
-          />
-        )}
-      </AnimatePresence>
+      />
     </div>
   );
 }

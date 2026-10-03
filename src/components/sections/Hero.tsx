@@ -1,525 +1,390 @@
 'use client';
-import { useRef, useState, useEffect, useId } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { PERSONAL } from '@/data/portfolio';
 
 const BASE = process.env.NODE_ENV === 'production' ? '/my-portfolio' : '';
 
-/* ─────────────────────────────────────────────────────────────
-   INLINE SVG DEFS — organic torn paper clip-paths
-   Paths describe irregular tear edge.
-   Top mask: full portrait from top down to the torn edge.
-   Bot mask: from the torn edge down to the bottom.
-   The tear line is a hand-crafted organic bezier curve path.
-   ───────────────────────────────────────────────────────────── */
-function TearSVGDefs({ topId, botId }: { topId: string; botId: string }) {
-  return (
-    <svg
-      aria-hidden="true"
-      style={{ position: 'absolute', width: 0, height: 0, pointerEvents: 'none' }}
-    >
-      <defs>
-        {/*
-          The tear line — reading left to right across the image at ~50% height.
-          Using cubic bezier curves for organic irregularity.
-          The path starts at (0, 50%) and ends at (100%, 50%) via an
-          asymmetric, slightly tilted organic edge.
-          All values in percentage of the image bounding box (0..100).
-        */}
-        <clipPath id={topId} clipPathUnits="objectBoundingBox">
-          <path d="
-            M 0,0
-            L 1,0
-            L 1,0.485
-            C 0.93,0.500 0.87,0.468 0.80,0.492
-            C 0.73,0.516 0.67,0.480 0.60,0.505
-            C 0.53,0.530 0.47,0.488 0.40,0.513
-            C 0.33,0.538 0.27,0.496 0.20,0.518
-            C 0.13,0.540 0.07,0.502 0,0.522
-            Z
-          " />
-        </clipPath>
-        <clipPath id={botId} clipPathUnits="objectBoundingBox">
-          <path d="
-            M 0,0.522
-            C 0.07,0.502 0.13,0.540 0.20,0.518
-            C 0.27,0.496 0.33,0.538 0.40,0.513
-            C 0.47,0.488 0.53,0.530 0.60,0.505
-            C 0.67,0.480 0.73,0.516 0.80,0.492
-            C 0.87,0.468 0.93,0.500 1,0.485
-            L 1,1
-            L 0,1
-            Z
-          " />
-        </clipPath>
-      </defs>
-    </svg>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────────
-   ABSTRACT NEURAL VISUAL — SVG art, not emoji, not Lucide Brain
-   Fine organic lines + nodes that resemble a neural structure.
-   ───────────────────────────────────────────────────────────── */
-function NeuralArt() {
-  return (
-    <svg
-      width="140" height="140" viewBox="0 0 140 140" fill="none"
-      aria-label="Abstract neural visualization"
-      style={{ display: 'block' }}
-    >
-      {/* Concentric orbit rings */}
-      <circle cx="70" cy="70" r="64" stroke="rgba(255,255,255,0.06)" strokeWidth="0.6" />
-      <circle cx="70" cy="70" r="42" stroke="rgba(255,255,255,0.09)" strokeWidth="0.6" />
-      <circle cx="70" cy="70" r="20" stroke="rgba(255,255,255,0.14)" strokeWidth="0.6" />
-
-      {/* Outer dendrite paths — organic, not perfectly radial */}
-      <path d="M 70,6 C 62,22 58,38 64,50" stroke="rgba(255,255,255,0.28)" strokeWidth="0.8" fill="none" strokeLinecap="round" />
-      <path d="M 134,70 C 118,62 102,60 90,66" stroke="rgba(255,255,255,0.24)" strokeWidth="0.8" fill="none" strokeLinecap="round" />
-      <path d="M 70,134 C 78,118 82,102 76,90" stroke="rgba(255,255,255,0.22)" strokeWidth="0.8" fill="none" strokeLinecap="round" />
-      <path d="M 6,70 C 22,78 38,80 52,74" stroke="rgba(255,255,255,0.20)" strokeWidth="0.8" fill="none" strokeLinecap="round" />
-
-      {/* Diagonal dendrites */}
-      <path d="M 116,24 C 104,36 94,46 86,56" stroke="rgba(255,255,255,0.18)" strokeWidth="0.7" fill="none" strokeLinecap="round" />
-      <path d="M 24,116 C 36,104 46,94 56,86" stroke="rgba(255,255,255,0.15)" strokeWidth="0.7" fill="none" strokeLinecap="round" />
-      <path d="M 116,116 C 104,104 94,94 86,86" stroke="rgba(255,255,255,0.14)" strokeWidth="0.7" fill="none" strokeLinecap="round" />
-      <path d="M 24,24 C 36,36 46,46 56,56" stroke="rgba(255,255,255,0.12)" strokeWidth="0.7" fill="none" strokeLinecap="round" />
-
-      {/* Mid-ring branching connections */}
-      <path d="M 70,28 Q 80,50 70,50" stroke="rgba(255,255,255,0.18)" strokeWidth="0.6" fill="none" />
-      <path d="M 112,70 Q 90,60 90,70" stroke="rgba(255,255,255,0.18)" strokeWidth="0.6" fill="none" />
-      <path d="M 70,112 Q 60,90 70,90" stroke="rgba(255,255,255,0.18)" strokeWidth="0.6" fill="none" />
-      <path d="M 28,70 Q 50,80 50,70" stroke="rgba(255,255,255,0.18)" strokeWidth="0.6" fill="none" />
-
-      {/* Outer nodes */}
-      <circle cx="70"  cy="6"   r="2.2" fill="rgba(255,255,255,0.55)" />
-      <circle cx="134" cy="70"  r="1.8" fill="rgba(255,255,255,0.45)" />
-      <circle cx="70"  cy="134" r="1.8" fill="rgba(255,255,255,0.40)" />
-      <circle cx="6"   cy="70"  r="1.8" fill="rgba(255,255,255,0.40)" />
-      <circle cx="116" cy="24"  r="1.5" fill="rgba(255,255,255,0.32)" />
-      <circle cx="24"  cy="116" r="1.5" fill="rgba(255,255,255,0.30)" />
-      <circle cx="116" cy="116" r="1.5" fill="rgba(255,255,255,0.28)" />
-      <circle cx="24"  cy="24"  r="1.5" fill="rgba(255,255,255,0.28)" />
-
-      {/* Mid ring nodes */}
-      <circle cx="70"  cy="28"  r="2.5" fill="rgba(255,255,255,0.60)" />
-      <circle cx="112" cy="70"  r="2"   fill="rgba(255,255,255,0.50)" />
-      <circle cx="70"  cy="112" r="2"   fill="rgba(255,255,255,0.45)" />
-      <circle cx="28"  cy="70"  r="2"   fill="rgba(255,255,255,0.45)" />
-
-      {/* Core */}
-      <circle cx="70" cy="70" r="9"  fill="rgba(255,255,255,0.10)" />
-      <circle cx="70" cy="70" r="5"  fill="rgba(255,255,255,0.45)" />
-      <circle cx="70" cy="70" r="2.5" fill="rgba(255,255,255,0.92)" />
-    </svg>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────────
-   GLASS ORB
-   ───────────────────────────────────────────────────────────── */
-function GlassOrb() {
-  return (
-    <div
-      style={{
-        position: 'relative',
-        width: 200, height: 200,
-        borderRadius: '50%',
-        background:
-          'radial-gradient(circle at 32% 28%, rgba(255,255,255,0.13) 0%, rgba(255,255,255,0.035) 55%, transparent 100%)',
-        backdropFilter: 'blur(40px) saturate(180%)',
-        WebkitBackdropFilter: 'blur(40px) saturate(180%)',
-        border: '1px solid rgba(255,255,255,0.14)',
-        boxShadow:
-          'inset 0 1px 0 rgba(255,255,255,0.20), 0 0 100px rgba(255,255,255,0.06)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-      }}
-    >
-      {/* Spinning outer orbit */}
-      <div style={{
-        position: 'absolute',
-        inset: -20,
-        borderRadius: '50%',
-        border: '1px solid rgba(255,255,255,0.07)',
-        animation: 'orb-cw 26s linear infinite',
-      }}>
-        {/* 3 knots on ring */}
-        {[60, 180, 300].map(deg => {
-          const r = (deg * Math.PI) / 180;
-          return (
-            <div key={deg} style={{
-              position: 'absolute',
-              width: 5, height: 5,
-              borderRadius: '50%',
-              background: 'rgba(255,255,255,0.40)',
-              top: `${50 + Math.sin(r) * 50}%`,
-              left: `${50 + Math.cos(r) * 50}%`,
-              transform: 'translate(-50%,-50%)',
-            }} />
-          );
-        })}
-      </div>
-      {/* Slow counter-spin inner dashed ring */}
-      <div style={{
-        position: 'absolute',
-        inset: -6,
-        borderRadius: '50%',
-        border: '1px dashed rgba(255,255,255,0.05)',
-        animation: 'orb-ccw 18s linear infinite',
-      }} />
-      <NeuralArt />
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────────
-   HERO — 480vh scroll container
-   ───────────────────────────────────────────────────────────── */
 export default function Hero() {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
 
-  // Unique IDs for SVG clip paths (SSR safe)
-  const uid = useId().replace(/:/g, '');
-  const topClipId = `tear-top-${uid}`;
-  const botClipId = `tear-bot-${uid}`;
-
-  useEffect(() => { setMounted(true); }, []);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start start', 'end end'],
+    target: heroRef,
+    offset: ['start start', 'end start'],
   });
 
-  // ── PHASE 0 (0→20%): editorial layout, name + portrait ──
-  const heroOpacity = useTransform(scrollYProgress, [0.00, 0.14, 0.22], [1, 1, 0]);
-  const heroY       = useTransform(scrollYProgress, [0.00, 0.22], [0, -56]);
-
-  // ── PHASE 1 (10→44%): portrait grows to fill viewport ──
-  const prtScale = useTransform(scrollYProgress, [0.00, 0.20, 0.44], [1, 1.05, 1.55]);
-  const prtX     = useTransform(scrollYProgress, [0.00, 0.20, 0.44], ['20%', '20%', '0%']);
-
-  // ── PHASE 2 (42→70%): organic tear ──
-  const topY  = useTransform(scrollYProgress, [0.42, 0.70], ['0%', '-65%']);
-  const botY  = useTransform(scrollYProgress, [0.42, 0.70], ['0%',  '65%']);
-  const prtOp = useTransform(scrollYProgress, [0.58, 0.72], [1, 0]);
-
-  // Crack glow at tear seam
-  const crackOp = useTransform(scrollYProgress, [0.46, 0.55, 0.66, 0.74], [0, 1, 1, 0]);
-
-  // ── PHASE 3 (70→90%): orb reveals ──
-  const orbOp    = useTransform(scrollYProgress, [0.68, 0.82], [0, 1]);
-  const orbScale = useTransform(scrollYProgress, [0.68, 0.84], [0.55, 1]);
-  const orbTextOp = useTransform(scrollYProgress, [0.80, 0.90, 0.97, 1.0], [0, 1, 1, 0]);
-
-  // Scroll hint fades away
-  const hintOp = useTransform(scrollYProgress, [0, 0.08], [1, 0]);
+  // Elegant, subtle scroll parallax — strictly spatial, never colliding
+  const portraitY = useTransform(scrollYProgress, [0, 1], [0, 60]);
+  const portraitScale = useTransform(scrollYProgress, [0, 1], [1, 1.04]);
+  const textY = useTransform(scrollYProgress, [0, 1], [0, 30]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.85], [1, 0.2]);
 
   return (
-    <div
-      ref={containerRef}
+    <section
+      ref={heroRef}
       id="home"
-      style={{ height: '480vh', position: 'relative' }}
+      aria-label="Hero"
+      style={{
+        position: 'relative',
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        paddingTop: 'clamp(90px, 12vh, 120px)',
+        paddingBottom: 'clamp(60px, 8vh, 100px)',
+        overflow: 'hidden',
+      }}
     >
-      {/* Inline SVG clip path definitions */}
-      <TearSVGDefs topId={topClipId} botId={botClipId} />
-
-      {/* ── STICKY VIEWPORT ── */}
-      <div
-        style={{ position: 'sticky', top: 0, height: '100vh', overflow: 'hidden' }}
-        aria-label="Hero section"
-      >
-        {/* Extra deep portrait atmosphere in hero */}
-        {mounted && (
+      {/* ── Atmospheric background layer (very soft photographic depth) ── */}
+      {mounted && (
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            zIndex: 0,
+            pointerEvents: 'none',
+            overflow: 'hidden',
+          }}
+        >
+          {/* Subtle cursor-reactive ambient glow in hero */}
           <div
-            aria-hidden="true"
             style={{
-              position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none',
-            }}
-          >
-            <div style={{
               position: 'absolute',
-              top: '-10%', right: '-5%',
-              width: '70%', height: '120%',
+              inset: 0,
+              background:
+                'radial-gradient(circle 600px at var(--cx, 60%) var(--cy, 40%), var(--cursor-glow) 0%, transparent 70%)',
+              opacity: 0.8,
+            }}
+          />
+          {/* Extremely soft, distant blur layer behind hero */}
+          <div
+            style={{
+              position: 'absolute',
+              top: '-10%',
+              right: '-5%',
+              width: '60%',
+              height: '110%',
               backgroundImage: `url(${BASE}/imageshardul.png)`,
               backgroundSize: 'cover',
               backgroundPosition: 'center top',
-              filter: 'blur(100px) saturate(70%) brightness(0.45)',
-              opacity: 0.26,
-            }} />
-          </div>
-        )}
+              filter: 'blur(100px) saturate(70%) brightness(0.40)',
+              opacity: 'var(--photo-opacity)' as unknown as number,
+            }}
+          />
+        </div>
+      )}
 
-        {/* ═════════════════════════════════════════════════════
-            PHASE 0 — Name + bio + CTA (editorial layout)
-            ═════════════════════════════════════════════════════ */}
-        <motion.div
+      {/* ── Main Hero Composition ── */}
+      <motion.div
+        className="wrap"
+        style={{
+          width: '100%',
+          position: 'relative',
+          zIndex: 10,
+          opacity: heroOpacity,
+        }}
+      >
+        <div
           style={{
-            position: 'absolute', inset: 0, zIndex: 10,
-            opacity: heroOpacity, y: heroY,
-            pointerEvents: 'none',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(12, 1fr)',
+            alignItems: 'center',
+            rowGap: 'clamp(36px, 6vw, 48px)',
+            columnGap: 'clamp(24px, 4vw, 56px)',
           }}
         >
-          <div
-            className="wrap"
+          {/* ═══════════════════════════════════════════════════
+              LEFT / FRONT LAYER — TYPOGRAPHY & IDENTITY
+              Always front, always unobstructed, zIndex: 20
+              ═══════════════════════════════════════════════════ */}
+          <motion.div
             style={{
-              height: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              paddingTop: 80,
+              y: textY,
+              zIndex: 20,
+              gridColumn: '1 / -1',
             }}
+            className="lg:!col-span-7 xl:!col-span-7"
+            initial={{ opacity: 0, y: 28 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
           >
-            <motion.div
-              initial={{ opacity: 0, x: -28 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
-              style={{ maxWidth: 520, pointerEvents: 'auto' }}
+            {/* Availability status badge */}
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 9,
+                padding: '4px 14px',
+                borderRadius: 100,
+                background: 'var(--glass-bg)',
+                border: '1px solid var(--glass-border)',
+                backdropFilter: 'blur(12px)',
+                marginBottom: 'clamp(20px, 3vh, 32px)',
+              }}
             >
-              {/* Available indicator */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 36 }}>
-                <span className="dot-available" />
-                <span style={{ fontSize: '0.78rem', color: 'var(--text-2)', letterSpacing: '0.02em' }}>
-                  Available for opportunities
-                </span>
-              </div>
-
-              {/* Name */}
-              <h1
-                className="display"
+              <span className="dot-available" />
+              <span
                 style={{
-                  fontSize: 'clamp(3.8rem, 9.5vw, 8rem)',
-                  color: 'var(--text)',
-                  marginBottom: '0.12em',
+                  fontSize: '0.78rem',
+                  color: 'var(--text-2)',
+                  letterSpacing: '0.02em',
+                  fontWeight: 500,
                 }}
               >
-                Shardul<br />Parihar
-              </h1>
+                Available for opportunities
+              </span>
+            </div>
 
-              <p style={{
-                fontSize: '1.05rem',
+            {/* Primary Name — Large, Editorial, completely unobstructed */}
+            <h1
+              className="display"
+              style={{
+                fontSize: 'clamp(3.4rem, 8.5vw, 6.8rem)',
+                color: 'var(--text)',
+                lineHeight: 0.94,
+                marginBottom: '0.22em',
+                letterSpacing: '-0.04em',
+                wordBreak: 'normal',
+                overflowWrap: 'break-word',
+              }}
+            >
+              Shardul
+              <br />
+              Parihar
+            </h1>
+
+            {/* Role / Subtitle */}
+            <p
+              style={{
+                fontSize: 'clamp(1.1rem, 2.2vw, 1.35rem)',
                 color: 'var(--text)',
                 fontWeight: 600,
-                marginBottom: 6,
-                letterSpacing: '-0.01em',
-              }}>
-                {PERSONAL.role}
-              </p>
+                letterSpacing: '-0.015em',
+                marginBottom: 8,
+              }}
+            >
+              {PERSONAL.role}
+            </p>
 
-              <p style={{
-                fontSize: '1.0rem',
+            {/* Core Headline */}
+            <p
+              style={{
+                fontSize: 'clamp(1.0rem, 1.8vw, 1.15rem)',
                 color: 'var(--text-2)',
                 fontWeight: 500,
-                marginBottom: 16,
-                lineHeight: 1.5,
-              }}>
-                {PERSONAL.headline}
-              </p>
+                lineHeight: 1.45,
+                marginBottom: 20,
+                maxWidth: 540,
+              }}
+            >
+              {PERSONAL.headline}
+            </p>
 
-              <p style={{
-                fontSize: '0.92rem',
+            {/* Bio Paragraphs */}
+            <p
+              style={{
+                fontSize: '0.94rem',
                 color: 'var(--text-2)',
-                lineHeight: 1.7,
-                maxWidth: 450,
+                lineHeight: 1.75,
+                maxWidth: 520,
                 marginBottom: 12,
-              }}>
-                {PERSONAL.bio}
-              </p>
+              }}
+            >
+              {PERSONAL.bio}
+            </p>
 
-              <p style={{
+            <p
+              style={{
                 fontSize: '0.90rem',
                 color: 'var(--text-2)',
                 lineHeight: 1.7,
-                maxWidth: 450,
-                marginBottom: 32,
-              }}>
-                {PERSONAL.bioSecondary}
-              </p>
+                maxWidth: 520,
+                marginBottom: 36,
+              }}
+            >
+              {PERSONAL.bioSecondary}
+            </p>
 
-              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-                <a href={PERSONAL.github} target="_blank" rel="noopener noreferrer" className="btn btn-fill" data-cursor="hover">
-                  GitHub
-                </a>
-                <a href={PERSONAL.linkedin} target="_blank" rel="noopener noreferrer" className="btn" data-cursor="hover">
-                  LinkedIn
-                </a>
-                <a href="#projects" className="btn" data-cursor="hover">
-                  View Projects
-                </a>
+            {/* Action CTAs */}
+            <div
+              style={{
+                display: 'flex',
+                gap: 12,
+                flexWrap: 'wrap',
+                alignItems: 'center',
+              }}
+            >
+              <a
+                href={PERSONAL.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-fill"
+                data-cursor="button"
+              >
+                GitHub
+              </a>
+              <a
+                href={PERSONAL.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn"
+                data-cursor="button"
+              >
+                LinkedIn
+              </a>
+              <a
+                href="#projects"
+                className="btn"
+                data-cursor="button"
+              >
+                View Projects
+              </a>
+            </div>
+          </motion.div>
+
+          {/* ═══════════════════════════════════════════════════
+              RIGHT / VISUAL LAYER — EDITORIAL CINEMATIC PORTRAIT
+              Unobstructed, organic feathered fade, whole portrait
+              Desktop: right side (5 cols), Mobile: natural flow
+              ═══════════════════════════════════════════════════ */}
+          <motion.div
+            style={{
+              y: portraitY,
+              zIndex: 10,
+              gridColumn: '1 / -1',
+              display: 'flex',
+              justifyContent: 'center',
+            }}
+            className="lg:!col-span-5 xl:!col-span-5 lg:!justify-end"
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.0, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div
+              data-cursor="portrait"
+              style={{
+                position: 'relative',
+                width: '100%',
+                maxWidth: 'clamp(280px, 85vw, 440px)',
+                aspectRatio: '3.6 / 4.8',
+                borderRadius: 'clamp(24px, 4vw, 36px)',
+                overflow: 'hidden',
+              }}
+            >
+              {/* Soft atmospheric halo behind portrait edge */}
+              <div
+                aria-hidden="true"
+                style={{
+                  position: 'absolute',
+                  inset: -16,
+                  borderRadius: 'inherit',
+                  background:
+                    'radial-gradient(circle at 50% 40%, rgba(120, 120, 200, 0.15) 0%, transparent 75%)',
+                  filter: 'blur(32px)',
+                  zIndex: 0,
+                  pointerEvents: 'none',
+                }}
+              />
+
+              {/* The Cinematic Photo Container */}
+              <motion.div
+                style={{
+                  scale: portraitScale,
+                  width: '100%',
+                  height: '100%',
+                  position: 'relative',
+                  zIndex: 1,
+                  borderRadius: 'inherit',
+                  overflow: 'hidden',
+                  background: 'var(--glass-bg)',
+                  border: '1px solid var(--glass-border)',
+                  boxShadow:
+                    '0 24px 64px rgba(0, 0, 0, 0.35), inset 0 1px 0 var(--glass-inset)',
+                }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={`${BASE}/imageshardul.png`}
+                  alt="Shardul Parihar"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    objectPosition: 'center 12%',
+                    display: 'block',
+                    transition: 'transform 0.5s ease',
+                  }}
+                />
+
+                {/* Organic feathered vignette overlay — merges seamlessly with atmosphere */}
+                <div
+                  aria-hidden="true"
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    pointerEvents: 'none',
+                    background:
+                      'linear-gradient(to bottom, transparent 65%, var(--bg) 98%),' +
+                      'radial-gradient(ellipse 95% 95% at 50% 35%, transparent 60%, rgba(6, 7, 11, 0.35) 100%)',
+                    mixBlendMode: 'normal',
+                  }}
+                />
+
+                {/* Subtle glass reflection highlight */}
+                <div
+                  aria-hidden="true"
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    pointerEvents: 'none',
+                    background:
+                      'linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, transparent 45%)',
+                  }}
+                />
+              </motion.div>
+
+              {/* Subtle Location Capsule beneath photo */}
+              <div
+                style={{
+                  position: 'absolute',
+                  bottom: 16,
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  zIndex: 5,
+                  padding: '6px 16px',
+                  borderRadius: 100,
+                  background: 'var(--glass-bg)',
+                  backdropFilter: 'blur(20px)',
+                  WebkitBackdropFilter: 'blur(20px)',
+                  border: '1px solid var(--glass-border-h)',
+                  boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                <span className="dot-available" style={{ width: 6, height: 6 }} />
+                <span
+                  style={{
+                    fontSize: '0.76rem',
+                    color: 'var(--text)',
+                    fontWeight: 600,
+                    letterSpacing: '0.02em',
+                  }}
+                >
+                  Pune, India
+                </span>
               </div>
-            </motion.div>
-          </div>
-        </motion.div>
-
-        {/* ═════════════════════════════════════════════════════
-            PHASE 1–2 — Portrait: grows → organic SVG tear
-            ═════════════════════════════════════════════════════ */}
-        <motion.div
-          style={{
-            position: 'absolute',
-            zIndex: 5,
-            top: '50%', left: '50%',
-            translateX: '-50%', translateY: '-50%',
-            width: 'clamp(300px, 44vw, 560px)',
-            aspectRatio: '3 / 4',
-            scale: prtScale,
-            x: prtX,
-            pointerEvents: 'none',
-          }}
-        >
-          {/* TOP HALF — clips via SVG clipPath, slides up */}
-          <motion.div
-            style={{
-              position: 'absolute', inset: 0,
-              clipPath: `url(#${topClipId})`,
-              y: topY,
-              opacity: prtOp,
-            }}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={`${BASE}/imageshardul.png`}
-              alt="Shardul Parihar"
-              style={{
-                width: '100%', height: '100%',
-                objectFit: 'cover', objectPosition: 'center top',
-                display: 'block',
-              }}
-            />
-            {/* Fade to bg at edges */}
-            <div style={{
-              position: 'absolute', inset: 0,
-              background: 'linear-gradient(to bottom, var(--bg) 0%, transparent 45%, var(--bg) 100%)',
-              opacity: 0.45,
-            }} />
+            </div>
           </motion.div>
-
-          {/* BOTTOM HALF — clips via SVG clipPath, slides down */}
-          <motion.div
-            style={{
-              position: 'absolute', inset: 0,
-              clipPath: `url(#${botClipId})`,
-              y: botY,
-              opacity: prtOp,
-            }}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={`${BASE}/imageshardul.png`}
-              alt=""
-              aria-hidden="true"
-              style={{
-                width: '100%', height: '100%',
-                objectFit: 'cover', objectPosition: 'center top',
-                display: 'block',
-              }}
-            />
-            <div style={{
-              position: 'absolute', inset: 0,
-              background: 'linear-gradient(to top, var(--bg) 0%, transparent 45%, var(--bg) 100%)',
-              opacity: 0.45,
-            }} />
-          </motion.div>
-
-          {/* Tear crack — luminous edge at split point */}
-          <motion.div
-            style={{
-              position: 'absolute',
-              left: 0, right: 0,
-              top: '50%',
-              translateY: '-1px',
-              zIndex: 20,
-              opacity: crackOp,
-              pointerEvents: 'none',
-            }}
-          >
-            {/* The main glow line */}
-            <div style={{
-              height: 2,
-              background:
-                'linear-gradient(90deg, transparent 0%, var(--crack) 20%, rgba(255,255,255,1) 50%, var(--crack) 80%, transparent 100%)',
-              boxShadow:
-                '0 0 18px var(--crack-glow), 0 0 48px var(--crack-glow)',
-              filter: 'blur(0.5px)',
-            }} />
-            {/* Diffuse atmospheric glow around tear */}
-            <div style={{
-              position: 'absolute',
-              top: -48, left: '5%', right: '5%', height: 96,
-              background:
-                'radial-gradient(ellipse 80% 48px at 50% 50%, var(--crack-glow) 0%, transparent 70%)',
-              pointerEvents: 'none',
-            }} />
-          </motion.div>
-        </motion.div>
-
-        {/* ═════════════════════════════════════════════════════
-            PHASE 3 — Glass orb + neural visual
-            ═════════════════════════════════════════════════════ */}
-        <motion.div
-          style={{
-            position: 'absolute', inset: 0, zIndex: 8,
-            opacity: orbOp,
-            display: 'flex', flexDirection: 'column',
-            alignItems: 'center', justifyContent: 'center',
-            gap: 44,
-            pointerEvents: 'none',
-          }}
-        >
-          <motion.div style={{ scale: orbScale }}>
-            <GlassOrb />
-          </motion.div>
-
-          <motion.div
-            style={{ opacity: orbTextOp, textAlign: 'center', padding: '0 24px' }}
-          >
-            <p style={{
-              fontSize: 'clamp(1.5rem, 3.5vw, 2.4rem)',
-              fontWeight: 700,
-              fontFamily: 'Manrope, system-ui, sans-serif',
-              letterSpacing: '-0.03em',
-              color: 'var(--text)',
-              marginBottom: 12,
-              lineHeight: 1.1,
-            }}>
-              Shardul Parihar
-            </p>
-            <p style={{
-              fontSize: '0.9rem',
-              color: 'var(--text-2)',
-              maxWidth: 320,
-              margin: '0 auto',
-              lineHeight: 1.65,
-            }}>
-              {PERSONAL.bio}
-            </p>
-          </motion.div>
-        </motion.div>
-
-        {/* Scroll hint */}
-        <motion.div
-          style={{
-            position: 'absolute',
-            bottom: 32, left: '50%',
-            translateX: '-50%',
-            opacity: hintOp,
-            zIndex: 20,
-            pointerEvents: 'none',
-            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10,
-          }}
-        >
-          <span style={{ fontSize: '0.6rem', letterSpacing: '0.2em', color: 'var(--text-3)', textTransform: 'uppercase' }}>
-            scroll
-          </span>
-          <motion.div
-            animate={{ y: [0, 12, 0] }}
-            transition={{ repeat: Infinity, duration: 2.2, ease: 'easeInOut' }}
-            style={{
-              width: 1, height: 40,
-              background: 'linear-gradient(to bottom, var(--text-3), transparent)',
-            }}
-          />
-        </motion.div>
-      </div>
-    </div>
+        </div>
+      </motion.div>
+    </section>
   );
 }

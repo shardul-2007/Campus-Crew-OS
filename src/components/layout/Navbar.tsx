@@ -122,7 +122,7 @@ export default function Navbar() {
           {/* Brand */}
           <a
             href="#home"
-            data-cursor="hover"
+            data-cursor="nav"
             style={{
               textDecoration: 'none',
               fontWeight: 700,
@@ -146,7 +146,7 @@ export default function Navbar() {
               <a
                 key={link.href}
                 href={link.href}
-                data-cursor="hover"
+                data-cursor="nav"
                 style={{
                   display: 'block',
                   padding: '6px 13px',
@@ -172,7 +172,7 @@ export default function Navbar() {
               onClick={toggleTheme}
               aria-label={`Switch to ${theme === 'dark' ? 'white' : 'black'} theme`}
               title={`Switch to ${theme === 'dark' ? 'white (light)' : 'black (dark)'} theme`}
-              data-cursor="hover"
+              data-cursor="button"
               style={{
                 display: 'flex',
                 alignItems: 'center',
