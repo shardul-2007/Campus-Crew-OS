@@ -2,14 +2,14 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Shardul Parihar — Software Engineer',
+  title: 'Shardul Parihar — Software Engineering Student',
   description:
-    'Software engineering student from Pune, India. Building full-stack products with React, Next.js, AI APIs, and open-source contributions.',
+    'Software engineering student from Pune, India, focused on full-stack development, modern web technologies, AI-powered applications, and software engineering. Building AssemblyOS, CivicOS, and SHARDUL.OS.',
   authors: [{ name: 'Shardul Parihar' }],
   openGraph: {
-    title: 'Shardul Parihar — Software Engineer',
+    title: 'Shardul Parihar — Software Engineering Student',
     description:
-      'Software engineering student building full-stack products, AI integrations, and open-source contributions from Pune, India.',
+      'Software engineering student from Pune, India, focused on full-stack development, modern web technologies, AI-powered applications, and software engineering. Building AssemblyOS, CivicOS, and SHARDUL.OS.',
     url: 'https://shardul-2007.github.io/my-portfolio/',
     type: 'website',
   },

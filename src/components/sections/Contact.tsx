@@ -30,7 +30,7 @@ export default function Contact() {
 
   return (
     <section id="contact" className="section" aria-label="Contact" style={{ position: 'relative', overflow: 'hidden' }}>
-      {/* ── Real portrait as cinematic closing background layer ── */}
+      {/* ── Real portrait background layer ── */}
       <div aria-hidden="true" style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none', overflow: 'hidden' }}>
         <div
           style={{
@@ -42,8 +42,8 @@ export default function Contact() {
             backgroundImage: `url(${BASE}/imageshardul.png)`,
             backgroundSize: 'cover',
             backgroundPosition: 'center 25%',
-            filter: 'blur(96px) saturate(70%) brightness(0.40)',
-            opacity: 0.25,
+            filter: 'var(--photo-filter)',
+            opacity: 'var(--photo-opacity)' as unknown as number,
           }}
         />
         <div
@@ -58,31 +58,53 @@ export default function Contact() {
       </div>
 
       <div className="wrap" style={{ position: 'relative', zIndex: 1 }}>
-        {/* Header with large CONTACT display */}
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 32 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={vp}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          style={{ marginBottom: 68 }}
+          style={{ marginBottom: 64 }}
         >
           <span className="s-label">Contact</span>
           <h2
             className="display"
             style={{
-              fontSize: 'clamp(3rem, 8.5vw, 7.5rem)',
+              fontSize: 'clamp(2.8rem, 8vw, 6.8rem)',
               color: 'var(--text)',
               lineHeight: 0.95,
               maxWidth: 720,
-              marginTop: 20,
+              marginTop: 18,
             }}
           >
-            Contact
+            Let&apos;s build something.
           </h2>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 24 }}>
+          <p
+            style={{
+              fontSize: '1.02rem',
+              color: 'var(--text-2)',
+              marginTop: 20,
+              maxWidth: 580,
+              lineHeight: 1.7,
+            }}
+          >
+            Open to software engineering internships, opportunities, collaborations, open-source projects, and interesting technical ideas.
+          </p>
+          <p
+            style={{
+              fontSize: '0.94rem',
+              color: 'var(--text-2)',
+              marginTop: 10,
+              maxWidth: 580,
+              lineHeight: 1.6,
+            }}
+          >
+            If you&apos;re building something and think I could contribute, feel free to reach out.
+          </p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 20 }}>
             <span className="dot-available" />
-            <span style={{ fontSize: '0.88rem', color: 'var(--text-2)' }}>
-              Open to opportunities, collaborations, and discussions
+            <span style={{ fontSize: '0.86rem', color: 'var(--text-2)' }}>
+              {PERSONAL.location} · Available globally for remote opportunities
             </span>
           </div>
         </motion.div>
@@ -102,10 +124,6 @@ export default function Contact() {
             viewport={vp}
             transition={{ duration: 0.6 }}
           >
-            <p style={{ fontSize: '0.94rem', color: 'var(--text-2)', lineHeight: 1.75, marginBottom: 28 }}>
-              Feel free to reach out directly through email or LinkedIn. Based in {PERSONAL.location}, available globally for remote roles.
-            </p>
-
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {CONTACT_CHANNELS.map((ch, i) => {
                 const Icon = ICON_MAP[ch.icon] || Mail;
@@ -126,15 +144,15 @@ export default function Contact() {
                       display: 'flex',
                       alignItems: 'center',
                       gap: 16,
-                      padding: '16px 22px',
+                      padding: '18px 22px',
                       borderRadius: 18,
                       textDecoration: 'none',
                     }}
                   >
                     <div
                       style={{
-                        width: 40,
-                        height: 40,
+                        width: 42,
+                        height: 42,
                         borderRadius: 12,
                         flexShrink: 0,
                         border: '1px solid var(--glass-border-h)',
@@ -144,14 +162,14 @@ export default function Contact() {
                         justifyContent: 'center',
                       }}
                     >
-                      <Icon size={17} color="var(--text-2)" />
+                      <Icon size={18} color="var(--text)" />
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <p className="meta" style={{ marginBottom: 2 }}>{ch.label}</p>
                       <p
                         style={{
-                          fontSize: '0.88rem',
-                          fontWeight: 500,
+                          fontSize: '0.90rem',
+                          fontWeight: 600,
                           color: 'var(--text)',
                           overflow: 'hidden',
                           textOverflow: 'ellipsis',
@@ -168,7 +186,7 @@ export default function Contact() {
             </div>
           </motion.div>
 
-          {/* Mailto message form */}
+          {/* Direct message form */}
           <motion.div
             initial={{ opacity: 0, x: 24 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -177,18 +195,19 @@ export default function Contact() {
             className="glass"
             style={{ padding: 'clamp(24px, 4vw, 36px)', borderRadius: 24 }}
           >
-            <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text)', marginBottom: 6 }}>
-              Direct message
+            <p className="meta" style={{ marginBottom: 4 }}>Direct Message</p>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>
+              Have an idea?
             </h3>
-            <p style={{ fontSize: '0.82rem', color: 'var(--text-3)', marginBottom: 20 }}>
-              Fills your default email client with your message for {PERSONAL.email}.
+            <p style={{ fontSize: '0.86rem', color: 'var(--text-2)', marginBottom: 20 }}>
+              Send me a message directly.
             </p>
 
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div>
                 <label
                   htmlFor="contact-name"
-                  style={{ display: 'block', fontSize: '0.78rem', color: 'var(--text-2)', marginBottom: 6, fontWeight: 500 }}
+                  style={{ display: 'block', fontSize: '0.80rem', color: 'var(--text-2)', marginBottom: 6, fontWeight: 500 }}
                 >
                   Your name
                 </label>
@@ -206,7 +225,7 @@ export default function Contact() {
                     background: 'var(--glass-bg)',
                     border: '1px solid var(--glass-border)',
                     color: 'var(--text)',
-                    fontSize: '0.88rem',
+                    fontSize: '0.90rem',
                     fontFamily: 'inherit',
                     outline: 'none',
                     transition: 'border-color 0.2s',
@@ -219,7 +238,7 @@ export default function Contact() {
               <div>
                 <label
                   htmlFor="contact-message"
-                  style={{ display: 'block', fontSize: '0.78rem', color: 'var(--text-2)', marginBottom: 6, fontWeight: 500 }}
+                  style={{ display: 'block', fontSize: '0.80rem', color: 'var(--text-2)', marginBottom: 6, fontWeight: 500 }}
                 >
                   Message
                 </label>
@@ -229,7 +248,7 @@ export default function Contact() {
                   rows={4}
                   value={message}
                   onChange={e => setMessage(e.target.value)}
-                  placeholder="Hello Shardul, let's connect..."
+                  placeholder="Hi Shardul, let's connect..."
                   style={{
                     width: '100%',
                     padding: '11px 16px',
@@ -237,7 +256,7 @@ export default function Contact() {
                     background: 'var(--glass-bg)',
                     border: '1px solid var(--glass-border)',
                     color: 'var(--text)',
-                    fontSize: '0.88rem',
+                    fontSize: '0.90rem',
                     fontFamily: 'inherit',
                     outline: 'none',
                     resize: 'none',
@@ -252,13 +271,13 @@ export default function Contact() {
                 type="submit"
                 className="btn btn-fill"
                 data-cursor="hover"
-                style={{ alignSelf: 'flex-start', marginTop: 4 }}
+                style={{ alignSelf: 'flex-start', marginTop: 4, cursor: 'pointer' }}
               >
                 {sent ? (
                   '✓ Mail client opened'
                 ) : (
                   <>
-                    <Send size={14} /> Send via email client
+                    <Send size={14} /> Send via Email
                   </>
                 )}
               </button>
@@ -266,32 +285,77 @@ export default function Contact() {
           </motion.div>
         </div>
 
-        {/* Footer closing line */}
-        <motion.div
+        {/* ── Footer ── */}
+        <motion.footer
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={vp}
-          transition={{ duration: 0.6, delay: 0.4 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
           style={{
             marginTop: 96,
-            paddingTop: 32,
+            paddingTop: 36,
             borderTop: '1px solid var(--glass-border)',
             display: 'flex',
-            flexWrap: 'wrap',
-            justifyContent: 'space-between',
-            alignItems: 'center',
+            flexDirection: 'column',
             gap: 16,
-            fontSize: '0.80rem',
-            color: 'var(--text-3)',
           }}
         >
-          <p>
-            Shardul Parihar · {PERSONAL.location}
-          </p>
-          <p>
-            Software Engineer / Builder
-          </p>
-        </motion.div>
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+              gap: 20,
+            }}
+          >
+            <div>
+              <p style={{ fontWeight: 700, fontSize: '1.05rem', color: 'var(--text)', marginBottom: 4 }}>
+                {PERSONAL.name}
+              </p>
+              <p style={{ fontSize: '0.86rem', color: 'var(--text-2)', marginBottom: 2 }}>
+                Software Engineering Student · Full-Stack Developer · Builder
+              </p>
+              <p style={{ fontSize: '0.80rem', color: 'var(--text-3)' }}>
+                {PERSONAL.location}
+              </p>
+            </div>
+
+            <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
+              <a
+                href={PERSONAL.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-cursor="hover"
+                style={{ color: 'var(--text-2)', textDecoration: 'none', fontSize: '0.84rem' }}
+              >
+                GitHub
+              </a>
+              <span style={{ color: 'var(--text-3)' }}>·</span>
+              <a
+                href={PERSONAL.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-cursor="hover"
+                style={{ color: 'var(--text-2)', textDecoration: 'none', fontSize: '0.84rem' }}
+              >
+                LinkedIn
+              </a>
+              <span style={{ color: 'var(--text-3)' }}>·</span>
+              <a
+                href={`mailto:${PERSONAL.email}`}
+                data-cursor="hover"
+                style={{ color: 'var(--text-2)', textDecoration: 'none', fontSize: '0.84rem' }}
+              >
+                Email
+              </a>
+            </div>
+          </div>
+
+          <div style={{ textAlign: 'center', marginTop: 12, fontSize: '0.76rem', color: 'var(--text-3)' }}>
+            © 2026 Shardul Parihar
+          </div>
+        </motion.footer>
       </div>
     </section>
   );

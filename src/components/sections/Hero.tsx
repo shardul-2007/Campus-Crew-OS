@@ -297,30 +297,53 @@ export default function Hero() {
 
               <p style={{
                 fontSize: '1.05rem',
-                color: 'var(--text-2)',
-                fontWeight: 500,
-                marginBottom: 18,
+                color: 'var(--text)',
+                fontWeight: 600,
+                marginBottom: 6,
                 letterSpacing: '-0.01em',
               }}>
-                Software Engineer
+                {PERSONAL.role}
               </p>
 
               <p style={{
-                fontSize: '0.93rem',
+                fontSize: '1.0rem',
                 color: 'var(--text-2)',
-                lineHeight: 1.75,
-                maxWidth: 400,
-                marginBottom: 40,
+                fontWeight: 500,
+                marginBottom: 16,
+                lineHeight: 1.5,
+              }}>
+                {PERSONAL.headline}
+              </p>
+
+              <p style={{
+                fontSize: '0.92rem',
+                color: 'var(--text-2)',
+                lineHeight: 1.7,
+                maxWidth: 450,
+                marginBottom: 12,
               }}>
                 {PERSONAL.bio}
               </p>
 
-              <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-                <a href="#projects" className="btn btn-fill" data-cursor="hover">
-                  View my work
+              <p style={{
+                fontSize: '0.90rem',
+                color: 'var(--text-2)',
+                lineHeight: 1.7,
+                maxWidth: 450,
+                marginBottom: 32,
+              }}>
+                {PERSONAL.bioSecondary}
+              </p>
+
+              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                <a href={PERSONAL.github} target="_blank" rel="noopener noreferrer" className="btn btn-fill" data-cursor="hover">
+                  GitHub
                 </a>
-                <a href="#contact" className="btn" data-cursor="hover">
-                  Get in touch
+                <a href={PERSONAL.linkedin} target="_blank" rel="noopener noreferrer" className="btn" data-cursor="hover">
+                  LinkedIn
+                </a>
+                <a href="#projects" className="btn" data-cursor="hover">
+                  View Projects
                 </a>
               </div>
             </motion.div>

@@ -1,27 +1,64 @@
 // ═══════════════════════════════════════════════════════════════
-// SHARDUL.OS — Portfolio Data
-// Single source of truth for ALL content.
-// No invented data — everything here is real.
+// Shardul Parihar — Portfolio Data
+// Single source of truth for all content.
 // ═══════════════════════════════════════════════════════════════
 
 export const PERSONAL = {
   name: 'Shardul Parihar',
-  shortName: 'SHARDUL.PARIHAR',
-  role: 'Software Engineer',
-  subtitle: 'SOFTWARE ENGINEER / BUILDER',
-  bio: 'Software engineering student focused on full-stack development, web technologies, AI, cybersecurity and innovative digital products.',
+  shortName: 'Shardul Parihar',
+  role: 'Software Engineering Student',
+  headline: 'Building full-stack products, AI experiences, and the web.',
+  bio: 'Software engineering student from Pune, India, focused on full-stack development, modern web technologies, AI-powered applications, and software engineering.',
+  bioSecondary: 'I enjoy turning ideas into working software — from interfaces and APIs to intelligent applications and interactive 3D experiences.',
   location: 'Pune, Maharashtra, India',
-  locationShort: 'INDIA',
   email: 'shardulparihar2007@gmail.com',
   github: 'https://github.com/shardul-2007',
   githubUser: 'shardul-2007',
   linkedin: 'https://www.linkedin.com/in/shardul-parihar/',
   portfolio: 'https://shardul-2007.github.io/my-portfolio/',
   status: 'AVAILABLE',
-  focus: ['Full Stack', 'AI / ML', 'Web Development', 'Cybersecurity'],
-  headline: 'BUILDING DIGITAL\nSYSTEMS THAT MATTER.',
-  buildVersion: '2026.09',
-  resumeUrl: 'https://www.linkedin.com/in/shardul-parihar/', // link to LinkedIn until PDF added
+  resumeUrl: 'https://www.linkedin.com/in/shardul-parihar/',
+};
+
+export const ABOUT_DATA = {
+  heading: 'Building things. Learning deeply. Shipping often.',
+  paragraphs: [
+    "I'm Shardul Parihar, a software engineering student interested in full-stack development, AI, modern web technologies, and product engineering.",
+    "I work across the stack — building interfaces, APIs, data-driven applications, AI integrations, and interactive experiences.",
+    "My projects include AssemblyOS, an AI-powered machine and assembly intelligence platform, CivicOS, an AI-powered civic intelligence platform, and SHARDUL.OS, my personal developer portfolio.",
+    "Alongside building projects, I contribute to open source through programs such as GSSoC and NSOC and participate in developer and student communities through campus ambassador programs.",
+    "Currently focused on becoming a stronger software engineer by building, experimenting, contributing, and continuously learning.",
+  ],
+  focus: [
+    {
+      title: 'Full-Stack Development',
+      skills: 'React · Next.js · Node.js · REST APIs · TypeScript · JavaScript',
+    },
+    {
+      title: 'Frontend Engineering',
+      skills: 'React · Next.js · HTML5 · CSS3 · Tailwind CSS · Framer Motion · Vite',
+    },
+    {
+      title: 'Backend & APIs',
+      skills: 'Node.js · REST APIs · API Integration · JSON · Authentication · Backend Architecture',
+    },
+    {
+      title: 'AI & Intelligent Applications',
+      skills: 'AI APIs · Prompt Engineering · AI Integration · AI-powered Applications · Computer Vision Concepts',
+    },
+    {
+      title: 'Programming',
+      skills: 'Python · C · C++ · Java · JavaScript · TypeScript',
+    },
+    {
+      title: 'Computer Science',
+      skills: 'Data Structures & Algorithms · Object-Oriented Programming · Problem Solving · Software Engineering',
+    },
+    {
+      title: 'Tools & Platforms',
+      skills: 'Git · GitHub · Vercel · GitHub Pages · npm · VS Code',
+    },
+  ],
 };
 
 export interface Project {
@@ -29,294 +66,311 @@ export interface Project {
   num: string;
   name: string;
   tagline: string;
-  description: string;
-  stack: string[];
-  status: 'LIVE' | 'IN DEVELOPMENT' | 'OPEN SOURCE' | 'ARCHIVED';
-  github?: string;
-  live?: string;
-  featured: boolean;
   category: string;
   year: string;
-  architecture?: ArchNode[];
-}
-
-interface ArchNode {
-  layer: string;
-  tech: string;
-  detail: string;
+  description: string;
+  stack: string[];
+  status: 'LIVE' | 'IN DEVELOPMENT' | 'OPEN SOURCE';
+  github: string;
+  live: string;
+  featured: boolean;
+  architecture?: {
+    layer: string;
+    tech: string;
+    detail: string;
+  }[];
 }
 
 export const PROJECTS: Project[] = [
   {
-    id: 'civicos',
+    id: 'assemblyos',
     num: '001',
+    name: 'AssemblyOS',
+    tagline: 'AI-Powered Machine & Assembly Intelligence',
+    category: 'AI · 3D · SOFTWARE ENGINEERING',
+    year: '2026',
+    description:
+      'AssemblyOS explores how AI can help people understand physical products and machines through images and interactive 3D assemblies. Users can capture or upload a product image, identify visible components, connect them to a compatible assembly, and explore the resulting 3D model. The interactive workspace allows users to inspect, select, isolate, hide, remove, attach, replace, explode, and reassemble components, while exploring relationships between parts. The flagship demonstration uses a drone assembly, with the system designed to extend to other machines, electronics, and mechanical products.',
+    stack: [
+      'Next.js',
+      'React',
+      'TypeScript',
+      'Three.js',
+      'React Three Fiber',
+      'Zustand',
+      'Framer Motion',
+      'AI APIs',
+      'Zod',
+    ],
+    status: 'LIVE',
+    github: 'https://github.com/shardul-2007/assemblyos',
+    live: 'https://github.com/shardul-2007/assemblyos',
+    featured: true,
+    architecture: [
+      {
+        layer: 'Interactive 3D',
+        tech: 'Three.js + React Three Fiber',
+        detail: '3D viewport for component selection, isolation, explosion, and reassembly',
+      },
+      {
+        layer: 'State Architecture',
+        tech: 'Zustand + React 18',
+        detail: 'Reactive hierarchical state for part relationships and assembly hierarchy',
+      },
+      {
+        layer: 'AI Intelligence',
+        tech: 'AI APIs + Vision',
+        detail: 'Product image recognition and component identification pipeline',
+      },
+      {
+        layer: 'Validation Layer',
+        tech: 'Zod + TypeScript',
+        detail: 'Rigid schema enforcement for mechanical parts, connections, and metadata',
+      },
+    ],
+  },
+  {
+    id: 'civicos',
+    num: '002',
     name: 'CivicOS',
-    tagline: 'AI-Powered Municipal Operating System',
-    description: 'A full-stack civic intelligence platform combining interactive maps, real-time analytics, and AI-driven insights. Built to help citizens interact with municipal services and urban data. Features live issue tracking, analytics dashboards, and AI-powered query resolution.',
-    stack: ['React', 'Vite', 'Leaflet', 'Recharts', 'AI APIs', 'REST APIs', 'JavaScript'],
+    tagline: 'AI-Powered Civic Intelligence Platform',
+    category: 'FULL STACK · AI',
+    year: '2025',
+    description:
+      'CivicOS is a full-stack civic intelligence platform combining interactive maps, municipal data, analytics, and AI-assisted information access. It brings civic information, issue tracking, visual analytics, and AI-powered query resolution into a single web application.',
+    stack: ['React', 'Vite', 'JavaScript', 'Leaflet', 'Recharts', 'REST APIs', 'AI APIs'],
     status: 'LIVE',
     github: 'https://github.com/shardul-2007',
     live: 'https://civicos-beta.vercel.app/',
     featured: true,
-    category: 'FULL STACK / AI',
-    year: '2025',
     architecture: [
-      { layer: 'Frontend',  tech: 'React + Vite',      detail: 'Component-based UI with fast hot reload and production bundling' },
-      { layer: 'Maps',      tech: 'Leaflet 1.9.4',     detail: 'Interactive geospatial map rendering with custom overlays and markers' },
-      { layer: 'Analytics', tech: 'Recharts',           detail: 'Composable data visualization for civic metrics and dashboards' },
-      { layer: 'AI Layer',  tech: 'AI APIs',            detail: 'Intelligent query resolution and data summarization' },
-      { layer: 'Data',      tech: 'REST APIs',          detail: 'Structured municipal data endpoints with real-time updates' },
+      {
+        layer: 'Frontend',
+        tech: 'React + Vite',
+        detail: 'Fast component-driven interface with responsive civic dashboards',
+      },
+      {
+        layer: 'Geospatial Maps',
+        tech: 'Leaflet 1.9.4',
+        detail: 'Interactive municipal maps with customized overlays and location pins',
+      },
+      {
+        layer: 'Analytics',
+        tech: 'Recharts',
+        detail: 'Composable visual analytics for urban and civic metrics',
+      },
+      {
+        layer: 'AI Query Engine',
+        tech: 'AI APIs',
+        detail: 'Intelligent query resolution and structured municipal data summaries',
+      },
     ],
   },
   {
     id: 'shardul-os',
-    num: '002',
+    num: '003',
     name: 'SHARDUL.OS',
-    tagline: 'Personal Developer OS — This Portfolio',
-    description: 'An experimental portfolio redesigned as a personal developer operating system. Features a futuristic glassmorphism UI, command palette, developer constellation, API explorer, performance monitor, build log, and Shardul.AI knowledge base. Originally built in plain HTML/CSS/JS, now rebuilt in Next.js.',
-    stack: ['Next.js 14', 'TypeScript', 'Tailwind CSS', 'Framer Motion', 'GitHub API'],
+    tagline: 'Personal Developer Portfolio',
+    category: 'FRONTEND · DESIGN',
+    year: '2026',
+    description:
+      'SHARDUL.OS is my personal portfolio — an interactive space for exploring my work, technical skills, projects, experience, achievements, and contact information. Designed with a futuristic glass interface and developer-focused visual language, it presents my work through an experience rather than a conventional resume page.',
+    stack: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Framer Motion', 'GitHub API'],
     status: 'LIVE',
     github: 'https://github.com/shardul-2007/my-portfolio',
     live: 'https://shardul-2007.github.io/my-portfolio/',
     featured: true,
-    category: 'FRONTEND / DESIGN',
-    year: '2026',
   },
 ];
 
-export interface Skill {
-  name: string;
+export interface SkillCategory {
   category: string;
-  level: 'primary' | 'secondary' | 'learning';
+  skills: string[];
 }
 
-export const SKILLS: Skill[] = [
-  // Frontend
-  { name: 'React',        category: 'Frontend',    level: 'primary'   },
-  { name: 'Next.js',      category: 'Frontend',    level: 'primary'   },
-  { name: 'HTML5',        category: 'Frontend',    level: 'primary'   },
-  { name: 'CSS3',         category: 'Frontend',    level: 'primary'   },
-  { name: 'Tailwind',     category: 'Frontend',    level: 'primary'   },
-  { name: 'Framer Motion',category: 'Frontend',    level: 'secondary' },
-  // Languages
-  { name: 'JavaScript',   category: 'Languages',   level: 'primary'   },
-  { name: 'TypeScript',   category: 'Languages',   level: 'primary'   },
-  { name: 'Python',       category: 'Languages',   level: 'primary'   },
-  // Backend / APIs
-  { name: 'REST APIs',    category: 'Backend',     level: 'primary'   },
-  { name: 'Node.js',      category: 'Backend',     level: 'secondary' },
-  // Data / Viz
-  { name: 'Leaflet',      category: 'Tools',       level: 'primary'   },
-  { name: 'Recharts',     category: 'Tools',       level: 'primary'   },
-  // DevOps / Tools
-  { name: 'Git',          category: 'Tools',       level: 'primary'   },
-  { name: 'GitHub',       category: 'Tools',       level: 'primary'   },
-  { name: 'Vite',         category: 'Tools',       level: 'primary'   },
-  { name: 'GitHub Pages', category: 'Tools',       level: 'secondary' },
-  { name: 'Vercel',       category: 'Tools',       level: 'secondary' },
-  // AI
-  { name: 'AI APIs',      category: 'AI',          level: 'primary'   },
-  { name: 'Prompt Eng.',  category: 'AI',          level: 'secondary' },
-  // Cybersecurity
-  { name: 'Cybersecurity',category: 'Cybersecurity',level:'learning'  },
-  // DSA
-  { name: 'DSA',          category: 'CS',          level: 'primary'   },
-  { name: 'Algorithms',   category: 'CS',          level: 'primary'   },
+export const SKILL_CATEGORIES: SkillCategory[] = [
+  {
+    category: 'Languages',
+    skills: ['JavaScript', 'TypeScript', 'Python', 'C', 'C++', 'Java', 'HTML5', 'CSS3'],
+  },
+  {
+    category: 'Frontend',
+    skills: ['React', 'Next.js', 'Vite', 'Tailwind CSS', 'Framer Motion', 'Responsive Design'],
+  },
+  {
+    category: 'Backend',
+    skills: ['Node.js', 'REST APIs', 'API Integration', 'JSON', 'Authentication'],
+  },
+  {
+    category: 'AI',
+    skills: ['AI APIs', 'Prompt Engineering', 'AI Integration', 'AI Applications'],
+  },
+  {
+    category: 'Libraries',
+    skills: ['Leaflet', 'Recharts', 'Three.js', 'React Three Fiber'],
+  },
+  {
+    category: 'Computer Science',
+    skills: ['DSA', 'Algorithms', 'OOP', 'Problem Solving', 'Software Engineering'],
+  },
+  {
+    category: 'Tools',
+    skills: ['Git', 'GitHub', 'Vercel', 'GitHub Pages', 'npm', 'VS Code'],
+  },
 ];
 
-export interface Experience {
+export interface ExperienceItem {
   id: string;
+  org: string;
+  role: string;
   year: string;
-  type: string;
-  title: string;
-  org?: string;
-  role?: string;
   description: string;
   tags: string[];
-  proof?: string;
-  link?: string;
-  current?: boolean;
 }
 
-export const EXPERIENCE: Experience[] = [
-  {
-    id: 'shardul-os-v5',
-    year: '2026',
-    type: 'BUILD',
-    title: 'SHARDUL.OS v5 — Next.js Rebuild',
-    org: 'Personal Project',
-    description: 'Rebuilt portfolio as a full Next.js / TypeScript / Framer Motion application with futuristic glassmorphism UI — Developer OS concept.',
-    tags: ['Next.js', 'TypeScript', 'Framer Motion'],
-    current: true,
-  },
+export const EXPERIENCE_ITEMS: ExperienceItem[] = [
   {
     id: 'remoterecruit',
-    year: '2026',
-    type: 'COMMUNITY',
-    title: 'RemoteRecruit Student Ambassador',
     org: 'RemoteRecruit',
     role: 'Student Ambassador',
-    description: 'Selected as Student Ambassador — student-focused technology and remote work community.',
+    year: '2026',
+    description:
+      'Selected as a Student Ambassador, participating in student-focused technology and remote-work community initiatives.',
     tags: ['Community', 'Ambassador'],
-    proof: 'images/remote-recruit.jpg',
   },
   {
     id: 'hackerrank',
-    year: '2026',
-    type: 'COMMUNITY',
-    title: 'HackerRank Campus Community',
-    org: 'HackerRank',
+    org: 'HackerRank Campus Community',
     role: 'Campus Community',
-    description: 'Campus community engagement, developer contests, and DSA practice activities.',
-    tags: ['Community', 'DSA', 'Contests'],
-    proof: 'images/hackerrank.jpg',
-  },
-  {
-    id: 'shardul-os-v4',
     year: '2026',
-    type: 'BUILD',
-    title: 'SHARDUL.OS v4 — Developer OS Portfolio',
-    org: 'Personal Project',
-    description: 'Original SHARDUL.OS — plain HTML/CSS/JS portfolio with glassmorphism UI, command palette, constellation, API explorer, build log.',
-    tags: ['HTML', 'CSS', 'JavaScript', 'Design'],
-  },
-  {
-    id: 'civicos',
-    year: '2025',
-    type: 'BUILD',
-    title: 'CivicOS — Flagship Project',
-    org: 'Personal Project',
-    description: 'Designed and built CivicOS — AI-powered civic intelligence platform with interactive maps (Leaflet), analytics dashboards (Recharts), and AI-driven query resolution.',
-    tags: ['React', 'Vite', 'Leaflet', 'AI'],
-    link: 'https://civicos-beta.vercel.app/',
+    description:
+      'Participating in campus developer community activities around programming, DSA, contests, and technical learning.',
+    tags: ['Community', 'DSA', 'Contests'],
   },
   {
     id: 'gssoc',
+    org: 'GirlScript Summer of Code',
+    role: 'Open Source Contributor',
     year: '2025',
-    type: 'OPEN SOURCE',
-    title: 'GirlScript Summer of Code',
-    org: 'GSSoC',
-    role: 'Contributor',
-    description: 'Open source contributor. Collaborated on community projects via GitHub under the GSSoC 2025 program.',
+    description:
+      'Contributed to open-source projects through the GSSoC 2025 program using GitHub-based collaboration.',
     tags: ['Open Source', 'GitHub', 'Collaboration'],
-    proof: 'images/gssoc.jpg',
   },
   {
     id: 'nsoc',
-    year: '2025',
-    type: 'OPEN SOURCE',
-    title: 'NSOC',
     org: 'NSOC',
-    role: 'Contributor',
-    description: 'Participated in open source development program. Code contributions and collaborative development.',
+    role: 'Open Source Contributor',
+    year: '2025',
+    description:
+      'Participated in an open-source development program focused on collaborative software development.',
     tags: ['Open Source', 'GitHub'],
-    proof: 'images/nsoc.jpg',
   },
   {
     id: 'google',
-    year: '2025',
-    type: 'COMMUNITY',
-    title: 'Google Campus Ambassador',
     org: 'Google',
     role: 'Campus Ambassador',
-    description: 'Student community initiatives, promoting Google technologies and developer programs on campus.',
-    tags: ['Community', 'Google', 'Leadership'],
-    proof: 'images/google-offer.jpg',
+    year: '2025',
+    description:
+      'Participated in student community initiatives around Google technologies and developer programs.',
+    tags: ['Community', 'Technology', 'Leadership'],
   },
   {
     id: 'internshala',
-    year: '2025',
-    type: 'COMMUNITY',
-    title: 'Internshala Campus Ambassador',
     org: 'Internshala',
     role: 'Campus Ambassador',
-    description: 'Promoting internship and career opportunities. Student engagement and program awareness.',
-    tags: ['Community', 'Career', 'Ambassador'],
-    proof: 'images/internshala.jpg',
+    year: '2025',
+    description:
+      'Participated in student engagement initiatives around internships and career opportunities.',
+    tags: ['Community', 'Career'],
   },
   {
     id: 'guvi',
-    year: '2025',
-    type: 'COMMUNITY',
-    title: 'GUVI Campus Ambassador',
     org: 'GUVI',
     role: 'Campus Ambassador',
-    description: 'Technology skill-development initiative. Student engagement and online learning advocacy.',
-    tags: ['Community', 'EdTech'],
-    proof: 'images/guvi.jpg',
+    year: '2025',
+    description:
+      'Participated in technology and learning initiatives focused on student skill development.',
+    tags: ['Community', 'Technology', 'EdTech'],
   },
   {
     id: 'pw',
-    year: '2025',
-    type: 'COMMUNITY',
-    title: 'Physics Wallah Campus Ambassador',
     org: 'Physics Wallah',
     role: 'Campus Ambassador',
-    description: 'Educational community activities and student opportunity promotion.',
+    year: '2025',
+    description:
+      'Participated in educational community initiatives and student opportunity programs.',
     tags: ['Community', 'Education'],
-    proof: 'images/physics-wallah.jpg',
   },
 ];
 
-export interface Achievement {
+export interface AchievementItem {
   id: string;
-  cat: string;
   name: string;
-  org: string;
-  detail: string;
+  role: string;
   year: string;
-  proof?: string;
-  icon: string;
+  link?: string;
 }
 
-export const ACHIEVEMENTS: Achievement[] = [
-  { id:'gssoc',       cat:'OPEN SOURCE',   name:'GirlScript Summer of Code', org:'GSSoC',           detail:'Open source contributor 2025',          year:'2025', proof:'images/gssoc.jpg',         icon:'⌥' },
-  { id:'nsoc',        cat:'OPEN SOURCE',   name:'NSOC',                     org:'NSOC',            detail:'Open source contributor 2025',          year:'2025', proof:'images/nsoc.jpg',          icon:'⌥' },
-  { id:'google',      cat:'COMMUNITY',     name:'Google Campus Ambassador',  org:'Google',          detail:'Student programs & developer community', year:'2025', proof:'images/google-offer.jpg',  icon:'◈' },
-  { id:'internshala', cat:'COMMUNITY',     name:'Internshala Ambassador',    org:'Internshala',     detail:'Career & internship advocacy',           year:'2025', proof:'images/internshala.jpg',   icon:'◈' },
-  { id:'guvi',        cat:'COMMUNITY',     name:'GUVI Campus Ambassador',    org:'GUVI',            detail:'EdTech community engagement',            year:'2025', proof:'images/guvi.jpg',          icon:'◈' },
-  { id:'pw',          cat:'COMMUNITY',     name:'Physics Wallah Ambassador', org:'Physics Wallah',  detail:'Educational community programs',         year:'2025', proof:'images/physics-wallah.jpg',icon:'◈' },
-  { id:'rr',          cat:'PROGRAM',       name:'RemoteRecruit Ambassador',  org:'RemoteRecruit',   detail:'Student ambassador 2026',               year:'2026', proof:'images/remote-recruit.jpg', icon:'▲' },
-  { id:'hr',          cat:'PROGRAM',       name:'HackerRank Campus',         org:'HackerRank',      detail:'DSA & campus developer community',       year:'2026', proof:'images/hackerrank.jpg',    icon:'▲' },
-];
-
-export const ABOUT_PANELS = [
+export const ACHIEVEMENTS: AchievementItem[] = [
   {
-    num: '01',
-    id: 'engineer',
-    label: 'ENGINEER',
-    title: 'Systems Thinker',
-    body: 'Focused on DSA and scalable system design. I approach problems from first principles — understanding the "why" before the "how". Currently deepening expertise in algorithms, data structures, and computer science fundamentals.',
-    tags: ['DSA', 'Algorithms', 'Systems Design'],
+    id: 'gssoc',
+    name: 'GirlScript Summer of Code (GSSoC)',
+    role: 'Open Source Contributor',
+    year: '2025',
   },
   {
-    num: '02',
-    id: 'builder',
-    label: 'BUILDER',
-    title: 'Shipping Real Products',
-    body: 'Built CivicOS — an AI-powered civic intelligence platform — from zero to deployed product. SHARDUL.OS is this portfolio, rebuilt multiple times in pursuit of a genuinely unique developer experience. I bias toward shipping.',
-    tags: ['CivicOS', 'SHARDUL.OS', 'Full Stack'],
+    id: 'nsoc',
+    name: 'NSOC',
+    role: 'Open Source Contributor',
+    year: '2025',
   },
   {
-    num: '03',
-    id: 'community',
-    label: 'COMMUNITY',
-    title: 'Building Together',
-    body: 'Campus Ambassador for Google, Internshala, GUVI, Physics Wallah, RemoteRecruit and HackerRank. Contributor to GSSoC and NSOC open source programs. Community building and knowledge sharing are part of how I grow.',
-    tags: ['Google', 'Open Source', 'Leadership'],
+    id: 'google',
+    name: 'Google',
+    role: 'Campus Ambassador',
+    year: '2025',
   },
   {
-    num: '04',
-    id: 'creator',
-    label: 'CREATOR',
-    title: 'Building in Public',
-    body: 'I treat each project as a product — designed, engineered, and shipped. SHARDUL.OS evolved through five major versions. I document what I build, what I learn, and what comes next. The process is part of the work.',
-    tags: ['Design', 'Portfolio', 'Writing'],
+    id: 'osgc',
+    name: 'OSGC',
+    role: 'Open Source Contributor',
+    year: '2025',
+    link: 'https://github.com/shardul-2007/assemblyos',
+  },
+  {
+    id: 'hackerrank',
+    name: 'HackerRank',
+    role: 'Campus Community',
+    year: '2026',
+  },
+  {
+    id: 'remoterecruit',
+    name: 'RemoteRecruit',
+    role: 'Student Ambassador',
+    year: '2026',
   },
 ];
 
 export const CONTACT_CHANNELS = [
-  { id: 'email',    label: 'EMAIL',    value: 'shardulparihar2007@gmail.com', href: 'mailto:shardulparihar2007@gmail.com', icon: 'Mail' },
-  { id: 'linkedin', label: 'LINKEDIN', value: '/in/shardul-parihar-/',         href: 'https://www.linkedin.com/in/shardul-parihar/', icon: 'Linkedin' },
-  { id: 'github',   label: 'GITHUB',   value: 'github.com/shardul-2007',       href: 'https://github.com/shardul-2007', icon: 'Github' },
+  {
+    id: 'email',
+    label: 'Email',
+    value: 'shardulparihar2007@gmail.com',
+    href: 'mailto:shardulparihar2007@gmail.com',
+    icon: 'Mail',
+  },
+  {
+    id: 'linkedin',
+    label: 'LinkedIn',
+    value: '/in/shardul-parihar/',
+    href: 'https://www.linkedin.com/in/shardul-parihar/',
+    icon: 'Linkedin',
+  },
+  {
+    id: 'github',
+    label: 'GitHub',
+    value: 'github.com/shardul-2007',
+    href: 'https://github.com/shardul-2007',
+    icon: 'Github',
+  },
 ];
