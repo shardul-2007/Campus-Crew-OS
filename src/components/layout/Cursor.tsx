@@ -12,8 +12,9 @@ export default function Cursor() {
 
   // DOM node references for 60fps GPU transforms (zero React re-renders on move)
   const coreRef = useRef<HTMLDivElement>(null);
-  const haloRef = useRef<HTMLDivElement>(null);
+  const auraRef = useRef<HTMLDivElement>(null);
   const fieldRef = useRef<HTMLDivElement>(null);
+  const outerFieldRef = useRef<HTMLDivElement>(null);
   const wakeRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
@@ -25,25 +26,36 @@ export default function Cursor() {
     setIsActive(true);
 
     let isVisible = false;
-    let targetX = -100;
-    let targetY = -100;
+    let targetX = window.innerWidth / 2;
+    let targetY = window.innerHeight / 2;
+    let prevX = targetX;
+    let prevY = targetY;
 
     // Intermediate physics coordinates
-    let haloX = -100;
-    let haloY = -100;
-    let fieldX = -100;
-    let fieldY = -100;
+    let auraX = targetX;
+    let auraY = targetY;
+    let fieldX = targetX;
+    let fieldY = targetY;
+    let outerFieldX = targetX;
+    let outerFieldY = targetY;
+
+    // Velocity & angle for liquid light distortion
+    let smoothSpeed = 0;
+    let currentAngle = 0;
+
+    // Parallax values
+    let bgParallaxX = 0;
+    let bgParallaxY = 0;
+    let photoParallaxX = 0;
+    let photoParallaxY = 0;
 
     // Magnetic pull coordinates
     let magneticTargetX = 0;
     let magneticTargetY = 0;
     let isMagnetic = false;
+    let isInteractive = false;
 
-    // Hover context states
-    type ContextMode = 'default' | 'nav' | 'button' | 'card' | 'portrait';
-    let currentMode: ContextMode = 'default';
-
-    // 4 decaying wake impressions
+    // 4 decaying wake impressions (fading completely within 150ms)
     const wakeHistory: WakePoint[] = [
       { x: -100, y: -100, opacity: 0 },
       { x: -100, y: -100, opacity: 0 },
@@ -53,6 +65,7 @@ export default function Cursor() {
     let wakeCounter = 0;
 
     let animId: number;
+    const rootStyle = document.documentElement.style;
 
     const onMouseMove = (e: MouseEvent) => {
       targetX = e.clientX;
@@ -60,49 +73,38 @@ export default function Cursor() {
 
       if (!isVisible) {
         isVisible = true;
-        haloX = targetX;
-        haloY = targetY;
+        auraX = targetX;
+        auraY = targetY;
         fieldX = targetX;
         fieldY = targetY;
+        outerFieldX = targetX;
+        outerFieldY = targetY;
+        prevX = targetX;
+        prevY = targetY;
       }
 
-      // Check contextual elements underneath cursor
+      // Check contextual interactive elements underneath cursor
       const target = e.target as HTMLElement | null;
       if (target) {
-        const btn = target.closest('button, .btn, [data-cursor="button"]') as HTMLElement | null;
-        const nav = target.closest('nav a, [data-cursor="nav"]') as HTMLElement | null;
-        const card = target.closest('article, [data-cursor="card"]') as HTMLElement | null;
-        const portrait = target.closest('[data-cursor="portrait"]') as HTMLElement | null;
-
+        const btn = target.closest('button, .btn, a, [role="button"]') as HTMLElement | null;
         if (btn) {
-          currentMode = 'button';
+          isInteractive = true;
           const rect = btn.getBoundingClientRect();
           const centerX = rect.left + rect.width / 2;
           const centerY = rect.top + rect.height / 2;
-          // Subtle magnetic attraction — pulls by up to 5px toward button center
+          // Subtle magnetic attraction — pulls by 3–5px toward center
           const dx = centerX - targetX;
           const dy = centerY - targetY;
-          magneticTargetX = dx * 0.14;
-          magneticTargetY = dy * 0.14;
+          magneticTargetX = Math.max(-5, Math.min(5, dx * 0.14));
+          magneticTargetY = Math.max(-5, Math.min(5, dy * 0.14));
           isMagnetic = true;
-        } else if (nav) {
-          currentMode = 'nav';
-          isMagnetic = false;
-        } else if (portrait) {
-          currentMode = 'portrait';
-          isMagnetic = false;
-        } else if (card) {
-          currentMode = 'card';
-          isMagnetic = false;
         } else {
-          currentMode = 'default';
+          isInteractive = false;
           isMagnetic = false;
+          magneticTargetX = 0;
+          magneticTargetY = 0;
         }
       }
-
-      // Update background atmospheric illumination via CSS variables
-      document.documentElement.style.setProperty('--cx', `${targetX}px`);
-      document.documentElement.style.setProperty('--cy', `${targetY}px`);
     };
 
     const onMouseLeave = () => {
@@ -113,83 +115,99 @@ export default function Cursor() {
       isVisible = true;
     };
 
-    // Physics Animation Loop
+    // Unified 60fps Physics & Living Field Loop
     const render = () => {
       if (isVisible) {
         const actualCoreX = isMagnetic ? targetX + magneticTargetX : targetX;
         const actualCoreY = isMagnetic ? targetY + magneticTargetY : targetY;
 
-        // 1. Core (Immediate responsive tracking)
+        // Calculate velocity and motion angle for liquid light distortion
+        const vx = actualCoreX - prevX;
+        const vy = actualCoreY - prevY;
+        const dist = Math.hypot(vx, vy);
+        smoothSpeed += (dist - smoothSpeed) * 0.22;
+        if (dist > 0.8) {
+          currentAngle = Math.atan2(vy, vx);
+        }
+        prevX = actualCoreX;
+        prevY = actualCoreY;
+
+        // 1. Core: tiny 3.5px luminous point (immediate tracking, zero lag)
         if (coreRef.current) {
           coreRef.current.style.transform = `translate3d(${actualCoreX}px, ${actualCoreY}px, 0) translate(-50%, -50%)`;
           coreRef.current.style.opacity = '1';
         }
 
-        // 2. Micro Halo (~40ms delay, lerp factor 0.42)
-        haloX += (actualCoreX - haloX) * 0.42;
-        haloY += (actualCoreY - haloY) * 0.42;
-        if (haloRef.current) {
-          haloRef.current.style.transform = `translate3d(${haloX}px, ${haloY}px, 0) translate(-50%, -50%)`;
-          haloRef.current.style.opacity = currentMode === 'button' ? '0.9' : '0.65';
+        // 2. Immediate Light Core (Layer 1: ~26px soft radial glow, lerp factor 0.65)
+        auraX += (actualCoreX - auraX) * 0.65;
+        auraY += (actualCoreY - auraY) * 0.65;
+        if (auraRef.current) {
+          auraRef.current.style.transform = `translate3d(${auraX}px, ${auraY}px, 0) translate(-50%, -50%)`;
+          auraRef.current.style.opacity = isInteractive ? '1' : '0.85';
         }
 
-        // 3. Delayed Spatial Field (~100ms delay, lerp factor 0.16)
-        fieldX += (actualCoreX - fieldX) * 0.16;
-        fieldY += (actualCoreY - fieldY) * 0.16;
+        // 3. Delayed Electromagnetic Field & Liquid Distortion (Layer 2 & 3: ~100ms lag, lerp factor 0.14)
+        fieldX += (actualCoreX - fieldX) * 0.14;
+        fieldY += (actualCoreY - fieldY) * 0.14;
+
+        // Stretch dynamically along angle of travel when moving fast
+        const stretch = Math.min(smoothSpeed * 0.018, 0.62);
+        const scaleBase = isInteractive ? 1.35 : 1;
+        const scaleX = (1 + stretch) * scaleBase;
+        const scaleY = Math.max(1 - stretch * 0.35, 0.65) * scaleBase;
+
         if (fieldRef.current) {
-          fieldRef.current.style.transform = `translate3d(${fieldX}px, ${fieldY}px, 0) translate(-50%, -50%)`;
-          fieldRef.current.style.opacity = '1';
-
-          // Contextual morphing styles
-          if (currentMode === 'button') {
-            fieldRef.current.style.width = '48px';
-            fieldRef.current.style.height = '48px';
-            fieldRef.current.style.borderColor = 'rgba(255, 255, 255, 0.45)';
-            fieldRef.current.style.backgroundColor = 'rgba(255, 255, 255, 0.08)';
-          } else if (currentMode === 'nav') {
-            fieldRef.current.style.width = '44px';
-            fieldRef.current.style.height = '44px';
-            fieldRef.current.style.borderColor = 'rgba(255, 255, 255, 0.35)';
-            fieldRef.current.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
-          } else if (currentMode === 'portrait') {
-            fieldRef.current.style.width = '64px';
-            fieldRef.current.style.height = '64px';
-            fieldRef.current.style.borderColor = 'rgba(255, 255, 255, 0.28)';
-            fieldRef.current.style.backgroundColor = 'rgba(255, 255, 255, 0.03)';
-          } else if (currentMode === 'card') {
-            fieldRef.current.style.width = '52px';
-            fieldRef.current.style.height = '52px';
-            fieldRef.current.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-            fieldRef.current.style.backgroundColor = 'rgba(255, 255, 255, 0.04)';
-          } else {
-            fieldRef.current.style.width = '36px';
-            fieldRef.current.style.height = '36px';
-            fieldRef.current.style.borderColor = 'var(--cursor-ring)';
-            fieldRef.current.style.backgroundColor = 'transparent';
-          }
+          fieldRef.current.style.transform = `translate3d(${fieldX}px, ${fieldY}px, 0) translate(-50%, -50%) rotate(${currentAngle}rad) scale(${scaleX.toFixed(3)}, ${scaleY.toFixed(3)})`;
+          fieldRef.current.style.opacity = isInteractive ? '1' : '0.8';
         }
 
-        // 4. Short Decaying Spatial Wake (3-4 discrete light stamps, decays rapidly)
+        // 4. Secondary Large Atmospheric Glow (Layer 4: ~140ms lag, lerp factor 0.075)
+        outerFieldX += (actualCoreX - outerFieldX) * 0.075;
+        outerFieldY += (actualCoreY - outerFieldY) * 0.075;
+        if (outerFieldRef.current) {
+          outerFieldRef.current.style.transform = `translate3d(${outerFieldX}px, ${outerFieldY}px, 0) translate(-50%, -50%)`;
+          outerFieldRef.current.style.opacity = '1';
+        }
+
+        // 5. Decaying Directional Wake (3-4 discrete light stamps, decays rapidly within 150ms)
         wakeCounter++;
-        if (wakeCounter % 3 === 0) {
-          // Push current field position into wake history
-          wakeHistory.unshift({ x: fieldX, y: fieldY, opacity: 0.32 });
+        if (wakeCounter % 3 === 0 && smoothSpeed > 1.2) {
+          wakeHistory.unshift({ x: fieldX, y: fieldY, opacity: 0.36 });
           wakeHistory.pop();
         }
 
-        // Decay wake opacities
         for (let i = 0; i < wakeHistory.length; i++) {
-          wakeHistory[i].opacity *= 0.88;
+          wakeHistory[i].opacity *= 0.82;
           const wakeEl = wakeRefs.current[i];
           if (wakeEl) {
             wakeEl.style.transform = `translate3d(${wakeHistory[i].x}px, ${wakeHistory[i].y}px, 0) translate(-50%, -50%)`;
-            wakeEl.style.opacity = `${wakeHistory[i].opacity}`;
+            wakeEl.style.opacity = `${wakeHistory[i].opacity.toFixed(3)}`;
           }
         }
+
+        // 6. Multi-layer background parallax coordinates
+        const normX = targetX / window.innerWidth - 0.5;
+        const normY = targetY / window.innerHeight - 0.5;
+
+        bgParallaxX += (normX * -14 - bgParallaxX) * 0.08;
+        bgParallaxY += (normY * -14 - bgParallaxY) * 0.08;
+        photoParallaxX += (normX * -26 - photoParallaxX) * 0.08;
+        photoParallaxY += (normY * -26 - photoParallaxY) * 0.08;
+
+        // Update centralized CSS variables on documentElement for living environment
+        rootStyle.setProperty('--pointer-x', `${targetX}px`);
+        rootStyle.setProperty('--pointer-y', `${targetY}px`);
+        rootStyle.setProperty('--cx', `${targetX}px`);
+        rootStyle.setProperty('--cy', `${targetY}px`);
+        rootStyle.setProperty('--bg-parallax-x', `${bgParallaxX.toFixed(2)}px`);
+        rootStyle.setProperty('--bg-parallax-y', `${bgParallaxY.toFixed(2)}px`);
+        rootStyle.setProperty('--photo-parallax-x', `${photoParallaxX.toFixed(2)}px`);
+        rootStyle.setProperty('--photo-parallax-y', `${photoParallaxY.toFixed(2)}px`);
       } else {
         if (coreRef.current) coreRef.current.style.opacity = '0';
-        if (haloRef.current) haloRef.current.style.opacity = '0';
+        if (auraRef.current) auraRef.current.style.opacity = '0';
         if (fieldRef.current) fieldRef.current.style.opacity = '0';
+        if (outerFieldRef.current) outerFieldRef.current.style.opacity = '0';
         wakeRefs.current.forEach(w => {
           if (w) w.style.opacity = '0';
         });
@@ -224,7 +242,7 @@ export default function Cursor() {
         overflow: 'hidden',
       }}
     >
-      {/* ── Layer 4: Decaying Spatial Wake Points (3-4 points) ── */}
+      {/* ── Layer 5: Decaying Directional Wake (dissolves naturally without borders) ── */}
       {[0, 1, 2, 3].map(i => (
         <div
           key={i}
@@ -235,11 +253,11 @@ export default function Cursor() {
             position: 'absolute',
             top: 0,
             left: 0,
-            width: `${Math.max(6 - i, 3)}px`,
-            height: `${Math.max(6 - i, 3)}px`,
+            width: `${Math.max(14 - i * 2, 8)}px`,
+            height: `${Math.max(14 - i * 2, 8)}px`,
             borderRadius: '50%',
-            backgroundColor: 'rgba(215, 230, 255, 0.45)',
-            boxShadow: '0 0 6px rgba(180, 215, 255, 0.3)',
+            background: 'radial-gradient(circle, var(--cursor-wake) 0%, transparent 70%)',
+            filter: 'blur(3px)',
             opacity: 0,
             pointerEvents: 'none',
             willChange: 'transform, opacity',
@@ -247,57 +265,73 @@ export default function Cursor() {
         />
       ))}
 
-      {/* ── Layer 3: Delayed Spatial Field (~100ms lag, subtle translucent depth) ── */}
+      {/* ── Layer 4: Secondary Large Outer Atmospheric Field (~420px, deep dissolve) ── */}
+      <div
+        ref={outerFieldRef}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '420px',
+          height: '420px',
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, var(--cursor-field-2) 0%, transparent 68%)',
+          filter: 'blur(28px)',
+          opacity: 0,
+          pointerEvents: 'none',
+          willChange: 'transform',
+        }}
+      />
+
+      {/* ── Layer 3: Electromagnetic Liquid Light Field (~220px, velocity-stretched, NO BORDER) ── */}
       <div
         ref={fieldRef}
         style={{
           position: 'absolute',
           top: 0,
           left: 0,
-          width: '36px',
-          height: '36px',
+          width: '220px',
+          height: '220px',
           borderRadius: '50%',
-          border: '1px solid var(--cursor-ring)',
-          backgroundColor: 'transparent',
-          backdropFilter: 'blur(2px)',
-          WebkitBackdropFilter: 'blur(2px)',
+          background:
+            'radial-gradient(circle, var(--cursor-field-1) 0%, var(--cursor-field-2) 45%, transparent 75%)',
+          filter: 'blur(16px)',
           opacity: 0,
-          transition: 'width 0.28s ease, height 0.28s ease, border-color 0.25s ease, background-color 0.25s ease',
           pointerEvents: 'none',
           willChange: 'transform',
         }}
       />
 
-      {/* ── Layer 2: Micro Halo (~40ms lag, soft atmospheric boundary) ── */}
+      {/* ── Layer 2: Immediate Light Core (~26px soft radial aura, NO BORDER) ── */}
       <div
-        ref={haloRef}
+        ref={auraRef}
         style={{
           position: 'absolute',
           top: 0,
           left: 0,
-          width: '14px',
-          height: '14px',
+          width: '26px',
+          height: '26px',
           borderRadius: '50%',
-          background:
-            'radial-gradient(circle, rgba(190, 215, 255, 0.25) 0%, rgba(190, 215, 255, 0.05) 60%, transparent 100%)',
+          background: 'radial-gradient(circle, var(--cursor-immediate-aura) 0%, transparent 70%)',
+          filter: 'blur(4px)',
           opacity: 0,
           pointerEvents: 'none',
           willChange: 'transform',
         }}
       />
 
-      {/* ── Layer 1: Core (Immediate 4.5px luminous point with subtle blue tint) ── */}
+      {/* ── Layer 1: Core (Tiny, precise 3.5px luminous point) ── */}
       <div
         ref={coreRef}
         style={{
           position: 'absolute',
           top: 0,
           left: 0,
-          width: '5px',
-          height: '5px',
+          width: '3.5px',
+          height: '3.5px',
           borderRadius: '50%',
-          backgroundColor: '#ffffff',
-          boxShadow: '0 0 8px rgba(180, 215, 255, 0.85), 0 0 2px rgba(255, 255, 255, 1)',
+          backgroundColor: 'var(--cursor-core)',
+          boxShadow: '0 0 6px var(--cursor-core-glow), 0 0 12px var(--cursor-immediate-aura)',
           opacity: 0,
           pointerEvents: 'none',
           willChange: 'transform',

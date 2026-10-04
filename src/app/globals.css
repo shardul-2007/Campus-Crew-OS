@@ -39,10 +39,27 @@
   --btn-fill-bg:   #f0eeff;
   --btn-fill-text: #06070b;
 
-  /* Cursor colors */
-  --cursor-dot:     #ffffff;
-  --cursor-ring:    rgba(255, 255, 255, 0.55);
-  --cursor-glow:    rgba(255, 255, 255, 0.035);
+  /* Living cursor & spatial field tokens */
+  --cursor-core:           #ffffff;
+  --cursor-core-glow:      rgba(255, 255, 255, 0.95);
+  --cursor-immediate-aura: rgba(210, 230, 255, 0.32);
+  --cursor-field-1:        rgba(190, 220, 255, 0.075);
+  --cursor-field-2:        rgba(160, 195, 255, 0.025);
+  --cursor-wake:           rgba(215, 235, 255, 0.45);
+  --cursor-glow:           rgba(255, 255, 255, 0.045);
+  --glass-sheen:           rgba(255, 255, 255, 0.08);
+
+  /* Dynamic pointer physics fallbacks */
+  --pointer-x:       50vw;
+  --pointer-y:       50vh;
+  --pointer-norm-x:  0;
+  --pointer-norm-y:  0;
+  --bg-parallax-x:   0px;
+  --bg-parallax-y:   0px;
+  --photo-parallax-x: 0px;
+  --photo-parallax-y: 0px;
+  --cx:              50vw;
+  --cy:              50vh;
 }
 
 [data-theme='light'] {
@@ -78,10 +95,27 @@
   --btn-fill-bg:   #0b0c12;
   --btn-fill-text: #f7f8fc;
 
-  /* Cursor colors */
-  --cursor-dot:     #0b0c12;
-  --cursor-ring:    rgba(11, 12, 18, 0.50);
-  --cursor-glow:    rgba(0, 0, 0, 0.03);
+  /* Living cursor & spatial field tokens */
+  --cursor-core:           #0b0c12;
+  --cursor-core-glow:      rgba(11, 12, 18, 0.80);
+  --cursor-immediate-aura: rgba(11, 12, 18, 0.16);
+  --cursor-field-1:        rgba(11, 12, 18, 0.045);
+  --cursor-field-2:        rgba(11, 12, 18, 0.015);
+  --cursor-wake:           rgba(11, 12, 18, 0.24);
+  --cursor-glow:           rgba(0, 0, 0, 0.03);
+  --glass-sheen:           rgba(255, 255, 255, 0.45);
+
+  /* Dynamic pointer physics fallbacks */
+  --pointer-x:       50vw;
+  --pointer-y:       50vh;
+  --pointer-norm-x:  0;
+  --pointer-norm-y:  0;
+  --bg-parallax-x:   0px;
+  --bg-parallax-y:   0px;
+  --photo-parallax-x: 0px;
+  --photo-parallax-y: 0px;
+  --cx:              50vw;
+  --cy:              50vh;
 }
 
 /* ═══════════════════════════════════════════════════
@@ -115,9 +149,10 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════
-   GLASS MATERIAL
+   GLASS MATERIAL & LIVING SPECULAR REFLECTION
    ═══════════════════════════════════════════════════ */
 .glass {
+  position: relative;
   background: var(--glass-bg);
   backdrop-filter: blur(32px) saturate(160%);
   -webkit-backdrop-filter: blur(32px) saturate(160%);
@@ -125,18 +160,58 @@ body {
   box-shadow: var(--glass-shadow);
   transition: border-color 0.28s ease, box-shadow 0.28s ease, background 0.35s ease;
 }
+
+/* Specular light interaction with cursor coordinates across glass */
+.glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(
+    circle 380px at var(--pointer-x, 50vw) var(--pointer-y, 50vh),
+    var(--glass-sheen, rgba(255, 255, 255, 0.08)) 0%,
+    transparent 70%
+  );
+  background-attachment: fixed;
+  opacity: 0.85;
+  z-index: 0;
+  transition: opacity 0.3s ease;
+}
+
 .glass:hover {
   border-color: var(--glass-border-h);
   box-shadow: var(--glass-shadow-h);
 }
+
 .glass-deep {
+  position: relative;
   background: var(--glass-bg);
   backdrop-filter: blur(44px) saturate(180%);
   -webkit-backdrop-filter: blur(44px) saturate(180%);
   border: 1px solid var(--glass-border-h);
   box-shadow: var(--glass-shadow-h);
 }
+
+.glass-deep::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(
+    circle 440px at var(--pointer-x, 50vw) var(--pointer-y, 50vh),
+    var(--glass-sheen, rgba(255, 255, 255, 0.08)) 0%,
+    transparent 70%
+  );
+  background-attachment: fixed;
+  opacity: 1;
+  z-index: 0;
+  transition: opacity 0.3s ease;
+}
+
 .glass-nav {
+  position: relative;
   background: var(--nav-bg);
   backdrop-filter: blur(44px) saturate(200%);
   -webkit-backdrop-filter: blur(44px) saturate(200%);
@@ -144,6 +219,30 @@ body {
   box-shadow: 0 4px 28px rgba(0, 0, 0, 0.15),
               inset 0 1px 0 rgba(255, 255, 255, 0.05);
   transition: all 0.35s ease;
+}
+
+.glass-nav::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(
+    circle 260px at var(--pointer-x, 50vw) var(--pointer-y, 50vh),
+    var(--glass-sheen, rgba(255, 255, 255, 0.08)) 0%,
+    transparent 70%
+  );
+  background-attachment: fixed;
+  opacity: 0.75;
+  z-index: 0;
+}
+
+/* Ensure glass interactive content sits above specular sheen */
+.glass > *,
+.glass-deep > *,
+.glass-nav > * {
+  position: relative;
+  z-index: 1;
 }
 
 /* ═══════════════════════════════════════════════════
