@@ -1,12 +1,38 @@
 'use client';
-import { motion } from 'framer-motion';
-import { EXPERIENCE_ITEMS } from '@/data/portfolio';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { EXPERIENCE_ITEMS, type ExperienceItem } from '@/data/portfolio';
+import { MapPin, Award, FileCheck } from 'lucide-react';
 
 const vp = { once: true, margin: '-60px' };
 
+type FilterType = 'ALL' | 'OPEN SOURCE' | 'CAMPUS & COMMUNITY' | 'PROGRAMS';
+
+const FILTERS: { id: FilterType; label: string }[] = [
+  { id: 'ALL', label: 'All Experience' },
+  { id: 'OPEN SOURCE', label: 'Open Source' },
+  { id: 'CAMPUS & COMMUNITY', label: 'Campus & Community' },
+  { id: 'PROGRAMS', label: 'Programs & Recognition' },
+];
+
 export default function Experience() {
+  const [activeFilter, setActiveFilter] = useState<FilterType>('ALL');
+
+  const filteredItems = EXPERIENCE_ITEMS.filter(item => {
+    if (activeFilter === 'ALL') return true;
+    if (activeFilter === 'OPEN SOURCE') return item.category.toLowerCase().includes('open source');
+    if (activeFilter === 'CAMPUS & COMMUNITY')
+      return (
+        item.category.toLowerCase().includes('campus') ||
+        item.category.toLowerCase().includes('community') ||
+        item.category.toLowerCase().includes('ambassador')
+      );
+    if (activeFilter === 'PROGRAMS') return item.category.toLowerCase().includes('program') || item.category.toLowerCase().includes('achievement');
+    return true;
+  });
+
   return (
-    <section id="experience" className="section" aria-label="Community and Open Source Experience">
+    <section id="experience" className="section" aria-label="Experience & Community Involvement">
       <div className="wrap">
         {/* Header */}
         <motion.div
@@ -14,7 +40,7 @@ export default function Experience() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={vp}
           transition={{ duration: 0.65 }}
-          style={{ marginBottom: 64 }}
+          style={{ marginBottom: 48 }}
         >
           <span className="s-label">Experience</span>
           <h2
@@ -25,133 +51,364 @@ export default function Experience() {
               marginTop: 18,
             }}
           >
-            Community &amp; Open Source
+            Experience, Programs &amp; Contributions
           </h2>
           <p
             style={{
               fontSize: '0.96rem',
               color: 'var(--text-2)',
               marginTop: 16,
-              maxWidth: 460,
+              maxWidth: 580,
               lineHeight: 1.7,
             }}
           >
-            Learning through building and collaboration.
+            Selected experience &amp; community involvement across open source initiatives, campus leadership, and developer programs.
           </p>
         </motion.div>
 
+        {/* Filter Pills */}
+        <div
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: 8,
+            marginBottom: 44,
+          }}
+        >
+          {FILTERS.map(f => {
+            const isActive = activeFilter === f.id;
+            return (
+              <button
+                key={f.id}
+                onClick={() => setActiveFilter(f.id)}
+                style={{
+                  padding: '7px 18px',
+                  borderRadius: 100,
+                  fontSize: '0.78rem',
+                  fontWeight: isActive ? 600 : 500,
+                  letterSpacing: '0.02em',
+                  border: isActive ? '1px solid var(--text)' : '1px solid var(--glass-border)',
+                  background: isActive ? 'var(--text)' : 'var(--glass-bg)',
+                  color: isActive ? 'var(--bg)' : 'var(--text-2)',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  backdropFilter: 'blur(12px)',
+                  WebkitBackdropFilter: 'blur(12px)',
+                }}
+              >
+                {f.label}
+              </button>
+            );
+          })}
+        </div>
+
         {/* Timeline list */}
-        <div style={{ position: 'relative', maxWidth: 760 }}>
+        <div style={{ position: 'relative', maxWidth: 840 }}>
           {/* Subtle vertical spine */}
           <div
             aria-hidden="true"
             style={{
               position: 'absolute',
-              top: 12,
-              bottom: 12,
-              left: 15,
+              top: 16,
+              bottom: 16,
+              left: 17,
               width: 1,
               background:
-                'linear-gradient(to bottom, transparent, var(--glass-border) 10%, var(--glass-border) 90%, transparent)',
+                'linear-gradient(to bottom, transparent, var(--glass-border) 8%, var(--glass-border) 92%, transparent)',
             }}
           />
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-            {EXPERIENCE_ITEMS.map((item, i) => (
-              <motion.div
-                key={item.id}
-                initial={{ opacity: 0, x: -18 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={vp}
-                transition={{ duration: 0.45, delay: i * 0.04 }}
-                style={{ display: 'flex', gap: 24, alignItems: 'flex-start' }}
-              >
-                {/* Node indicator */}
-                <div
-                  style={{
-                    flexShrink: 0,
-                    width: 30,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    paddingTop: 22,
-                  }}
-                >
-                  <div
-                    style={{
-                      width: 8,
-                      height: 8,
-                      borderRadius: '50%',
-                      background: 'var(--text)',
-                      opacity: 0.6,
-                      boxShadow: '0 0 10px var(--text)',
-                    }}
-                  />
-                </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <AnimatePresence mode="popLayout">
+              {filteredItems.map((item: ExperienceItem, i: number) => {
+                const isPresent = item.status === 'Present';
 
-                {/* Content Card */}
-                <div
-                  className="glass"
-                  style={{
-                    flex: 1,
-                    padding: '22px 26px',
-                    borderRadius: 20,
-                  }}
-                >
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexWrap: 'wrap',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      gap: 8,
-                      marginBottom: 8,
-                    }}
+                return (
+                  <motion.div
+                    key={item.id}
+                    layout
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.98 }}
+                    transition={{ duration: 0.35, delay: Math.min(i * 0.03, 0.3) }}
+                    style={{ display: 'flex', gap: 24, alignItems: 'flex-start' }}
                   >
-                    <span
+                    {/* Spine Node indicator */}
+                    <div
                       style={{
-                        fontSize: '0.80rem',
-                        fontWeight: 600,
-                        color: 'var(--text-2)',
+                        flexShrink: 0,
+                        width: 35,
+                        display: 'flex',
+                        justifyContent: 'center',
+                        paddingTop: 26,
                       }}
                     >
-                      {item.role}
-                    </span>
-                    <span className="meta">{item.year}</span>
-                  </div>
+                      <div
+                        style={{
+                          width: isPresent ? 10 : 8,
+                          height: isPresent ? 10 : 8,
+                          borderRadius: '50%',
+                          background: isPresent ? '#22c55e' : 'var(--text)',
+                          opacity: isPresent ? 1 : 0.45,
+                          boxShadow: isPresent ? '0 0 10px rgba(34, 197, 94, 0.6)' : 'none',
+                          transition: 'all 0.2s ease',
+                        }}
+                      />
+                    </div>
 
-                  <h3
-                    style={{
-                      fontSize: '1.05rem',
-                      fontWeight: 700,
-                      color: 'var(--text)',
-                      marginBottom: 8,
-                      letterSpacing: '-0.01em',
-                    }}
-                  >
-                    {item.org}
-                  </h3>
+                    {/* Content Card */}
+                    <article
+                      className="glass"
+                      style={{
+                        flex: 1,
+                        padding: '26px 30px',
+                        borderRadius: 22,
+                      }}
+                    >
+                      {/* Top Meta Bar */}
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexWrap: 'wrap',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: 10,
+                          marginBottom: 12,
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                          {/* Category Badge */}
+                          <span
+                            style={{
+                              fontSize: '0.66rem',
+                              fontWeight: 600,
+                              letterSpacing: '0.10em',
+                              padding: '3px 10px',
+                              borderRadius: 100,
+                              background: 'rgba(255, 255, 255, 0.07)',
+                              border: '1px solid var(--glass-border)',
+                              color: 'var(--text)',
+                              textTransform: 'uppercase',
+                              fontFamily: 'JetBrains Mono, monospace',
+                            }}
+                          >
+                            {item.category}
+                          </span>
 
-                  <p
-                    style={{
-                      fontSize: '0.88rem',
-                      color: 'var(--text-2)',
-                      lineHeight: 1.7,
-                      marginBottom: 16,
-                    }}
-                  >
-                    {item.description}
-                  </p>
+                          {/* Role Type Badge (Internship / Part-time) */}
+                          {item.type && (
+                            <span
+                              style={{
+                                fontSize: '0.66rem',
+                                fontWeight: 500,
+                                letterSpacing: '0.06em',
+                                padding: '3px 8px',
+                                borderRadius: 6,
+                                background: 'rgba(128, 128, 128, 0.12)',
+                                color: 'var(--text-2)',
+                              }}
+                            >
+                              {item.type}
+                            </span>
+                          )}
+                        </div>
 
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                    {item.tags.map(t => (
-                      <span key={t} className="tag" style={{ fontSize: '0.74rem' }}>
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+                        {/* Dates & Active Status */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          {isPresent && (
+                            <span
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 6,
+                                fontSize: '0.70rem',
+                                fontWeight: 600,
+                                color: '#22c55e',
+                                padding: '2px 8px',
+                                borderRadius: 100,
+                                background: 'rgba(34, 197, 94, 0.10)',
+                                border: '1px solid rgba(34, 197, 94, 0.25)',
+                              }}
+                            >
+                              <span
+                                style={{
+                                  width: 5,
+                                  height: 5,
+                                  borderRadius: '50%',
+                                  background: '#22c55e',
+                                }}
+                              />
+                              Present
+                            </span>
+                          )}
+                          <span className="meta">{item.dates}</span>
+                        </div>
+                      </div>
+
+                      {/* 1. ROLE (Prominent visual anchor) */}
+                      <h3
+                        style={{
+                          fontSize: 'clamp(1.15rem, 2.5vw, 1.35rem)',
+                          fontWeight: 800,
+                          color: 'var(--text)',
+                          lineHeight: 1.25,
+                          letterSpacing: '-0.02em',
+                          marginBottom: 6,
+                        }}
+                      >
+                        {item.role}
+                      </h3>
+
+                      {/* 2. ORGANIZATION (Prominently displayed) */}
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 10,
+                          marginBottom: 14,
+                        }}
+                      >
+                        {item.orgShort && (
+                          <span
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              width: 26,
+                              height: 26,
+                              borderRadius: 7,
+                              background: 'var(--glass-bg-d)',
+                              border: '1px solid var(--glass-border)',
+                              fontSize: '0.68rem',
+                              fontWeight: 700,
+                              fontFamily: 'JetBrains Mono, monospace',
+                              color: 'var(--text)',
+                              letterSpacing: '-0.02em',
+                              flexShrink: 0,
+                            }}
+                          >
+                            {item.orgShort}
+                          </span>
+                        )}
+                        <span
+                          style={{
+                            fontSize: '0.96rem',
+                            fontWeight: 600,
+                            color: 'var(--text)',
+                            letterSpacing: '-0.01em',
+                          }}
+                        >
+                          {item.org}
+                        </span>
+
+                        {item.location && (
+                          <span
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 4,
+                              fontSize: '0.78rem',
+                              color: 'var(--text-3)',
+                              marginLeft: 'auto',
+                            }}
+                          >
+                            <MapPin size={12} /> {item.location}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Additional recognition banner if present */}
+                      {item.recognition && (
+                        <div
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 6,
+                            padding: '6px 12px',
+                            borderRadius: 10,
+                            background: 'rgba(255, 255, 255, 0.05)',
+                            border: '1px solid var(--glass-border-h)',
+                            fontSize: '0.80rem',
+                            fontWeight: 600,
+                            color: 'var(--text)',
+                            marginBottom: 14,
+                          }}
+                        >
+                          <Award size={14} color="var(--text)" />
+                          {item.recognition}
+                        </div>
+                      )}
+
+                      {/* Description */}
+                      {item.description && (
+                        <p
+                          style={{
+                            fontSize: '0.90rem',
+                            color: 'var(--text-2)',
+                            lineHeight: 1.7,
+                            marginBottom: item.skills || item.media ? 16 : 0,
+                          }}
+                        >
+                          {item.description}
+                        </p>
+                      )}
+
+                      {/* Bottom row: Skills & Supporting Proof */}
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexWrap: 'wrap',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: 10,
+                          marginTop: item.skills || item.media ? 12 : 0,
+                          paddingTop: item.skills || item.media ? 12 : 0,
+                          borderTop: item.skills || item.media ? '1px solid var(--glass-border)' : 'none',
+                        }}
+                      >
+                        {/* Associated Skills */}
+                        {item.skills && item.skills.length > 0 ? (
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                            {item.skills.map(s => (
+                              <span key={s} className="tag" style={{ fontSize: '0.74rem' }}>
+                                {s}
+                              </span>
+                            ))}
+                          </div>
+                        ) : (
+                          <div />
+                        )}
+
+                        {/* Supporting Proof / Media Pills */}
+                        {item.media && item.media.length > 0 && (
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                            {item.media.map(m => (
+                              <span
+                                key={m}
+                                style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: 5,
+                                  fontSize: '0.72rem',
+                                  fontWeight: 500,
+                                  padding: '3px 9px',
+                                  borderRadius: 100,
+                                  background: 'rgba(255, 255, 255, 0.04)',
+                                  border: '1px solid var(--glass-border)',
+                                  color: 'var(--text-2)',
+                                }}
+                              >
+                                <FileCheck size={12} color="var(--text-2)" /> Proof: {m}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </article>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
           </div>
         </div>
       </div>
