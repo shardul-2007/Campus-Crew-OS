@@ -58,7 +58,21 @@ export default function Hero() {
               inset: 0,
               background:
                 'radial-gradient(circle 600px at var(--cx, 60%) var(--cy, 40%), var(--cursor-glow) 0%, transparent 70%)',
-              opacity: 0.8,
+              opacity: 0.9,
+            }}
+          />
+          {/* Radiant shining yellow atmospheric bloom behind hero */}
+          <div
+            style={{
+              position: 'absolute',
+              top: '5%',
+              right: '5%',
+              width: 550,
+              height: 550,
+              borderRadius: '50%',
+              background:
+                'radial-gradient(circle, rgba(255, 215, 50, 0.10) 0%, rgba(245, 180, 25, 0.035) 45%, transparent 70%)',
+              filter: 'blur(60px)',
             }}
           />
           {/* Extremely soft, distant blur layer behind hero */}

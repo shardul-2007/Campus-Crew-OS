@@ -39,15 +39,10 @@
   --btn-fill-bg:   #f0eeff;
   --btn-fill-text: #06070b;
 
-  /* Living cursor & spatial field tokens */
-  --cursor-core:           #ffffff;
-  --cursor-core-glow:      rgba(255, 255, 255, 0.95);
-  --cursor-immediate-aura: rgba(210, 230, 255, 0.32);
-  --cursor-field-1:        rgba(190, 220, 255, 0.075);
-  --cursor-field-2:        rgba(160, 195, 255, 0.025);
-  --cursor-wake:           rgba(215, 235, 255, 0.45);
-  --cursor-glow:           rgba(255, 255, 255, 0.045);
-  --glass-sheen:           rgba(255, 255, 255, 0.08);
+  /* Living background & ambient shining yellow tokens */
+  --cursor-glow:           rgba(255, 215, 50, 0.08);
+  --glass-sheen:           rgba(255, 220, 90, 0.085);
+  --crack-glow:            rgba(255, 210, 50, 0.35);
 
   /* Dynamic pointer physics fallbacks */
   --pointer-x:       50vw;
@@ -95,15 +90,10 @@
   --btn-fill-bg:   #0b0c12;
   --btn-fill-text: #f7f8fc;
 
-  /* Living cursor & spatial field tokens */
-  --cursor-core:           #0b0c12;
-  --cursor-core-glow:      rgba(11, 12, 18, 0.80);
-  --cursor-immediate-aura: rgba(11, 12, 18, 0.16);
-  --cursor-field-1:        rgba(11, 12, 18, 0.045);
-  --cursor-field-2:        rgba(11, 12, 18, 0.015);
-  --cursor-wake:           rgba(11, 12, 18, 0.24);
-  --cursor-glow:           rgba(0, 0, 0, 0.03);
-  --glass-sheen:           rgba(255, 255, 255, 0.45);
+  /* Living background & ambient shining yellow tokens */
+  --cursor-glow:           rgba(230, 175, 20, 0.05);
+  --glass-sheen:           rgba(255, 225, 100, 0.40);
+  --crack-glow:            rgba(230, 160, 20, 0.25);
 
   /* Dynamic pointer physics fallbacks */
   --pointer-x:       50vw;

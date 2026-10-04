@@ -1,8 +1,8 @@
 'use client';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { EXPERIENCE_ITEMS, type ExperienceItem } from '@/data/portfolio';
-import { MapPin, Award, FileCheck } from 'lucide-react';
+import { EXPERIENCE_ITEMS, PERSONAL, type ExperienceItem } from '@/data/portfolio';
+import { MapPin, Award, FileCheck, Linkedin, ExternalLink, X } from 'lucide-react';
 
 const vp = { once: true, margin: '-60px' };
 
@@ -17,6 +17,7 @@ const FILTERS: { id: FilterType; label: string }[] = [
 
 export default function Experience() {
   const [activeFilter, setActiveFilter] = useState<FilterType>('ALL');
+  const [showModal, setShowModal] = useState(false);
 
   const filteredItems = EXPERIENCE_ITEMS.filter(item => {
     if (activeFilter === 'ALL') return true;
@@ -411,7 +412,168 @@ export default function Experience() {
             </AnimatePresence>
           </div>
         </div>
+
+        {/* Action Button to Open Documented Proofs Modal */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={vp}
+          transition={{ duration: 0.5, delay: 0.35 }}
+          style={{ marginTop: 48, display: 'flex', justifyContent: 'center' }}
+        >
+          <button
+            onClick={() => setShowModal(true)}
+            className="btn btn-fill"
+          >
+            View Documented Proofs &amp; Records
+          </button>
+        </motion.div>
       </div>
+
+      {/* Documented Proofs & Experience Modal */}
+      <AnimatePresence>
+        {showModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowModal(false)}
+            style={{
+              position: 'fixed',
+              inset: 0,
+              zIndex: 999,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 24,
+              background: 'rgba(6, 7, 11, 0.78)',
+              backdropFilter: 'blur(28px)',
+            }}
+          >
+            <motion.div
+              initial={{ scale: 0.92, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.92, y: 20 }}
+              transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+              className="glass-deep"
+              style={{
+                maxWidth: 520,
+                width: '100%',
+                borderRadius: 24,
+                overflow: 'hidden',
+              }}
+              onClick={e => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '22px 26px',
+                  borderBottom: '1px solid var(--glass-border)',
+                }}
+              >
+                <div>
+                  <p style={{ fontWeight: 700, color: 'var(--text)', fontSize: '1rem' }}>
+                    Documented Experience &amp; Records
+                  </p>
+                  <p className="meta" style={{ marginTop: 4 }}>
+                    LinkedIn Experience, Offer Letters &amp; Badges
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowModal(false)}
+                  aria-label="Close dialog"
+                  style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: 10,
+                    border: '1px solid var(--glass-border)',
+                    background: 'var(--glass-bg)',
+                    color: 'var(--text-2)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <X size={14} />
+                </button>
+              </div>
+
+              {/* List */}
+              <div style={{ padding: '20px 26px 26px' }}>
+                <div style={{ maxHeight: '320px', overflowY: 'auto', marginBottom: 20 }}>
+                  {EXPERIENCE_ITEMS.map(item => (
+                    <div
+                      key={item.id}
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
+                        padding: '12px 0',
+                        borderBottom: '1px solid var(--glass-border)',
+                        gap: 14,
+                      }}
+                    >
+                      <div style={{ flex: 1 }}>
+                        <p style={{ fontSize: '0.88rem', color: 'var(--text)', fontWeight: 600 }}>
+                          {item.role}
+                        </p>
+                        <p style={{ fontSize: '0.78rem', color: 'var(--text-2)', marginTop: 2 }}>
+                          {item.org}
+                        </p>
+                        {item.media && item.media.length > 0 && (
+                          <div style={{ display: 'flex', gap: 6, marginTop: 4, flexWrap: 'wrap' }}>
+                            {item.media.map(m => (
+                              <span
+                                key={m}
+                                style={{
+                                  fontSize: '0.68rem',
+                                  color: 'var(--text-3)',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: 3,
+                                }}
+                              >
+                                <FileCheck size={10} color="var(--text-2)" /> Proof: {m}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      <span className="meta" style={{ flexShrink: 0 }}>{item.dates}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <p
+                  style={{
+                    fontSize: '0.84rem',
+                    color: 'var(--text-2)',
+                    textAlign: 'center',
+                    marginBottom: 20,
+                    lineHeight: 1.6,
+                  }}
+                >
+                  Appointment letters, contributor badges, and verified records are documented on my LinkedIn profile.
+                </p>
+
+                <a
+                  href={PERSONAL.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-fill"
+                  style={{ width: '100%', justifyContent: 'center' }}
+                >
+                  <Linkedin size={15} /> Open LinkedIn Profile <ExternalLink size={13} />
+                </a>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

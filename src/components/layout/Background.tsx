@@ -16,26 +16,26 @@ interface Ripple {
   wobblePhase: number;
 }
 
-// 18 subtle floating microscopic light particles providing natural optical depth
+// 18 subtle floating golden-yellow light particles providing natural optical depth
 const PARTICLES = [
-  { id: 1, top: '12%', left: '18%', size: 2.2, opacity: 0.28, factor: 1.8 },
-  { id: 2, top: '24%', left: '78%', size: 1.8, opacity: 0.22, factor: -1.5 },
-  { id: 3, top: '35%', left: '32%', size: 2.6, opacity: 0.32, factor: 2.1 },
-  { id: 4, top: '48%', left: '88%', size: 1.6, opacity: 0.18, factor: -2.0 },
-  { id: 5, top: '58%', left: '14%', size: 2.0, opacity: 0.25, factor: 1.6 },
-  { id: 6, top: '65%', left: '55%', size: 3.0, opacity: 0.35, factor: -1.9 },
-  { id: 7, top: '78%', left: '82%', size: 1.8, opacity: 0.20, factor: 2.4 },
-  { id: 8, top: '85%', left: '25%', size: 2.4, opacity: 0.26, factor: -1.7 },
-  { id: 9, top: '18%', left: '45%', size: 1.5, opacity: 0.18, factor: 1.4 },
-  { id: 10, top: '92%', left: '68%', size: 2.0, opacity: 0.22, factor: 2.0 },
-  { id: 11, top: '8%',  left: '62%', size: 1.7, opacity: 0.20, factor: -1.8 },
-  { id: 12, top: '42%', left: '10%', size: 2.2, opacity: 0.24, factor: 1.9 },
-  { id: 13, top: '52%', left: '72%', size: 1.9, opacity: 0.21, factor: -2.2 },
-  { id: 14, top: '72%', left: '38%', size: 2.5, opacity: 0.30, factor: 1.7 },
-  { id: 15, top: '28%', left: '92%', size: 1.6, opacity: 0.17, factor: -1.6 },
-  { id: 16, top: '82%', left: '4%',  size: 2.1, opacity: 0.23, factor: 2.3 },
-  { id: 17, top: '15%', left: '85%', size: 2.8, opacity: 0.33, factor: -2.1 },
-  { id: 18, top: '62%', left: '94%', size: 1.7, opacity: 0.19, factor: 1.5 },
+  { id: 1, top: '12%', left: '18%', size: 2.2, opacity: 0.38, factor: 1.8 },
+  { id: 2, top: '24%', left: '78%', size: 1.8, opacity: 0.32, factor: -1.5 },
+  { id: 3, top: '35%', left: '32%', size: 2.6, opacity: 0.42, factor: 2.1 },
+  { id: 4, top: '48%', left: '88%', size: 1.6, opacity: 0.28, factor: -2.0 },
+  { id: 5, top: '58%', left: '14%', size: 2.0, opacity: 0.35, factor: 1.6 },
+  { id: 6, top: '65%', left: '55%', size: 3.0, opacity: 0.45, factor: -1.9 },
+  { id: 7, top: '78%', left: '82%', size: 1.8, opacity: 0.30, factor: 2.4 },
+  { id: 8, top: '85%', left: '25%', size: 2.4, opacity: 0.36, factor: -1.7 },
+  { id: 9, top: '18%', left: '45%', size: 1.5, opacity: 0.28, factor: 1.4 },
+  { id: 10, top: '92%', left: '68%', size: 2.0, opacity: 0.32, factor: 2.0 },
+  { id: 11, top: '8%',  left: '62%', size: 1.7, opacity: 0.30, factor: -1.8 },
+  { id: 12, top: '42%', left: '10%', size: 2.2, opacity: 0.34, factor: 1.9 },
+  { id: 13, top: '52%', left: '72%', size: 1.9, opacity: 0.31, factor: -2.2 },
+  { id: 14, top: '72%', left: '38%', size: 2.5, opacity: 0.40, factor: 1.7 },
+  { id: 15, top: '28%', left: '92%', size: 1.6, opacity: 0.27, factor: -1.6 },
+  { id: 16, top: '82%', left: '4%',  size: 2.1, opacity: 0.33, factor: 2.3 },
+  { id: 17, top: '15%', left: '85%', size: 2.8, opacity: 0.43, factor: -2.1 },
+  { id: 18, top: '62%', left: '94%', size: 1.7, opacity: 0.29, factor: 1.5 },
 ];
 
 export default function Background() {
@@ -177,15 +177,15 @@ export default function Background() {
         const alpha = Math.sin((1 - progress) * Math.PI * 0.5) * r.amplitude;
         if (alpha <= 0.005) continue;
 
-        // 1. Inner soft caustic liquid glow
+        // 1. Inner soft shining golden-yellow caustic liquid glow
         const glowGrad = ctx.createRadialGradient(r.x, r.y, 0, r.x, r.y, r.radius);
         if (isDark) {
-          glowGrad.addColorStop(0, `rgba(180, 215, 255, ${(alpha * 0.06).toFixed(3)})`);
-          glowGrad.addColorStop(0.7, `rgba(140, 190, 255, ${(alpha * 0.02).toFixed(3)})`);
+          glowGrad.addColorStop(0, `rgba(255, 220, 70, ${(alpha * 0.10).toFixed(3)})`);
+          glowGrad.addColorStop(0.65, `rgba(245, 180, 30, ${(alpha * 0.035).toFixed(3)})`);
           glowGrad.addColorStop(1, 'transparent');
         } else {
-          glowGrad.addColorStop(0, `rgba(90, 130, 200, ${(alpha * 0.05).toFixed(3)})`);
-          glowGrad.addColorStop(0.7, `rgba(70, 110, 180, ${(alpha * 0.015).toFixed(3)})`);
+          glowGrad.addColorStop(0, `rgba(240, 185, 40, ${(alpha * 0.08).toFixed(3)})`);
+          glowGrad.addColorStop(0.65, `rgba(220, 160, 20, ${(alpha * 0.025).toFixed(3)})`);
           glowGrad.addColorStop(1, 'transparent');
         }
         ctx.fillStyle = glowGrad;
@@ -193,7 +193,7 @@ export default function Background() {
         ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
         ctx.fill();
 
-        // 2. Primary leading wave crest (bright specular water ridge)
+        // 2. Primary leading wave crest (radiant shining golden-yellow water ridge)
         ctx.beginPath();
         const segments = 48;
         for (let s = 0; s <= segments; s++) {
@@ -209,13 +209,13 @@ export default function Background() {
 
         ctx.lineWidth = Math.max(1, 2.8 * (1 - progress));
         if (isDark) {
-          ctx.strokeStyle = `rgba(215, 235, 255, ${(alpha * 0.45).toFixed(3)})`;
-          ctx.shadowColor = 'rgba(180, 220, 255, 0.4)';
-          ctx.shadowBlur = 6;
+          ctx.strokeStyle = `rgba(255, 235, 140, ${(alpha * 0.65).toFixed(3)})`;
+          ctx.shadowColor = 'rgba(255, 215, 60, 0.65)';
+          ctx.shadowBlur = 8;
         } else {
-          ctx.strokeStyle = `rgba(70, 110, 180, ${(alpha * 0.35).toFixed(3)})`;
-          ctx.shadowColor = 'rgba(50, 90, 160, 0.25)';
-          ctx.shadowBlur = 5;
+          ctx.strokeStyle = `rgba(210, 155, 25, ${(alpha * 0.45).toFixed(3)})`;
+          ctx.shadowColor = 'rgba(230, 175, 30, 0.40)';
+          ctx.shadowBlur = 6;
         }
         ctx.stroke();
 
@@ -226,21 +226,21 @@ export default function Background() {
           ctx.lineWidth = Math.max(0.8, 1.8 * (1 - progress));
           ctx.strokeStyle = isDark
             ? `rgba(0, 0, 15, ${(alpha * 0.28).toFixed(3)})`
-            : `rgba(160, 185, 220, ${(alpha * 0.25).toFixed(3)})`;
+            : `rgba(180, 160, 120, ${(alpha * 0.25).toFixed(3)})`;
           ctx.shadowBlur = 0;
           ctx.stroke();
         }
 
-        // 4. Secondary harmonic crest (inner water reflection)
+        // 4. Secondary harmonic crest (golden water reflection)
         if (r.radius > 28) {
           ctx.beginPath();
           ctx.arc(r.x, r.y, r.radius * 0.72, 0, Math.PI * 2);
           ctx.lineWidth = Math.max(0.6, 1.4 * (1 - progress));
           ctx.strokeStyle = isDark
-            ? `rgba(210, 230, 255, ${(alpha * 0.22).toFixed(3)})`
-            : `rgba(80, 120, 190, ${(alpha * 0.18).toFixed(3)})`;
-          ctx.shadowBlur = 4;
-          ctx.shadowColor = isDark ? 'rgba(180, 220, 255, 0.3)' : 'rgba(60, 100, 170, 0.2)';
+            ? `rgba(255, 230, 130, ${(alpha * 0.32).toFixed(3)})`
+            : `rgba(200, 150, 20, ${(alpha * 0.24).toFixed(3)})`;
+          ctx.shadowBlur = 5;
+          ctx.shadowColor = isDark ? 'rgba(255, 215, 60, 0.45)' : 'rgba(220, 165, 30, 0.3)';
           ctx.stroke();
         }
       }
@@ -272,18 +272,43 @@ export default function Background() {
         transition: 'background-color 0.35s ease',
       }}
     >
-      {/* ── Depth 1: Atmospheric light field (shifts slowly via --bg-parallax) ── */}
+      {/* ── Depth 1A: Primary Shining Yellow atmospheric light field (top right) ── */}
       <div
         style={{
           position: 'absolute',
           top: '-15%',
-          left: '-15%',
+          left: '-10%',
           width: '130%',
           height: '130%',
           background:
-            'radial-gradient(circle 850px at 70% 30%, rgba(200, 225, 255, 0.045) 0%, transparent 70%)',
+            'radial-gradient(circle 900px at 72% 26%, rgba(255, 215, 50, 0.16) 0%, rgba(245, 180, 25, 0.07) 35%, rgba(220, 150, 15, 0.02) 60%, transparent 75%)',
           transform: 'translate3d(var(--bg-parallax-x, 0px), var(--bg-parallax-y, 0px), 0)',
           willChange: 'transform',
+        }}
+      />
+
+      {/* ── Depth 1B: Secondary Shining Yellow atmospheric field (bottom left) ── */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: '-15%',
+          left: '-15%',
+          width: '120%',
+          height: '120%',
+          background:
+            'radial-gradient(circle 800px at 25% 75%, rgba(255, 195, 40, 0.12) 0%, rgba(240, 160, 20, 0.04) 45%, transparent 75%)',
+          transform: 'translate3d(calc(var(--bg-parallax-x, 0px) * 0.75), calc(var(--bg-parallax-y, 0px) * 0.75), 0)',
+          willChange: 'transform',
+        }}
+      />
+
+      {/* ── Depth 1C: Central shining golden-yellow atmospheric warmth ── */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background:
+            'radial-gradient(ellipse 70% 55% at 50% 45%, rgba(255, 220, 70, 0.065) 0%, rgba(245, 185, 30, 0.02) 50%, transparent 70%)',
         }}
       />
 
@@ -307,7 +332,7 @@ export default function Background() {
         }}
       />
 
-      {/* ── Depth 3: Microscopic floating dust / light particles ── */}
+      {/* ── Depth 3: Microscopic floating golden-yellow light particles ── */}
       <div
         style={{
           position: 'absolute',
@@ -325,7 +350,8 @@ export default function Background() {
               width: `${p.size}px`,
               height: `${p.size}px`,
               borderRadius: '50%',
-              backgroundColor: 'var(--text)',
+              backgroundColor: '#ffdb4d',
+              boxShadow: '0 0 8px rgba(255, 215, 50, 0.8), 0 0 2px rgba(255, 245, 180, 1)',
               opacity: p.opacity,
               transform: `translate3d(calc(var(--bg-parallax-x, 0px) * ${p.factor}), calc(var(--bg-parallax-y, 0px) * ${p.factor}), 0)`,
               transition: 'opacity 0.4s ease',
@@ -334,7 +360,7 @@ export default function Background() {
         ))}
       </div>
 
-      {/* ── Depth 4: Interactive Water Surface Canvas (Hover in water ripple physics) ── */}
+      {/* ── Depth 4: Interactive Water Surface Canvas (Shining Yellow Water Ripples) ── */}
       <canvas
         ref={canvasRef}
         style={{
