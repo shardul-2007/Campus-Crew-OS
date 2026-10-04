@@ -143,10 +143,7 @@ body {
 ::-webkit-scrollbar { width: 0; }
 ::selection { background: rgba(140, 140, 220, 0.25); color: var(--text); }
 
-/* Custom cursor (desktop fine pointer only) */
-@media (pointer: fine) {
-  * { cursor: none !important; }
-}
+/* Native cursor restored */
 
 /* ═══════════════════════════════════════════════════
    GLASS MATERIAL & LIVING SPECULAR REFLECTION
