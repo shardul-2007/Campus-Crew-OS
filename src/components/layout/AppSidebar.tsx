@@ -45,6 +45,11 @@ export function AppSidebar({ currentUser }: Props) {
     setIsSwitching(true);
     try {
       await switchDemoUser(email);
+      if (email === 'analyst@example.com' || email === 'admin@example.com') {
+        router.push('/admin/analytics');
+      } else {
+        router.push('/dashboard');
+      }
       router.refresh();
     } finally {
       setIsSwitching(false);

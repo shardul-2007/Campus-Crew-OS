@@ -151,7 +151,7 @@ export async function runEndToEndLifecycleTest() {
     event_name: newEvent.title,
     event_date: new Date().toISOString().split('T')[0],
     college: 'COEP Pune',
-    organizer_team: 'Shardul Patel & Campus Crew Team',
+    organizer_team: 'Shardul Parihar & Campus Crew Team',
     event_type: 'Coding Contest',
     objective: 'Graph algorithms proficiency',
     platform: 'HRW',

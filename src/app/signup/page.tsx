@@ -42,7 +42,7 @@ export default function SignupPage() {
                   <input
                     type="text"
                     required
-                    placeholder="e.g. Shardul Patel"
+                    placeholder="e.g. Shardul Parihar"
                     className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                   />
                 </div>

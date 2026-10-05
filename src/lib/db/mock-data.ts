@@ -69,7 +69,7 @@ export const INITIAL_PROFILES: Profile[] = [
   {
     id: 'user-crew-1',
     crew_code: 'CREW-0001',
-    full_name: 'Shardul Patel',
+    full_name: 'Shardul Parihar',
     email: 'crew@example.com',
     phone: '+91 98765 43210',
     avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
@@ -80,8 +80,8 @@ export const INITIAL_PROFILES: Profile[] = [
     city: 'Pune',
     state: 'Maharashtra',
     bio: 'Lead Campus Crew Ambassador at COEP. Passionate about competitive programming, open source, and campus developer communities.',
-    linkedin_url: 'https://linkedin.com/in/shardul-patel',
-    github_url: 'https://github.com/shardul-patel',
+    linkedin_url: 'https://linkedin.com/in/shardul-parihar',
+    github_url: 'https://github.com/shardul-parihar',
     role: 'crew_member',
     is_active: true,
     created_at: '2026-01-15T00:00:00Z',
@@ -267,7 +267,7 @@ export const INITIAL_MONTHLY_GOALS: MonthlyGoal[] = [
   {
     id: 'goal-1',
     user_id: 'user-crew-1',
-    user_name: 'Shardul Patel',
+    user_name: 'Shardul Parihar',
     month: '2026-10-01',
     target_events: 1,
     completed_events: 1,
@@ -346,7 +346,7 @@ export function generateInitialEvents(): {
     id: mainEventId,
     event_code: 'ACT-2026-00042',
     created_by: 'user-crew-1',
-    created_by_name: 'Shardul Patel',
+    created_by_name: 'Shardul Parihar',
     created_by_email: 'crew@example.com',
     title: 'CodeRush 2026',
     event_type_id: 'type-1',
@@ -415,7 +415,7 @@ export function generateInitialEvents(): {
 
   // Team members for CodeRush
   team.push(
-    { id: 'tm-1', event_id: mainEventId, user_id: 'user-crew-1', user_name: 'Shardul Patel', user_email: 'crew@example.com', role: 'campus_crew_lead', responsibilities: 'Overall event owner, liaison with university authorities & platform scheduling.', created_at: '2026-09-15T10:00:00Z' },
+    { id: 'tm-1', event_id: mainEventId, user_id: 'user-crew-1', user_name: 'Shardul Parihar', user_email: 'crew@example.com', role: 'campus_crew_lead', responsibilities: 'Overall event owner, liaison with university authorities & platform scheduling.', created_at: '2026-09-15T10:00:00Z' },
     { id: 'tm-2', event_id: mainEventId, user_id: 'user-crew-2', user_name: 'Aarav Gupta', user_email: 'crew2@campuscrew.org', role: 'technical_lead', responsibilities: 'HRW test curation, test case verification, and live problem clarifications.', created_at: '2026-09-15T10:00:00Z' },
     { id: 'tm-3', event_id: mainEventId, user_id: 'user-crew-3', user_name: 'Ishaan Sengupta', user_email: 'crew3@campuscrew.org', role: 'outreach_marketing', responsibilities: 'Social media broadcasts, classroom flyers, and WhatsApp group announcements.', created_at: '2026-09-15T10:00:00Z' },
     { id: 'tm-4', event_id: mainEventId, user_id: 'user-crew-4', user_name: 'Meera Iyer', user_email: 'crew4@campuscrew.org', role: 'documentation', responsibilities: 'Evidence capture, attendance cross-referencing, and post-event reporting.', created_at: '2026-09-15T10:00:00Z' }
@@ -453,7 +453,7 @@ export function generateInitialEvents(): {
       id: 'prf-main-1',
       event_id: mainEventId,
       uploaded_by: 'user-crew-1',
-      uploaded_by_name: 'Shardul Patel',
+      uploaded_by_name: 'Shardul Parihar',
       proof_type: 'event_photo',
       file_path: 'event-proofs/coderush-lab-session-1.jpg',
       file_name: 'coderush-lab-session-1.jpg',
@@ -471,7 +471,7 @@ export function generateInitialEvents(): {
       id: 'prf-main-2',
       event_id: mainEventId,
       uploaded_by: 'user-crew-1',
-      uploaded_by_name: 'Shardul Patel',
+      uploaded_by_name: 'Shardul Parihar',
       proof_type: 'contest_dashboard',
       file_path: 'event-proofs/hrw-dashboard-overview.png',
       file_name: 'hrw-dashboard-overview.png',
@@ -489,7 +489,7 @@ export function generateInitialEvents(): {
       id: 'prf-main-3',
       event_id: mainEventId,
       uploaded_by: 'user-crew-1',
-      uploaded_by_name: 'Shardul Patel',
+      uploaded_by_name: 'Shardul Parihar',
       proof_type: 'poster',
       file_path: 'event-proofs/coderush-promotional-poster.png',
       file_name: 'coderush-promotional-poster.png',
@@ -568,14 +568,14 @@ export function generateInitialEvents(): {
   // Comments for CodeRush
   comments.push(
     { id: 'cmt-1', event_id: mainEventId, author_id: 'user-analyst-1', author_name: 'Priya Nair', author_role: 'analyst', comment: 'Contest proposal looks stellar. Verified HRW assessment link and team assignments. Approved!', is_internal: false, created_at: '2026-10-01T11:42:00Z' },
-    { id: 'cmt-2', event_id: mainEventId, author_id: 'user-crew-1', author_name: 'Shardul Patel', author_role: 'crew_member', comment: 'Thank you Priya! Promotion launched and we have already crossed 120 registrations.', is_internal: false, created_at: '2026-10-02T09:15:00Z' }
+    { id: 'cmt-2', event_id: mainEventId, author_id: 'user-crew-1', author_name: 'Shardul Parihar', author_role: 'crew_member', comment: 'Thank you Priya! Promotion launched and we have already crossed 120 registrations.', is_internal: false, created_at: '2026-10-02T09:15:00Z' }
   );
 
   // Audit Log for CodeRush
   auditLogs.push(
-    { id: 'aud-1', actor_id: 'user-crew-1', actor_name: 'Shardul Patel', actor_email: 'crew@example.com', action: 'Created Event Proposal', entity_type: 'event', entity_id: mainEventId, new_values: { title: 'CodeRush 2026', code: 'ACT-2026-00042' }, created_at: '2026-09-15T10:00:00Z' },
+    { id: 'aud-1', actor_id: 'user-crew-1', actor_name: 'Shardul Parihar', actor_email: 'crew@example.com', action: 'Created Event Proposal', entity_type: 'event', entity_id: mainEventId, new_values: { title: 'CodeRush 2026', code: 'ACT-2026-00042' }, created_at: '2026-09-15T10:00:00Z' },
     { id: 'aud-2', actor_id: 'user-analyst-1', actor_name: 'Priya Nair', actor_email: 'analyst@example.com', action: 'Approved Event', entity_type: 'event', entity_id: mainEventId, old_values: { status: 'submitted' }, new_values: { status: 'approved' }, created_at: '2026-10-01T11:42:00Z' },
-    { id: 'aud-3', actor_id: 'user-crew-1', actor_name: 'Shardul Patel', actor_email: 'crew@example.com', action: 'Transitioned to LIVE', entity_type: 'event', entity_id: mainEventId, old_values: { status: 'scheduled' }, new_values: { status: 'live' }, created_at: '2026-10-05T14:00:00Z' }
+    { id: 'aud-3', actor_id: 'user-crew-1', actor_name: 'Shardul Parihar', actor_email: 'crew@example.com', action: 'Transitioned to LIVE', entity_type: 'event', entity_id: mainEventId, old_values: { status: 'scheduled' }, new_values: { status: 'live' }, created_at: '2026-10-05T14:00:00Z' }
   );
 
   // Now generate remaining 49 events across all types, colleges, and statuses!
