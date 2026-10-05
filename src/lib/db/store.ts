@@ -1026,6 +1026,13 @@ class DataStore {
     return [...this.db.rewardPolicies];
   }
 
+  getMonthlyGoals(userId?: string): MonthlyGoal[] {
+    if (userId) {
+      return this.db.monthlyGoals.filter((g) => g.user_id === userId);
+    }
+    return [...this.db.monthlyGoals];
+  }
+
   // --- DOCUMENTATION SCORE RECALCULATION ---
   recalculateDocumentationScore(eventId: string): number {
     const ev = this.getEventById(eventId);
