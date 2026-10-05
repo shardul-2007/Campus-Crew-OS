@@ -83,7 +83,7 @@ export default async function EventCertificatesPage({ params }: Props) {
               </span>
               <span className="text-slate-600">•</span>
               <span className="text-xs font-semibold text-slate-300 uppercase">
-                {event.event_types?.name || 'HackerRank Event'}
+                {event.event_type_name || 'HackerRank Event'}
               </span>
             </div>
             <h2 className="text-base font-bold text-white mt-0.5">{event.title}</h2>
@@ -96,7 +96,7 @@ export default async function EventCertificatesPage({ params }: Props) {
             </div>
             <div className="flex items-center gap-1.5">
               <MapPin className="w-3.5 h-3.5 text-slate-500" />
-              <span>{event.mode === 'in_person' ? event.venue || 'On Campus' : 'Virtual / Online'}</span>
+              <span>{event.mode === 'offline' ? event.venue || 'On Campus' : event.mode === 'hybrid' ? 'Hybrid / Campus + Online' : 'Virtual / Online'}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <Users className="w-3.5 h-3.5 text-slate-500" />

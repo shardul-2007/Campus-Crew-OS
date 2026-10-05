@@ -163,7 +163,8 @@ export async function runEndToEndLifecycleTest() {
     outcomes: '72 active participants; 58 completed submissions.',
     feedback_summary: 'Overall rating 4.9/5.',
     certificates_issued: true,
-    social_links: ['https://linkedin.com/posts/codesprint-2026']
+    social_links: ['https://linkedin.com/posts/codesprint-2026'],
+    review_status: 'pending'
   });
   console.log(`✓ Event report filed. Review status: ${report.review_status}`);
 
@@ -195,7 +196,7 @@ export async function runEndToEndLifecycleTest() {
   const certWinner = db.generateCertificate({
     event_id: newEvent.id,
     event_title: newEvent.title,
-    recipient_name: win1.name,
+    recipient_name: win1.name || 'Top Ranker',
     recipient_email: win1.hacker_rank_email,
     certificate_type: 'winner',
     certificate_url: `https://certificates.campuscrew.org/verify/WIN-${win1.id}`,
