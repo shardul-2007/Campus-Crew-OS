@@ -105,9 +105,10 @@ export default function Experience() {
 
         {/* Timeline list */}
         <div style={{ position: 'relative', maxWidth: 840 }}>
-          {/* Subtle vertical spine */}
+          {/* Subtle vertical spine (tablet/desktop) */}
           <div
             aria-hidden="true"
+            className="hidden sm:block"
             style={{
               position: 'absolute',
               top: 16,
@@ -132,14 +133,15 @@ export default function Experience() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.98 }}
                     transition={{ duration: 0.35, delay: Math.min(i * 0.03, 0.3) }}
-                    style={{ display: 'flex', gap: 24, alignItems: 'flex-start' }}
+                    className="flex sm:gap-6 gap-0 items-start"
+                    style={{ width: '100%' }}
                   >
-                    {/* Spine Node indicator */}
+                    {/* Spine Node indicator (desktop/tablet) */}
                     <div
+                      className="hidden sm:flex"
                       style={{
                         flexShrink: 0,
                         width: 35,
-                        display: 'flex',
                         justifyContent: 'center',
                         paddingTop: 26,
                       }}
@@ -162,7 +164,9 @@ export default function Experience() {
                       className="glass"
                       style={{
                         flex: 1,
-                        padding: '26px 30px',
+                        width: '100%',
+                        minWidth: 0,
+                        padding: 'clamp(18px, 4vw, 26px) clamp(16px, 4vw, 30px)',
                         borderRadius: 22,
                       }}
                     >
@@ -215,7 +219,7 @@ export default function Experience() {
                         </div>
 
                         {/* Dates & Active Status */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                           {isPresent && (
                             <span
                               style={{
@@ -255,6 +259,7 @@ export default function Experience() {
                           lineHeight: 1.25,
                           letterSpacing: '-0.02em',
                           marginBottom: 6,
+                          wordBreak: 'break-word',
                         }}
                       >
                         {item.role}
@@ -265,7 +270,9 @@ export default function Experience() {
                         style={{
                           display: 'flex',
                           alignItems: 'center',
+                          flexWrap: 'wrap',
                           gap: 10,
+                          rowGap: 6,
                           marginBottom: 14,
                         }}
                       >
@@ -445,7 +452,7 @@ export default function Experience() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              padding: 24,
+              padding: 'clamp(12px, 3.5vw, 24px)',
               background: 'rgba(6, 7, 11, 0.78)',
               backdropFilter: 'blur(28px)',
             }}
@@ -459,6 +466,9 @@ export default function Experience() {
               style={{
                 maxWidth: 520,
                 width: '100%',
+                maxHeight: 'min(90vh, 680px)',
+                display: 'flex',
+                flexDirection: 'column',
                 borderRadius: 24,
                 overflow: 'hidden',
               }}
@@ -470,7 +480,7 @@ export default function Experience() {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  padding: '22px 26px',
+                  padding: 'clamp(16px, 3vw, 22px) clamp(16px, 3.5vw, 26px)',
                   borderBottom: '1px solid var(--glass-border)',
                 }}
               >
@@ -503,8 +513,8 @@ export default function Experience() {
               </div>
 
               {/* List */}
-              <div style={{ padding: '20px 26px 26px' }}>
-                <div style={{ maxHeight: '320px', overflowY: 'auto', marginBottom: 20 }}>
+              <div style={{ padding: 'clamp(14px, 3.5vw, 24px)', overflowY: 'auto' }}>
+                <div style={{ maxHeight: 'min(50vh, 320px)', overflowY: 'auto', marginBottom: 20 }}>
                   {EXPERIENCE_ITEMS.map(item => (
                     <div
                       key={item.id}

@@ -89,12 +89,12 @@ export default function Navbar() {
       <div
         style={{
           position: 'fixed',
-          top: 20,
+          top: 14,
           left: 0, right: 0,
           zIndex: 500,
           display: 'flex',
           justifyContent: 'center',
-          padding: '0 20px',
+          padding: '0 clamp(12px, 3.5vw, 20px)',
           pointerEvents: 'none',
         }}
       >
@@ -110,11 +110,11 @@ export default function Navbar() {
             width: '100%',
             maxWidth: 820,
             borderRadius: 100,
-            padding: '10px 22px',
+            padding: '8px clamp(12px, 3vw, 22px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            gap: 12,
+            gap: 8,
             opacity: scrolled ? 0.90 : 1,
             transition: 'opacity 0.4s ease',
           }}
@@ -126,7 +126,7 @@ export default function Navbar() {
             style={{
               textDecoration: 'none',
               fontWeight: 700,
-              fontSize: '0.93rem',
+              fontSize: 'clamp(0.84rem, 3.6vw, 0.93rem)',
               letterSpacing: '-0.025em',
               color: 'var(--text)',
               flexShrink: 0,
@@ -246,7 +246,8 @@ export default function Navbar() {
             style={{
               position: 'fixed',
               top: 76,
-              left: 20, right: 20,
+              left: 'clamp(12px, 3.5vw, 20px)',
+              right: 'clamp(12px, 3.5vw, 20px)',
               zIndex: 499,
               borderRadius: 20,
               padding: 16,

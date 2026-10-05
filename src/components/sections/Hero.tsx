@@ -158,7 +158,7 @@ export default function Hero() {
             <h1
               className="display"
               style={{
-                fontSize: 'clamp(3.4rem, 8.5vw, 6.8rem)',
+                fontSize: 'clamp(2.5rem, 8vw, 6.8rem)',
                 color: 'var(--text)',
                 lineHeight: 0.94,
                 marginBottom: '0.22em',
@@ -175,7 +175,7 @@ export default function Hero() {
             {/* Role / Subtitle */}
             <p
               style={{
-                fontSize: 'clamp(1.1rem, 2.2vw, 1.35rem)',
+                fontSize: 'clamp(1.05rem, 2.2vw, 1.35rem)',
                 color: 'var(--text)',
                 fontWeight: 600,
                 letterSpacing: '-0.015em',
@@ -188,11 +188,11 @@ export default function Hero() {
             {/* Core Headline */}
             <p
               style={{
-                fontSize: 'clamp(1.0rem, 1.8vw, 1.15rem)',
+                fontSize: 'clamp(0.95rem, 1.8vw, 1.15rem)',
                 color: 'var(--text-2)',
                 fontWeight: 500,
                 lineHeight: 1.45,
-                marginBottom: 20,
+                marginBottom: 18,
                 maxWidth: 540,
               }}
             >
@@ -218,7 +218,7 @@ export default function Hero() {
                 color: 'var(--text-2)',
                 lineHeight: 1.7,
                 maxWidth: 520,
-                marginBottom: 36,
+                marginBottom: 'clamp(24px, 4vh, 36px)',
               }}
             >
               {PERSONAL.bioSecondary}
@@ -228,7 +228,7 @@ export default function Hero() {
             <div
               style={{
                 display: 'flex',
-                gap: 12,
+                gap: 10,
                 flexWrap: 'wrap',
                 alignItems: 'center',
               }}
@@ -284,7 +284,7 @@ export default function Hero() {
               style={{
                 position: 'relative',
                 width: '100%',
-                maxWidth: 'clamp(280px, 85vw, 440px)',
+                maxWidth: 'clamp(260px, 85vw, 420px)',
                 aspectRatio: '3.6 / 4.8',
                 borderRadius: 'clamp(24px, 4vw, 36px)',
                 overflow: 'hidden',

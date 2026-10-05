@@ -64,13 +64,13 @@ export default function Contact() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={vp}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          style={{ marginBottom: 64 }}
+          style={{ marginBottom: 'clamp(36px, 6vw, 64px)' }}
         >
           <span className="s-label">Contact</span>
           <h2
             className="display"
             style={{
-              fontSize: 'clamp(2.8rem, 8vw, 6.8rem)',
+              fontSize: 'clamp(2.4rem, 7.5vw, 6.8rem)',
               color: 'var(--text)',
               lineHeight: 0.95,
               maxWidth: 720,
@@ -83,7 +83,7 @@ export default function Contact() {
             style={{
               fontSize: '1.02rem',
               color: 'var(--text-2)',
-              marginTop: 20,
+              marginTop: 18,
               maxWidth: 580,
               lineHeight: 1.7,
             }}
@@ -101,7 +101,7 @@ export default function Contact() {
           >
             If you&apos;re building something and think I could contribute, feel free to reach out.
           </p>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 20 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 18 }}>
             <span className="dot-available" />
             <span style={{ fontSize: '0.86rem', color: 'var(--text-2)' }}>
               {PERSONAL.location} · Available globally for remote opportunities
@@ -112,8 +112,8 @@ export default function Contact() {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))',
-            gap: 40,
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
+            gap: 'clamp(24px, 4vw, 40px)',
             alignItems: 'start',
           }}
         >
@@ -144,7 +144,7 @@ export default function Contact() {
                       display: 'flex',
                       alignItems: 'center',
                       gap: 16,
-                      padding: '18px 22px',
+                      padding: '16px clamp(16px, 3.5vw, 22px)',
                       borderRadius: 18,
                       textDecoration: 'none',
                     }}
@@ -193,7 +193,7 @@ export default function Contact() {
             viewport={vp}
             transition={{ duration: 0.6, delay: 0.12 }}
             className="glass"
-            style={{ padding: 'clamp(24px, 4vw, 36px)', borderRadius: 24 }}
+            style={{ padding: 'clamp(20px, 4vw, 36px)', borderRadius: 24 }}
           >
             <p className="meta" style={{ marginBottom: 4 }}>Direct Message</p>
             <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>
@@ -292,7 +292,7 @@ export default function Contact() {
           viewport={vp}
           transition={{ duration: 0.6, delay: 0.3 }}
           style={{
-            marginTop: 96,
+            marginTop: 'clamp(48px, 8vw, 96px)',
             paddingTop: 36,
             borderTop: '1px solid var(--glass-border)',
             display: 'flex',

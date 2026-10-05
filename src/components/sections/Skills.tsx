@@ -53,15 +53,15 @@ export default function Skills() {
           whileInView={{ opacity: 1 }}
           viewport={vp}
           transition={{ duration: 0.5, delay: 0.1 }}
-          style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 40 }}
+          style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginBottom: 'clamp(28px, 4vh, 40px)' }}
         >
           <button
             onClick={() => setSelectedCategory(null)}
             data-cursor="hover"
             style={{
-              padding: '7px 18px',
+              padding: '6px 15px',
               borderRadius: 100,
-              fontSize: '0.80rem',
+              fontSize: '0.78rem',
               fontWeight: selectedCategory === null ? 600 : 400,
               border: `1px solid ${selectedCategory === null ? 'var(--glass-border-h)' : 'var(--glass-border)'}`,
               background: selectedCategory === null ? 'var(--btn-fill-bg)' : 'var(--glass-bg)',
@@ -80,9 +80,9 @@ export default function Skills() {
               onClick={() => setSelectedCategory(selectedCategory === c.category ? null : c.category)}
               data-cursor="hover"
               style={{
-                padding: '7px 18px',
+                padding: '6px 15px',
                 borderRadius: 100,
-                fontSize: '0.80rem',
+                fontSize: '0.78rem',
                 fontWeight: selectedCategory === c.category ? 600 : 400,
                 border: `1px solid ${selectedCategory === c.category ? 'var(--glass-border-h)' : 'var(--glass-border)'}`,
                 background: selectedCategory === c.category ? 'var(--btn-fill-bg)' : 'var(--glass-bg)',
@@ -102,7 +102,7 @@ export default function Skills() {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 320px), 1fr))',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))',
             gap: 16,
           }}
         >
@@ -116,7 +116,7 @@ export default function Skills() {
               className="glass"
               style={{
                 borderRadius: 20,
-                padding: '24px 26px',
+                padding: 'clamp(20px, 4vw, 26px)',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
@@ -127,20 +127,20 @@ export default function Skills() {
                   className="meta"
                   style={{
                     color: 'var(--text-3)',
-                    marginBottom: 14,
+                    marginBottom: 12,
                   }}
                 >
                   {cat.category}
                 </p>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
                   {cat.skills.map(s => (
                     <span
                       key={s}
                       className="tag"
                       data-cursor="hover"
                       style={{
-                        padding: '6px 14px',
-                        fontSize: '0.82rem',
+                        padding: '5px 12px',
+                        fontSize: '0.80rem',
                         fontWeight: 500,
                         color: 'var(--text)',
                       }}

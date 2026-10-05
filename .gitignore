@@ -32,3 +32,4 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 /_certificate_platform_stash/
+.campus_crew_os_data.json

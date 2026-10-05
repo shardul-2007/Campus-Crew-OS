@@ -53,13 +53,13 @@ export default function About() {
           whileInView={an1}
           viewport={vp}
           transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
-          style={{ marginBottom: 64 }}
+          style={{ marginBottom: 'clamp(36px, 6vw, 64px)' }}
         >
           <span className="s-label">About</span>
           <h2
             className="display"
             style={{
-              fontSize: 'clamp(2.4rem, 6vw, 4.8rem)',
+              fontSize: 'clamp(2.2rem, 6vw, 4.8rem)',
               color: 'var(--text)',
               maxWidth: 720,
               marginTop: 18,
@@ -73,8 +73,8 @@ export default function About() {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 420px), 1fr))',
-            gap: 'clamp(32px, 5vw, 64px)',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
+            gap: 'clamp(28px, 5vw, 64px)',
             alignItems: 'start',
           }}
         >
@@ -150,7 +150,7 @@ export default function About() {
             className="glass"
             style={{
               borderRadius: 24,
-              padding: 'clamp(28px, 4vw, 40px)',
+              padding: 'clamp(20px, 4vw, 36px)',
               display: 'flex',
               flexDirection: 'column',
               gap: 20,

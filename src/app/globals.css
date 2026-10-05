@@ -116,6 +116,8 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 88px;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 body {
@@ -125,6 +127,7 @@ body {
   font-size: 16px;
   line-height: 1.65;
   overflow-x: hidden;
+  width: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition: background-color 0.35s ease, color 0.35s ease;
@@ -238,11 +241,11 @@ body {
 .wrap {
   max-width: 1240px;
   margin: 0 auto;
-  padding: 0 clamp(24px, 5vw, 80px);
+  padding: 0 clamp(16px, 4.5vw, 80px);
 }
 
 .section {
-  padding: clamp(100px, 13vh, 160px) 0;
+  padding: clamp(64px, 10vh, 140px) 0;
   position: relative;
 }
 
@@ -253,7 +256,9 @@ body {
   font-family: 'Manrope', system-ui, sans-serif;
   font-weight: 800;
   letter-spacing: -0.04em;
-  line-height: 0.92;
+  line-height: 0.95;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .meta {
@@ -270,9 +275,10 @@ body {
 .btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  padding: 11px 26px;
-  font-size: 0.84rem;
+  padding: 10px clamp(16px, 3.5vw, 24px);
+  font-size: 0.82rem;
   font-weight: 600;
   letter-spacing: 0.01em;
   border-radius: 100px;
@@ -404,7 +410,7 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════
-   MOBILE: reduce blur cost
+   MOBILE: reduce blur cost & responsive alignment
    ═══════════════════════════════════════════════════ */
 @media (max-width: 768px) {
   .glass {
@@ -418,5 +424,40 @@ body {
   .glass-nav {
     backdrop-filter: blur(28px) saturate(160%);
     -webkit-backdrop-filter: blur(28px) saturate(160%);
+  }
+}
+
+@media (max-width: 640px) {
+  .wrap {
+    padding: 0 16px;
+  }
+  .section {
+    padding: clamp(52px, 8vh, 84px) 0;
+  }
+  .display {
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+  }
+  .timeline-spine {
+    left: 11px !important;
+  }
+  .timeline-node {
+    width: 22px !important;
+    padding-top: 20px !important;
+  }
+  .timeline-item {
+    gap: 12px !important;
+  }
+  .timeline-card {
+    padding: 18px 16px !important;
+    border-radius: 18px !important;
+  }
+  .s-label {
+    margin-bottom: 14px;
+    font-size: 0.58rem;
+  }
+  .btn {
+    padding: 9px 18px;
+    font-size: 0.80rem;
   }
 }

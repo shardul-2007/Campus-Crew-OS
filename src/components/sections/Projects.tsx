@@ -82,13 +82,13 @@ export default function Projects() {
                   }}
                 />
 
-                <div style={{ position: 'relative', zIndex: 1, padding: 'clamp(28px, 5vw, 48px)' }}>
+                <div style={{ position: 'relative', zIndex: 1, padding: 'clamp(20px, 4.5vw, 48px)' }}>
                   {/* Category and Year row */}
                   <div
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      gap: 12,
+                      gap: 10,
                       marginBottom: 16,
                       flexWrap: 'wrap',
                     }}
@@ -120,7 +120,7 @@ export default function Projects() {
                   <h3
                     className="display"
                     style={{
-                      fontSize: 'clamp(2.2rem, 5vw, 3.8rem)',
+                      fontSize: 'clamp(1.9rem, 5vw, 3.8rem)',
                       color: 'var(--text)',
                       marginBottom: 8,
                     }}
@@ -132,7 +132,7 @@ export default function Projects() {
                       fontSize: '1.02rem',
                       color: 'var(--text-2)',
                       fontWeight: 500,
-                      marginBottom: 20,
+                      marginBottom: 18,
                     }}
                   >
                     {p.tagline}
@@ -145,14 +145,14 @@ export default function Projects() {
                       color: 'var(--text-2)',
                       lineHeight: 1.8,
                       maxWidth: 720,
-                      marginBottom: 26,
+                      marginBottom: 24,
                     }}
                   >
                     {p.description}
                   </p>
 
                   {/* Stack Tags */}
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 32 }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginBottom: 28 }}>
                     {p.stack.map(s => (
                       <span key={s} className="tag" data-cursor="hover">
                         {s}
@@ -161,7 +161,7 @@ export default function Projects() {
                   </div>
 
                   {/* Action buttons */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
                     {p.live && (
                       <a
                         href={p.live}
@@ -227,7 +227,7 @@ export default function Projects() {
                           <div
                             style={{
                               display: 'grid',
-                              gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 220px), 1fr))',
+                              gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 180px), 1fr))',
                               gap: 12,
                             }}
                           >

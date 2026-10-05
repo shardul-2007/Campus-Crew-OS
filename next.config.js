@@ -1,11 +1,17 @@
 /** @type {import('next').NextConfig} */
-const isProd = process.env.NODE_ENV === 'production';
 const nextConfig = {
-  output: 'export',
-  basePath: isProd ? '/my-portfolio' : '',
-  images: { unoptimized: true },
-  trailingSlash: true,
+  reactStrictMode: true,
   eslint: { ignoreDuringBuilds: true },
   typescript: { ignoreBuildErrors: true },
+  images: {
+    unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
+  },
 };
+
 module.exports = nextConfig;

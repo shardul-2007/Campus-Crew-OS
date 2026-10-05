@@ -66,8 +66,8 @@ export default function Achievements() {
           style={{
             display: 'flex',
             flexWrap: 'wrap',
-            gap: 8,
-            marginBottom: 40,
+            gap: 7,
+            marginBottom: 'clamp(28px, 4vh, 40px)',
           }}
         >
           {TABS.map(tab => {
@@ -77,7 +77,7 @@ export default function Achievements() {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 style={{
-                  padding: '7px 18px',
+                  padding: '6px 15px',
                   borderRadius: 100,
                   fontSize: '0.78rem',
                   fontWeight: isActive ? 600 : 500,
@@ -102,8 +102,8 @@ export default function Achievements() {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 360px), 1fr))',
-            gap: 18,
+            gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))',
+            gap: 16,
           }}
         >
           <AnimatePresence mode="popLayout">
@@ -120,7 +120,7 @@ export default function Achievements() {
                   transition={{ duration: 0.35, delay: Math.min(i * 0.04, 0.25) }}
                   className="glass"
                   style={{
-                    padding: '28px 28px',
+                    padding: 'clamp(18px, 4vw, 26px)',
                     borderRadius: 22,
                     display: 'flex',
                     flexDirection: 'column',
@@ -174,12 +174,13 @@ export default function Achievements() {
                     {/* 1. ROLE / ACHIEVEMENT NAME */}
                     <h3
                       style={{
-                        fontSize: '1.18rem',
+                        fontSize: 'clamp(1.05rem, 2.4vw, 1.25rem)',
                         fontWeight: 800,
                         color: 'var(--text)',
                         lineHeight: 1.25,
                         letterSpacing: '-0.02em',
                         marginBottom: 6,
+                        wordBreak: 'break-word',
                       }}
                     >
                       {item.name}
@@ -190,6 +191,7 @@ export default function Achievements() {
                       style={{
                         display: 'flex',
                         alignItems: 'center',
+                        flexWrap: 'wrap',
                         gap: 8,
                         marginBottom: 14,
                       }}
@@ -360,7 +362,7 @@ export default function Achievements() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              padding: 24,
+              padding: 'clamp(12px, 3.5vw, 24px)',
               background: 'rgba(6, 7, 11, 0.78)',
               backdropFilter: 'blur(28px)',
             }}
@@ -374,6 +376,9 @@ export default function Achievements() {
               style={{
                 maxWidth: 520,
                 width: '100%',
+                maxHeight: 'min(90vh, 680px)',
+                display: 'flex',
+                flexDirection: 'column',
                 borderRadius: 24,
                 overflow: 'hidden',
               }}
@@ -385,7 +390,7 @@ export default function Achievements() {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  padding: '22px 26px',
+                  padding: 'clamp(16px, 3vw, 22px) clamp(16px, 3.5vw, 26px)',
                   borderBottom: '1px solid var(--glass-border)',
                 }}
               >
@@ -418,8 +423,8 @@ export default function Achievements() {
               </div>
 
               {/* List */}
-              <div style={{ padding: '20px 26px 26px' }}>
-                <div style={{ maxHeight: '320px', overflowY: 'auto', marginBottom: 20 }}>
+              <div style={{ padding: 'clamp(14px, 3.5vw, 24px)', overflowY: 'auto' }}>
+                <div style={{ maxHeight: 'min(50vh, 320px)', overflowY: 'auto', marginBottom: 20 }}>
                   {ACHIEVEMENTS.map(a => (
                     <div
                       key={a.id}
