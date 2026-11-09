@@ -1,0 +1,100 @@
+modules:
+  jira:projectPage:
+    - key: campuscrew-engineering-hub
+      title: CampusCrew Intelligence
+      icon: https://cdn-icons-png.flaticon.com/512/8649/8649607.png
+      resource: main-ui
+      resolver:
+        function: resolver-fn
+
+  jira:globalPage:
+    - key: campuscrew-global-hub
+      title: CampusCrew Ops Hub
+      icon: https://cdn-icons-png.flaticon.com/512/8649/8649607.png
+      resource: main-ui
+      resolver:
+        function: resolver-fn
+
+  confluence:globalPage:
+    - key: campuscrew-confluence-hub
+      title: CampusCrew Decision Hub
+      icon: https://cdn-icons-png.flaticon.com/512/8649/8649607.png
+      resource: main-ui
+      resolver:
+        function: resolver-fn
+
+  rovo:agent:
+    - key: campuscrew-rovo-agent
+      name: CampusCrew Engineering Agent
+      description: AI-powered engineering operations agent that analyzes sprint health, diagnoses blocked tickets, correlates Confluence documentation, and calculates delivery risk.
+      prompt: >
+        You are the CampusCrew Engineering Agent, an autonomous operations and delivery intelligence assistant for software teams.
+        Your job is to analyze Jira sprints, identify blocked tasks, find missing Confluence technical specifications,
+        and advise engineering managers on team workload balance and delivery confidence. Always reference actual retrieved
+        Jira issue keys (e.g., ENG-104) and Confluence documentation titles to ground your recommendations.
+      conversationStarters:
+        - "Summarize our current sprint health and blockers"
+        - "Which high-priority Jira issues are missing Confluence documentation?"
+        - "Analyze team workload and identify members with WIP limit risk"
+        - "What are our top delivery risks for the upcoming release?"
+      actions:
+        - get-project-overview
+        - get-context-intelligence
+        - analyze-delivery-risks
+
+  action:
+    - key: get-project-overview
+      name: Get Engineering Project Overview
+      description: Fetches real-time Jira sprint status, issues, velocity, and blocker count.
+      function: rovo-action-fn
+      inputs:
+        projectKey:
+          title: Project Key
+          type: string
+          required: false
+          description: Jira project key (e.g. ENG or CORE). Defaults to current project.
+
+    - key: get-context-intelligence
+      name: Get Context Intelligence & Missing Docs
+      description: Analyzes Jira issues against Confluence documentation and detects documentation deficits.
+      function: rovo-action-fn
+      inputs:
+        projectKey:
+          title: Project Key
+          type: string
+          required: false
+          description: Jira project key to analyze.
+
+    - key: analyze-delivery-risks
+      name: Analyze Delivery Risks
+      description: Computes delivery risk score based on cycle time, blocker age, and documentation coverage.
+      function: rovo-action-fn
+      inputs:
+        projectKey:
+          title: Project Key
+          type: string
+          required: false
+          description: Jira project key to score.
+
+function:
+  - key: resolver-fn
+    handler: src/resolvers/index.handler
+  - key: rovo-action-fn
+    handler: src/resolvers/rovo.handler
+
+resources:
+  - key: main-ui
+    path: static/dist
+
+permissions:
+  scopes:
+    - read:jira-work
+    - read:jira-user
+    - read:confluence-content.summary
+    - read:confluence-space.summary
+    - read:confluence-props
+    - storage:app
+
+app:
+  id: ari:cloud:ecosystem::app/c2a38914-7e82-416b-9520-e8d90471b0e3
+  name: CampusCrew Intelligence
